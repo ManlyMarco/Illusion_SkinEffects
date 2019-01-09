@@ -1,3 +1,4 @@
+![preview effects](https://user-images.githubusercontent.com/39247311/50917637-52220580-143e-11e9-9274-5575496dacdb.png)
 # KK_SkinEffects / Additional Skin Effects mod for Koikatsu!
 Koikatu! mod that adds simple effects to characters' skin that are not present in the main game. The effects include sweating, wetness under shower, bukkake etc. The effects are implemented by static textures with multiple levels, they are not animated. The effects are automatically applied during gameplay, and can be used in studio in your scenes.
 
