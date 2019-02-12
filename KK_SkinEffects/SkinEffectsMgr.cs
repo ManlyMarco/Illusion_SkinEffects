@@ -1,7 +1,8 @@
 ﻿using System.ComponentModel;
 using BepInEx;
-using MakerAPI.Chara;
-using MakerAPI.Studio;
+using KKAPI.Chara;
+using KKAPI.Studio;
+using KKAPI.Studio.UI;
 using Studio;
 using UniRx;
 using UnityEngine;
@@ -12,7 +13,7 @@ namespace KK_SkinEffects
     internal partial class SkinEffectsMgr : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        public const string Version = "1.0";
+        internal const string Version = "1.1";
 
         internal static readonly Texture2D[] BldTextures = new Texture2D[3];
         internal static readonly Texture2D[] CumTextures = new Texture2D[4];
@@ -43,7 +44,7 @@ namespace KK_SkinEffects
 
             InitializeTextures();
 
-            if (MakerAPI.MakerAPI.Instance.InsideStudio)
+            if (StudioAPI.InsideStudio)
                 RegisterStudioControls();
         }
 

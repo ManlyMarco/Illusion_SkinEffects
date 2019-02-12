@@ -1,9 +1,9 @@
 ﻿using System;
 using System.Linq;
 using ExtensibleSaveFormat;
+using KKAPI;
+using KKAPI.Chara;
 using KoiSkinOverlayX;
-using MakerAPI;
-using MakerAPI.Chara;
 using UnityEngine;
 
 namespace KK_SkinEffects

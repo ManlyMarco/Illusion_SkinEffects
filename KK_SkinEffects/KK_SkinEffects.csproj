@@ -36,26 +36,24 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
-      <HintPath>..\..\lib\Assembly-CSharp.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Games\Koikatsu\Koikatu_Data\Managed\Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="Assembly-CSharp-firstpass, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <Private>False</Private>
+    <Reference Include="Assembly-CSharp-firstpass">
+      <HintPath>..\..\..\..\Games\Koikatsu\Koikatu_Data\Managed\Assembly-CSharp-firstpass.dll</HintPath>
     </Reference>
     <Reference Include="BepInEx">
       <HintPath>..\..\CheatTools\Libs\BepInEx.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="ExtensibleSaveFormat, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
-      <Private>False</Private>
+    <Reference Include="ExtensibleSaveFormat">
+      <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\ExtensibleSaveFormat.dll</HintPath>
+    </Reference>
+    <Reference Include="KKAPI">
+      <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\KKAPI.dll</HintPath>
     </Reference>
     <Reference Include="KoiSkinOverlay, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\KoiSkinOverlay.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
-    <Reference Include="MakerAPI">
-      <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\MakerAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
