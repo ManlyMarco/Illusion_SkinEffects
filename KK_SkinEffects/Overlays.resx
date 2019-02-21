@@ -118,26 +118,26 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <assembly alias="System.Windows.Forms" name="System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089" />
-  <data name="b1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\b1.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BloodBody_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BloodBody_01.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="b2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\b2.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BloodBody_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BloodBody_02.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="b3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\b3.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BloodBody_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BloodBody_03.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="c1" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\c1.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BukkakeBody_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BukkakeBody_01.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="c2" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\c2.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BukkakeBody_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BukkakeBody_02.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="c3" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\c3.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="BukkakeBody_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\BukkakeBody_03.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="c4" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\c4.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="Drool_Face" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\Drool_Face.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
   <data name="SweatBody" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\SweatBody.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
@@ -145,10 +145,25 @@
   <data name="SweatFace" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>Resources\SweatFace.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="WetBody" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\WetBody.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="TearFace_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\TearFace_01.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
-  <data name="WetFace" type="System.Resources.ResXFileRef, System.Windows.Forms">
-    <value>Resources\WetFace.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  <data name="TearFace_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\TearFace_02.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="TearFace_03" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\TearFace_03.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="WetBody_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\WetBody_01.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="WetBody_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\WetBody_02.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="WetFace_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\WetFace_01.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </data>
+  <data name="WetFace_02" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>Resources\WetFace_02.png;System.Byte[], mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </data>
 </root>

@@ -63,9 +63,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] b1 {
+        internal static byte[] BloodBody_01 {
             get {
-                object obj = ResourceManager.GetObject("b1", resourceCulture);
+                object obj = ResourceManager.GetObject("BloodBody_01", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -73,9 +73,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] b2 {
+        internal static byte[] BloodBody_02 {
             get {
-                object obj = ResourceManager.GetObject("b2", resourceCulture);
+                object obj = ResourceManager.GetObject("BloodBody_02", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -83,9 +83,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] b3 {
+        internal static byte[] BloodBody_03 {
             get {
-                object obj = ResourceManager.GetObject("b3", resourceCulture);
+                object obj = ResourceManager.GetObject("BloodBody_03", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -93,9 +93,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] c1 {
+        internal static byte[] BukkakeBody_01 {
             get {
-                object obj = ResourceManager.GetObject("c1", resourceCulture);
+                object obj = ResourceManager.GetObject("BukkakeBody_01", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -103,9 +103,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] c2 {
+        internal static byte[] BukkakeBody_02 {
             get {
-                object obj = ResourceManager.GetObject("c2", resourceCulture);
+                object obj = ResourceManager.GetObject("BukkakeBody_02", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -113,9 +113,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] c3 {
+        internal static byte[] BukkakeBody_03 {
             get {
-                object obj = ResourceManager.GetObject("c3", resourceCulture);
+                object obj = ResourceManager.GetObject("BukkakeBody_03", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -123,9 +123,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] c4 {
+        internal static byte[] Drool_Face {
             get {
-                object obj = ResourceManager.GetObject("c4", resourceCulture);
+                object obj = ResourceManager.GetObject("Drool_Face", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -153,9 +153,9 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] WetBody {
+        internal static byte[] TearFace_01 {
             get {
-                object obj = ResourceManager.GetObject("WetBody", resourceCulture);
+                object obj = ResourceManager.GetObject("TearFace_01", resourceCulture);
                 return ((byte[])(obj));
             }
         }
@@ -163,9 +163,59 @@ namespace KK_SkinEffects {
         /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
-        internal static byte[] WetFace {
+        internal static byte[] TearFace_02 {
             get {
-                object obj = ResourceManager.GetObject("WetFace", resourceCulture);
+                object obj = ResourceManager.GetObject("TearFace_02", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] TearFace_03 {
+            get {
+                object obj = ResourceManager.GetObject("TearFace_03", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WetBody_01 {
+            get {
+                object obj = ResourceManager.GetObject("WetBody_01", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WetBody_02 {
+            get {
+                object obj = ResourceManager.GetObject("WetBody_02", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WetFace_01 {
+            get {
+                object obj = ResourceManager.GetObject("WetFace_01", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] WetFace_02 {
+            get {
+                object obj = ResourceManager.GetObject("WetFace_02", resourceCulture);
                 return ((byte[])(obj));
             }
         }
