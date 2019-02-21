@@ -1,4 +1,5 @@
 ﻿using System.ComponentModel;
+using System.Linq;
 using BepInEx;
 using KKAPI.Chara;
 using KKAPI.Studio;
@@ -15,10 +16,10 @@ namespace KK_SkinEffects
         public const string GUID = "Marco.SkinEffects";
         internal const string Version = "1.1";
 
-        internal static readonly Texture2D[] BldTextures = new Texture2D[3];
-        internal static readonly Texture2D[] CumTextures = new Texture2D[4];
-        internal static readonly Texture2D[] WetTexturesBody = new Texture2D[2];
-        internal static readonly Texture2D[] WetTexturesFace = new Texture2D[2];
+        internal static Texture2D[] BldTextures;
+        internal static Texture2D[] CumTextures;
+        internal static Texture2D[] WetTexturesBody;
+        internal static Texture2D[] WetTexturesFace;
 
         [DisplayName("Enable virgin bleeding")]
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
@@ -54,30 +55,22 @@ namespace KK_SkinEffects
         /// </summary>
         private static void InitializeTextures()
         {
-            void InitArray(Texture2D[] arr)
+            Texture2D[] MakeArray(byte[][] textures)
             {
-                for (var i = 0; i < arr.Length; i++)
-                    arr[i] = new Texture2D(1, 1);
+                return textures.Select(x =>
+                {
+                    var texture2D = new Texture2D(1, 1);
+                    texture2D.LoadImage(x);
+                    return texture2D;
+                }).ToArray();
             }
 
-            InitArray(CumTextures);
-            CumTextures[0].LoadImage(Overlays.c1);
-            CumTextures[1].LoadImage(Overlays.c2);
-            CumTextures[2].LoadImage(Overlays.c3);
-            CumTextures[3].LoadImage(Overlays.c4);
+            BldTextures = MakeArray(new[] { Overlays.BloodBody_01, Overlays.BloodBody_02, Overlays.BloodBody_03 });
 
-            InitArray(BldTextures);
-            BldTextures[0].LoadImage(Overlays.b1);
-            BldTextures[1].LoadImage(Overlays.b2);
-            BldTextures[2].LoadImage(Overlays.b3);
+            CumTextures = MakeArray(new[] { Overlays.BukkakeBody_01, Overlays.BukkakeBody_02, Overlays.BukkakeBody_03 });
 
-            InitArray(WetTexturesFace);
-            WetTexturesFace[0].LoadImage(Overlays.SweatFace);
-            WetTexturesFace[1].LoadImage(Overlays.WetFace);
-
-            InitArray(WetTexturesBody);
-            WetTexturesBody[0].LoadImage(Overlays.SweatBody);
-            WetTexturesBody[1].LoadImage(Overlays.WetBody);
+            WetTexturesBody = MakeArray(new[] { Overlays.SweatBody, Overlays.WetBody_01, Overlays.WetBody_02 });
+            WetTexturesFace = MakeArray(new[] { Overlays.SweatFace, Overlays.WetFace_01, Overlays.WetFace_02 });
         }
 
         private static void RegisterStudioControls()
