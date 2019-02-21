@@ -13,6 +13,8 @@ namespace KK_SkinEffects
         private int _bloodLevel;
         private int _bukkakeLevel;
         private int _sweatLevel;
+        private int _tearLevel;
+        private int _droolLevel;
         private KoiSkinOverlayController _ksox;
 
         public int BloodLevel
@@ -53,6 +55,34 @@ namespace KK_SkinEffects
                 {
                     _sweatLevel = value;
                     UpdateWetTexture();
+                }
+            }
+        }
+
+        public int TearLevel
+        {
+            get => _tearLevel;
+            set
+            {
+                value = Math.Min(value, SkinEffectsMgr.TearTextures.Length);
+                if (_tearLevel != value)
+                {
+                    _tearLevel = value;
+                    UpdateTearTexture();
+                }
+            }
+        }
+
+        public int DroolLevel
+        {
+            get => _droolLevel;
+            set
+            {
+                value = Math.Min(value, SkinEffectsMgr.DroolTextures.Length);
+                if (_droolLevel != value)
+                {
+                    _droolLevel = value;
+                    UpdateDroolTexture();
                 }
             }
         }
@@ -105,7 +135,18 @@ namespace KK_SkinEffects
                 if (attribs.majime) lvl += 2;
 
                 BloodLevel = Mathf.Clamp(lvl, 0, SkinEffectsMgr.BldTextures.Length);
+
+                if (BloodLevel == SkinEffectsMgr.BldTextures.Length)
+                    TearLevel += 2;
+                else
+                    TearLevel += 1;
             }
+        }
+
+        public void OnCumInMouth(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            DroolLevel++;
+            TearLevel++;
         }
 
         protected override void OnCardBeingSaved(GameMode currentGameMode)
@@ -117,6 +158,8 @@ namespace KK_SkinEffects
                 data.data[nameof(BukkakeLevel)] = BukkakeLevel;
                 data.data[nameof(SweatLevel)] = SweatLevel;
                 data.data[nameof(BloodLevel)] = BloodLevel;
+                data.data[nameof(TearLevel)] = TearLevel;
+                data.data[nameof(DroolLevel)] = DroolLevel;
 
                 SetExtendedData(data);
             }
@@ -129,6 +172,8 @@ namespace KK_SkinEffects
             _bukkakeLevel = 0;
             _bloodLevel = -1;
             _sweatLevel = 0;
+            _tearLevel = 0;
+            _droolLevel = 0;
 
             if (currentGameMode == GameMode.Studio)
             {
@@ -136,13 +181,18 @@ namespace KK_SkinEffects
 
                 if (data != null)
                 {
-                    if (data.data.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int) obj;
-                    if (data.data.TryGetValue(nameof(SweatLevel), out var obj2)) _sweatLevel = (int) obj2;
-                    if (data.data.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int) obj3;
+                    if (data.data.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int)obj;
+                    if (data.data.TryGetValue(nameof(SweatLevel), out var obj2)) _sweatLevel = (int)obj2;
+                    if (data.data.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
+                    if (data.data.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
+                    if (data.data.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
 
                     UpdateWetTexture(false);
                     UpdateBldTexture(false);
                     UpdateCumTexture(false);
+                    UpdateDroolTexture(false);
+                    UpdateTearTexture(false);
+
                     update = true;
                 }
             }
@@ -200,6 +250,28 @@ namespace KK_SkinEffects
                 _ksox.UpdateTexture(TexType.BodyOver);
                 _ksox.UpdateTexture(TexType.FaceOver);
             }
+        }
+
+        private void UpdateTearTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.TearTextures.Contains(x.Texture));
+
+            if (TearLevel > 0)
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.TearTextures[TearLevel - 1], TexType.FaceOver, this));
+
+            if (refresh)
+                _ksox.UpdateTexture(TexType.FaceOver);
+        }
+
+        private void UpdateDroolTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.DroolTextures.Contains(x.Texture));
+
+            if (DroolLevel > 0)
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.DroolTextures[DroolLevel - 1], TexType.FaceOver, this));
+
+            if (refresh)
+                _ksox.UpdateTexture(TexType.FaceOver);
         }
     }
 }

@@ -26,6 +26,15 @@ namespace KK_SkinEffects
                 GetEffectController(heroine).OnInsert(heroine, __instance);
             }
 
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddKuwaeFinish))]
+            public static void AddKuwaeFinish(HFlag __instance)
+            {
+                // Cum inside mouth
+                var heroine = GetLeadHeroine(__instance);
+                GetEffectController(heroine).OnCumInMouth(heroine, __instance);
+            }
+
             [HarmonyPostfix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.FemaleGaugeUp))]
             public static void FemaleGaugeUp(HFlag __instance)
