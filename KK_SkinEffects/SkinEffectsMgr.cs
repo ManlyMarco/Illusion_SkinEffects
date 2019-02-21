@@ -15,7 +15,7 @@ namespace KK_SkinEffects
     internal partial class SkinEffectsMgr : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        internal const string Version = "1.1";
+        internal const string Version = "1.2";
 
         internal static Texture2D[] BldTextures;
         internal static Texture2D[] CumTextures;
