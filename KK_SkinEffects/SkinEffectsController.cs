@@ -118,8 +118,7 @@ namespace KK_SkinEffects
         {
             if (!SkinEffectsMgr.EnableBld.Value) return;
 
-            var virgin = heroine.isVirgin || heroine.HExperience == SaveData.Heroine.HExperienceKind.初めて;
-            if (virgin && BloodLevel == -1)
+            if (heroine.isVirgin && BloodLevel == -1)
             {
                 // figure out bleed level
                 var lvl = SkinEffectsMgr.BldTextures.Length - 1;
