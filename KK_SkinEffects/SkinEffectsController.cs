@@ -122,7 +122,7 @@ namespace KK_SkinEffects
             if (virgin && BloodLevel == -1)
             {
                 // figure out bleed level
-                var lvl = SkinEffectsMgr.BldTextures.Length;
+                var lvl = SkinEffectsMgr.BldTextures.Length - 1;
                 if (hFlag.gaugeFemale >= 68)
                     lvl -= 1;
                 if (hFlag.GetOrgCount() >= 1)
