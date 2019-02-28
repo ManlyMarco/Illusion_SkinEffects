@@ -5,7 +5,7 @@ Koikatu! mod that adds simple effects to characters' skin that are not present i
 You can support development of my plugins through my Patreon page: https://www.patreon.com/ManlyMarco
 
 ## How to use 
-1. Make sure at least [BepInEx v4.1](https://github.com/BepInEx/BepInEx), [BepisPlugins r7](https://github.com/bbepis/BepisPlugins) and [KKAPI v1.0](https://github.com/ManlyMarco/KKAPI) are installed, and your game is updated.
+1. Make sure your game is updated and has all of these installed (same verion or newer): [BepInEx v4.1](https://github.com/BepInEx/BepInEx), [BepisPlugins r7](https://github.com/bbepis/BepisPlugins), [KKAPI v1.0](https://github.com/ManlyMarco/KKAPI) and [Overlay Mods v4.0](https://github.com/ManlyMarco/Koikatu-Overlay-Mods)
 2. Download the latest release from [releases](/../../releases).
 3. Extract the dll file(s) into the folder `Koikatu\BepInEx` in your game's directory.
 4. Start studio, you should see new options under the anim menu.
