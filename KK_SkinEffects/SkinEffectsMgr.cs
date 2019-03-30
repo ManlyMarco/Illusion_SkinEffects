@@ -36,11 +36,16 @@ namespace KK_SkinEffects
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableSwt { get; private set; }
 
+        [DisplayName("All virgins bleed regardless of parameters")]
+        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        public static ConfigWrapper<bool> EnableBldAll { get; private set; }
+
         private void Start()
         {
-            EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);
+            EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);            
             EnableCum = new ConfigWrapper<bool>(nameof(EnableCum), this, true);
             EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
+            EnableBldAll = new ConfigWrapper<bool>(nameof(EnableBldAll), this, true);
 
             Hooks.InstallHook();
 
