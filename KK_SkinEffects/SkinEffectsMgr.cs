@@ -24,9 +24,16 @@ namespace KK_SkinEffects
         internal static Texture2D[] DroolTextures;
         internal static Texture2D[] TearTextures;
 
-        [DisplayName("Enable virgin bleeding")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        [DisplayName("!Enable virgin bleeding")]
+        [Description("When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableBld { get; private set; }
+
+        [DisplayName("!Virgins always bleed")]
+        [Description("By default some girls might not bleed on their first time depending on some parameters. " +
+                     "This setting makes sure some blood to always be there." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
+        public static ConfigWrapper<bool> EnableBldAlways { get; private set; }
 
         [DisplayName("Enable bukkake")]
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
@@ -36,16 +43,12 @@ namespace KK_SkinEffects
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableSwt { get; private set; }
 
-        [DisplayName("All virgins bleed regardless of parameters")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
-        public static ConfigWrapper<bool> EnableBldAll { get; private set; }
-
         private void Start()
         {
             EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);            
             EnableCum = new ConfigWrapper<bool>(nameof(EnableCum), this, true);
             EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
-            EnableBldAll = new ConfigWrapper<bool>(nameof(EnableBldAll), this, true);
+            EnableBldAlways = new ConfigWrapper<bool>(nameof(EnableBldAlways), this, false);
 
             Hooks.InstallHook();
 

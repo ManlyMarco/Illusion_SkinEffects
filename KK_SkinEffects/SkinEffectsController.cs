@@ -128,21 +128,14 @@ namespace KK_SkinEffects
                     lvl -= 1;
 
                 var attribs = heroine.parameter.attribute;
-                if (!SkinEffectsMgr.EnableBldAll.Value)
-                {
-                    if (attribs.bitch) lvl -= 2;
-                    if (attribs.undo) lvl -= 1;
-                    if (attribs.kireizuki) lvl += 1;
-                    if (attribs.majime) lvl += 2;
-                } else
-                {
-                    if (attribs.bitch) lvl += 1;
-                    if (attribs.undo) lvl += 1;
-                    if (attribs.kireizuki) lvl += 1;
-                    if (attribs.majime) lvl += 2;
-                }
+                if (attribs.bitch) lvl -= 2;
+                if (attribs.undo) lvl -= 1;
+                if (attribs.kireizuki) lvl += 1;
+                if (attribs.majime) lvl += 2;
 
-                BloodLevel = Mathf.Clamp(lvl, 0, SkinEffectsMgr.BldTextures.Length);
+                var minLvl = SkinEffectsMgr.EnableBldAlways.Value ? 1 : 0;
+
+                BloodLevel = Mathf.Clamp(lvl, minLvl, SkinEffectsMgr.BldTextures.Length);
 
                 if (BloodLevel == SkinEffectsMgr.BldTextures.Length)
                     TearLevel += 2;
