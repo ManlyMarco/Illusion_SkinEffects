@@ -90,35 +90,39 @@ namespace KK_SkinEffects
         internal void OnFemaleGaugeUp(SaveData.Heroine heroine, HFlag hFlag)
         {
             // Increase sweat level every time female gauge reaches 70
-            if (!SkinEffectsMgr.EnableSwt.Value) return;
-            if (hFlag.gaugeFemale >= 70)
+            if (SkinEffectsMgr.EnableSwt.Value)
             {
-                var orgs = Math.Min(hFlag.GetOrgCount() + 1, SkinEffectsMgr.WetTexturesBody.Length);
-                if (SweatLevel < orgs)
-                    SweatLevel = orgs;
+                if (hFlag.gaugeFemale >= 70)
+                {
+                    var orgs = Math.Min(hFlag.GetOrgCount() + 1, SkinEffectsMgr.WetTexturesBody.Length);
+                    if (SweatLevel < orgs)
+                        SweatLevel = orgs;
+                }
             }
         }
 
         internal void OnFinishRawInside(SaveData.Heroine heroine, HFlag hFlag)
         {
-            if (!SkinEffectsMgr.EnableCum.Value) return;
-            if (BukkakeLevel >= SkinEffectsMgr.CumTextures.Length - 1) return;
-            BukkakeLevel += 1;
+            if (SkinEffectsMgr.EnableCum.Value)
+            {
+                if (BukkakeLevel >= SkinEffectsMgr.CumTextures.Length - 1) return;
+                BukkakeLevel += 1;
+            }
         }
 
         internal void OnHSceneProcStart(SaveData.Heroine heroine, HFlag hFlag)
         {
-            // Full wetness in shower scene
-            if (!SkinEffectsMgr.EnableSwt.Value) return;
-            if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
-                SweatLevel = SkinEffectsMgr.WetTexturesBody.Length;
+            if (SkinEffectsMgr.EnableSwt.Value)
+            {
+                // Full wetness in shower scene
+                if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
+                    SweatLevel = SkinEffectsMgr.WetTexturesBody.Length;
+            }
         }
 
         internal void OnInsert(SaveData.Heroine heroine, HFlag hFlag)
         {
-            if (!SkinEffectsMgr.EnableBld.Value) return;
-
-            if (heroine.isVirgin && BloodLevel == -1)
+            if (SkinEffectsMgr.EnableBld.Value && heroine.isVirgin && BloodLevel == -1)
             {
                 // figure out bleed level
                 var lvl = SkinEffectsMgr.BldTextures.Length - 1;
@@ -144,17 +148,22 @@ namespace KK_SkinEffects
 
                 BloodLevel = Mathf.Clamp(lvl, minLvl, SkinEffectsMgr.BldTextures.Length);
 
-                if (BloodLevel == SkinEffectsMgr.BldTextures.Length)
-                    TearLevel += 2;
-                else
-                    TearLevel += 1;
+                if (SkinEffectsMgr.EnableTear.Value)
+                {
+                    if (BloodLevel == SkinEffectsMgr.BldTextures.Length)
+                        TearLevel += 2;
+                    else
+                        TearLevel += 1;
+                }
             }
         }
 
         public void OnCumInMouth(SaveData.Heroine heroine, HFlag hFlag)
         {
-            DroolLevel++;
-            TearLevel++;
+            if (SkinEffectsMgr.EnableDrl.Value)
+                DroolLevel++;
+            if (SkinEffectsMgr.EnableTear.Value)
+                TearLevel++;
         }
 
         protected override void OnCardBeingSaved(GameMode currentGameMode)

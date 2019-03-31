@@ -36,19 +36,31 @@ namespace KK_SkinEffects
         public static ConfigWrapper<bool> EnableBldAlways { get; private set; }
 
         [DisplayName("Enable bukkake")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        [Description("Triggers when cumming inside." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableCum { get; private set; }
 
         [DisplayName("Enable sweating/wet under shower")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        [Description("When excited girls sweat, same deal under the shower." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableSwt { get; private set; }
+
+        [DisplayName("Enable tears")]
+        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        public static ConfigWrapper<bool> EnableTear { get; private set; }
+
+        [DisplayName("Enable drool")]
+        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        public static ConfigWrapper<bool> EnableDrl { get; private set; }
 
         private void Start()
         {
-            EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);            
+            EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);
+            EnableBldAlways = new ConfigWrapper<bool>(nameof(EnableBldAlways), this, false);
             EnableCum = new ConfigWrapper<bool>(nameof(EnableCum), this, true);
             EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
-            EnableBldAlways = new ConfigWrapper<bool>(nameof(EnableBldAlways), this, false);
+            EnableTear = new ConfigWrapper<bool>(nameof(EnableTear), this, true);
+            EnableDrl = new ConfigWrapper<bool>(nameof(EnableDrl), this, true);
 
             Hooks.InstallHook();
 
