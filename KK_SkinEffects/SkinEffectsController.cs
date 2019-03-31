@@ -124,7 +124,7 @@ namespace KK_SkinEffects
                 var lvl = SkinEffectsMgr.BldTextures.Length - 1;
                 if (hFlag.gaugeFemale >= 68)
                     lvl -= 1;
-                if (hFlag.GetOrgCount() >= 1)
+                if (hFlag.GetOrgCount() >= 3)
                     lvl -= 1;
 
                 var attribs = heroine.parameter.attribute;
@@ -132,6 +132,13 @@ namespace KK_SkinEffects
                 if (attribs.undo) lvl -= 1;
                 if (attribs.kireizuki) lvl += 1;
                 if (attribs.majime) lvl += 2;
+
+                var moreBldPersonalities = new[] { 03, 06, 08, 19, 20, 26, 28, 37 };
+                var lessBldPersonalities = new[] { 00, 07, 11, 12, 13, 14, 15, 33 };
+                if (moreBldPersonalities.Contains(heroine.personality))
+                    lvl += 1;
+                else if (lessBldPersonalities.Contains(heroine.personality))
+                    lvl -= 1;
 
                 var minLvl = SkinEffectsMgr.EnableBldAlways.Value ? 1 : 0;
 
