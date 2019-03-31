@@ -89,12 +89,13 @@ namespace KK_SkinEffects
 
         internal void OnFemaleGaugeUp(SaveData.Heroine heroine, HFlag hFlag)
         {
-            // Increase sweat level every time female gauge reaches 70
             if (SkinEffectsMgr.EnableSwt.Value)
             {
+                // Increase sweat level every time female gauge reaches 70
                 if (hFlag.gaugeFemale >= 70)
                 {
-                    var orgs = Math.Min(hFlag.GetOrgCount() + 1, SkinEffectsMgr.WetTexturesBody.Length);
+                    // Using GetOrgCount to prevent adding a level when you let gauge fall below 70 and resume
+                    var orgs = hFlag.GetOrgCount() + 1;
                     if (SweatLevel < orgs)
                         SweatLevel = orgs;
                 }
@@ -104,10 +105,7 @@ namespace KK_SkinEffects
         internal void OnFinishRawInside(SaveData.Heroine heroine, HFlag hFlag)
         {
             if (SkinEffectsMgr.EnableCum.Value)
-            {
-                if (BukkakeLevel >= SkinEffectsMgr.CumTextures.Length - 1) return;
                 BukkakeLevel += 1;
-            }
         }
 
         internal void OnHSceneProcStart(SaveData.Heroine heroine, HFlag hFlag)
