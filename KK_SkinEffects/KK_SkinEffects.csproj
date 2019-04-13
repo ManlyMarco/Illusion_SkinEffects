@@ -74,6 +74,7 @@
     <Compile Include="SkinEffectsController.cs" />
     <Compile Include="SkinEffectsMgr.cs" />
     <Compile Include="SkinEffectsMgr.Hooks.cs" />
+    <Compile Include="TextureLoader.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Overlays.resx">

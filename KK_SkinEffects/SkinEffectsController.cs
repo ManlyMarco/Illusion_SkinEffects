@@ -22,7 +22,7 @@ namespace KK_SkinEffects
             get => _bloodLevel;
             set
             {
-                value = Math.Min(value, SkinEffectsMgr.BldTextures.Length);
+                value = Math.Min(value, TextureLoader.BldTexturesCount);
                 if (_bloodLevel != value)
                 {
                     _bloodLevel = value;
@@ -36,7 +36,7 @@ namespace KK_SkinEffects
             get => _bukkakeLevel;
             set
             {
-                value = Math.Min(value, SkinEffectsMgr.CumTextures.Length);
+                value = Math.Min(value, TextureLoader.CumTexturesCount);
                 if (_bukkakeLevel != value)
                 {
                     _bukkakeLevel = value;
@@ -50,7 +50,7 @@ namespace KK_SkinEffects
             get => _sweatLevel;
             set
             {
-                value = Math.Min(value, SkinEffectsMgr.WetTexturesFace.Length);
+                value = Math.Min(value, TextureLoader.WetTexturesFaceCount);
                 if (_sweatLevel != value)
                 {
                     _sweatLevel = value;
@@ -64,7 +64,7 @@ namespace KK_SkinEffects
             get => _tearLevel;
             set
             {
-                value = Math.Min(value, SkinEffectsMgr.TearTextures.Length);
+                value = Math.Min(value, TextureLoader.TearTexturesCount);
                 if (_tearLevel != value)
                 {
                     _tearLevel = value;
@@ -78,7 +78,7 @@ namespace KK_SkinEffects
             get => _droolLevel;
             set
             {
-                value = Math.Min(value, SkinEffectsMgr.DroolTextures.Length);
+                value = Math.Min(value, TextureLoader.DroolTexturesCount);
                 if (_droolLevel != value)
                 {
                     _droolLevel = value;
@@ -114,7 +114,7 @@ namespace KK_SkinEffects
             {
                 // Full wetness in shower scene
                 if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
-                    SweatLevel = SkinEffectsMgr.WetTexturesBody.Length;
+                    SweatLevel = TextureLoader.WetTexturesBodyCount;
             }
         }
 
@@ -123,7 +123,7 @@ namespace KK_SkinEffects
             if (SkinEffectsMgr.EnableBld.Value && heroine.isVirgin && BloodLevel == -1)
             {
                 // figure out bleed level
-                var lvl = SkinEffectsMgr.BldTextures.Length - 1;
+                var lvl = TextureLoader.BldTexturesCount - 1;
                 if (hFlag.gaugeFemale >= 68)
                     lvl -= 1;
                 if (hFlag.GetOrgCount() >= 3)
@@ -144,11 +144,11 @@ namespace KK_SkinEffects
 
                 var minLvl = SkinEffectsMgr.EnableBldAlways.Value ? 1 : 0;
 
-                BloodLevel = Mathf.Clamp(lvl, minLvl, SkinEffectsMgr.BldTextures.Length);
+                BloodLevel = Mathf.Clamp(lvl, minLvl, TextureLoader.BldTexturesCount);
 
                 if (SkinEffectsMgr.EnableTear.Value)
                 {
-                    if (BloodLevel == SkinEffectsMgr.BldTextures.Length)
+                    if (BloodLevel == TextureLoader.BldTexturesCount)
                         TearLevel += 2;
                     else
                         TearLevel += 1;
@@ -227,12 +227,12 @@ namespace KK_SkinEffects
 
         private void UpdateBldTexture(bool refresh = true)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.BldTextures.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BldTextures.Contains(x.Texture));
 
             if (BloodLevel > 0)
             {
                 // Insert bld at lowest position to keep it under cum
-                _ksox.AdditionalTextures.Insert(0, new AdditionalTexture(SkinEffectsMgr.BldTextures[BloodLevel - 1], TexType.BodyOver, this));
+                _ksox.AdditionalTextures.Insert(0, new AdditionalTexture(TextureLoader.BldTextures[BloodLevel - 1], TexType.BodyOver, this));
             }
 
             if (refresh)
@@ -241,10 +241,10 @@ namespace KK_SkinEffects
 
         private void UpdateCumTexture(bool refresh = true)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.CumTextures.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumTextures.Contains(x.Texture));
 
             if (BukkakeLevel > 0)
-                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this));
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this));
 
             if (refresh)
                 _ksox.UpdateTexture(TexType.BodyOver);
@@ -252,12 +252,12 @@ namespace KK_SkinEffects
 
         private void UpdateWetTexture(bool refresh = true)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.WetTexturesBody.Contains(x.Texture) || SkinEffectsMgr.WetTexturesFace.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.WetTexturesBody.Contains(x.Texture) || TextureLoader.WetTexturesFace.Contains(x.Texture));
 
             if (SweatLevel > 0)
             {
-                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.WetTexturesBody[SweatLevel - 1], TexType.BodyOver, this));
-                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.WetTexturesFace[SweatLevel - 1], TexType.FaceOver, this));
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesBody[SweatLevel - 1], TexType.BodyOver, this));
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesFace[SweatLevel - 1], TexType.FaceOver, this));
             }
 
             if (refresh)
@@ -269,10 +269,10 @@ namespace KK_SkinEffects
 
         private void UpdateTearTexture(bool refresh = true)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.TearTextures.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.TearTextures.Contains(x.Texture));
 
             if (TearLevel > 0)
-                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.TearTextures[TearLevel - 1], TexType.FaceOver, this));
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.TearTextures[TearLevel - 1], TexType.FaceOver, this));
 
             if (refresh)
                 _ksox.UpdateTexture(TexType.FaceOver);
@@ -280,10 +280,10 @@ namespace KK_SkinEffects
 
         private void UpdateDroolTexture(bool refresh = true)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => SkinEffectsMgr.DroolTextures.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.DroolTextures.Contains(x.Texture));
 
             if (DroolLevel > 0)
-                _ksox.AdditionalTextures.Add(new AdditionalTexture(SkinEffectsMgr.DroolTextures[DroolLevel - 1], TexType.FaceOver, this));
+                _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this));
 
             if (refresh)
                 _ksox.UpdateTexture(TexType.FaceOver);

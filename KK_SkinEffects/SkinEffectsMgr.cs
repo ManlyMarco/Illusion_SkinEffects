@@ -1,6 +1,5 @@
 ﻿using System;
 using System.ComponentModel;
-using System.Linq;
 using BepInEx;
 using KKAPI.Chara;
 using KKAPI.Studio;
@@ -8,6 +7,7 @@ using KKAPI.Studio.UI;
 using Studio;
 using UniRx;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 namespace KK_SkinEffects
 {
@@ -16,13 +16,6 @@ namespace KK_SkinEffects
     {
         public const string GUID = "Marco.SkinEffects";
         internal const string Version = "1.3";
-
-        internal static Texture2D[] BldTextures;
-        internal static Texture2D[] CumTextures;
-        internal static Texture2D[] WetTexturesBody;
-        internal static Texture2D[] WetTexturesFace;
-        internal static Texture2D[] DroolTextures;
-        internal static Texture2D[] TearTextures;
 
         [DisplayName("!Enable virgin bleeding")]
         [Description("When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status." +
@@ -66,63 +59,44 @@ namespace KK_SkinEffects
 
             CharacterApi.RegisterExtraBehaviour<SkinEffectsController>(GUID);
 
-            InitializeTextures();
-
             if (StudioAPI.InsideStudio)
-                RegisterStudioControls();
-        }
-
-        /// <summary>
-        /// Just add textures for additional levels here, everything should scale automatically.
-        /// Blood might require tweaking of the severity algorithm to make it work well.
-        /// </summary>
-        private static void InitializeTextures()
-        {
-            Texture2D[] MakeArray(byte[][] textures)
             {
-                return textures.Select(x =>
-                {
-                    var texture2D = new Texture2D(1, 1);
-                    texture2D.LoadImage(x);
-                    return texture2D;
-                }).ToArray();
+                RegisterStudioControls();
             }
-
-            BldTextures = MakeArray(new[] { Overlays.BloodBody_01, Overlays.BloodBody_02, Overlays.BloodBody_03 });
-
-            CumTextures = MakeArray(new[] { Overlays.BukkakeBody_01, Overlays.BukkakeBody_02, Overlays.BukkakeBody_03 });
-
-            WetTexturesBody = MakeArray(new[] { Overlays.SweatBody, Overlays.WetBody_01, Overlays.WetBody_02 });
-            WetTexturesFace = MakeArray(new[] { Overlays.SweatFace, Overlays.WetFace_01, Overlays.WetFace_02 });
-
-            TearTextures = MakeArray(new[] { Overlays.TearFace_01, Overlays.TearFace_02, Overlays.TearFace_03 });
-
-            DroolTextures = MakeArray(new[] { Overlays.Drool_Face });
+            else
+            {
+                SceneManager.sceneLoaded += (arg0, mode) =>
+                {
+                    // Preload effects for H scene in case they didn't get loaded yet to prevent freeze on first effect appearing
+                    if (arg0.name == "H")
+                        TextureLoader.InitializeTextures();
+                };
+            }
         }
 
         private static void RegisterStudioControls()
         {
-            CurrentStateCategoryToggle CreateToggle(string name, Texture2D[] textures, Action<SkinEffectsController, int> set, Func<SkinEffectsController, int> get)
+            CurrentStateCategoryToggle CreateToggle(string name, int textureCount, Action<SkinEffectsController, int> set, Func<SkinEffectsController, int> get)
             {
                 var tgl = new CurrentStateCategoryToggle(name,
-                    Mathf.Min(4, textures.Length + 1),
-                    c => RescaleLevel(get(c.charInfo.GetComponent<SkinEffectsController>()), textures.Length, 3));
+                    Mathf.Min(4, textureCount + 1),
+                    c => RescaleLevel(get(c.charInfo.GetComponent<SkinEffectsController>()), textureCount, 3));
 
                 tgl.SelectedIndex.Subscribe(Observer.Create((int x) =>
                 {
                     var controller = GetSelectedController();
                     if (controller != null)
-                        set(controller, RescaleLevel(x, tgl.ToggleCount - 1, textures.Length));
+                        set(controller, RescaleLevel(x, tgl.ToggleCount - 1, textureCount));
                 }));
 
                 return tgl;
             }
 
-            var sweatTgl = CreateToggle("Sweat", WetTexturesFace, (controller, i) => controller.SweatLevel = i, controller => controller.SweatLevel);
-            var tearsTgl = CreateToggle("Tears", TearTextures, (controller, i) => controller.TearLevel = i, controller => controller.TearLevel);
-            var droolTgl = CreateToggle("Drool", DroolTextures, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
-            var cumTgl = CreateToggle("Bukkake", CumTextures, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
-            var bldTgl = CreateToggle("Virgin blood", BldTextures, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
+            var sweatTgl = CreateToggle("Sweat", TextureLoader.WetTexturesFaceCount, (controller, i) => controller.SweatLevel = i, controller => controller.SweatLevel);
+            var tearsTgl = CreateToggle("Tears", TextureLoader.TearTexturesCount, (controller, i) => controller.TearLevel = i, controller => controller.TearLevel);
+            var droolTgl = CreateToggle("Drool", TextureLoader.DroolTexturesCount, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
+            var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
+            var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
 
             StudioAPI.CreateCurrentStateCategory(new CurrentStateCategory("Additional skin effects", new[] { sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl }));
         }
