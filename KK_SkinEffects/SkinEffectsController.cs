@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ExtensibleSaveFormat;
 using KKAPI;
@@ -169,20 +170,37 @@ namespace KK_SkinEffects
             if (currentGameMode == GameMode.Studio)
             {
                 var data = new PluginData();
-
-                data.data[nameof(BukkakeLevel)] = BukkakeLevel;
-                data.data[nameof(SweatLevel)] = SweatLevel;
-                data.data[nameof(BloodLevel)] = BloodLevel;
-                data.data[nameof(TearLevel)] = TearLevel;
-                data.data[nameof(DroolLevel)] = DroolLevel;
-
+                WriteState(data.data);
                 SetExtendedData(data);
             }
         }
 
-        protected override void OnReload(GameMode currentGameMode)
+        protected override void OnReload(GameMode currentGameMode, bool maintainState)
         {
-            var update = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
+            if (maintainState) return;
+            
+            switch (currentGameMode)
+            {
+                case GameMode.Studio:
+                    // Get the state set in the character state menu
+                    var data = GetExtendedData();
+                    ApplyState(data?.data);
+                    break;
+
+                case GameMode.MainGame:
+                    // Get the state persisted in the currently loaded game
+                    SkinEffectGameController.ApplyPersistData(this);
+                    break;
+
+                default:
+                    ClearState(true);
+                    break;
+            }
+        }
+
+        public bool ClearState(bool refreshTextures = false)
+        {
+            var needsUpdate = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
 
             _bukkakeLevel = 0;
             _bloodLevel = -1;
@@ -190,39 +208,55 @@ namespace KK_SkinEffects
             _tearLevel = 0;
             _droolLevel = 0;
 
-            if (currentGameMode == GameMode.Studio)
+            if (refreshTextures)
+                UpdateAllTextures();
+
+            return needsUpdate;
+        }
+
+        public void ApplyState(IDictionary<string, object> dataDict)
+        {
+            var needsUpdate = ClearState();
+            if (dataDict != null && dataDict.Count > 0)
             {
-                var data = GetExtendedData();
+                if (dataDict.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int)obj;
+                if (dataDict.TryGetValue(nameof(SweatLevel), out var obj2)) _sweatLevel = (int)obj2;
+                if (dataDict.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
+                if (dataDict.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
+                if (dataDict.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
 
-                if (data != null)
-                {
-                    if (data.data.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int)obj;
-                    if (data.data.TryGetValue(nameof(SweatLevel), out var obj2)) _sweatLevel = (int)obj2;
-                    if (data.data.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
-                    if (data.data.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
-                    if (data.data.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
+                UpdateWetTexture(false);
+                UpdateBldTexture(false);
+                UpdateCumTexture(false);
+                UpdateDroolTexture(false);
+                UpdateTearTexture(false);
 
-                    UpdateWetTexture(false);
-                    UpdateBldTexture(false);
-                    UpdateCumTexture(false);
-                    UpdateDroolTexture(false);
-                    UpdateTearTexture(false);
-
-                    update = true;
-                }
+                needsUpdate = true;
             }
 
-            if (update)
-            {
-                _ksox.UpdateTexture(TexType.BodyOver);
-                _ksox.UpdateTexture(TexType.FaceOver);
-            }
+            if(needsUpdate)
+                UpdateAllTextures();
+        }
+
+        public void WriteState(IDictionary<string, object> dataDict)
+        {
+            dataDict[nameof(BukkakeLevel)] = BukkakeLevel;
+            dataDict[nameof(SweatLevel)] = SweatLevel;
+            dataDict[nameof(BloodLevel)] = BloodLevel;
+            dataDict[nameof(TearLevel)] = TearLevel;
+            dataDict[nameof(DroolLevel)] = DroolLevel;
         }
 
         protected override void Start()
         {
             _ksox = GetComponent<KoiSkinOverlayController>();
             base.Start();
+        }
+
+        public void UpdateAllTextures()
+        {
+            _ksox.UpdateTexture(TexType.BodyOver);
+            _ksox.UpdateTexture(TexType.FaceOver);
         }
 
         private void UpdateBldTexture(bool refresh = true)

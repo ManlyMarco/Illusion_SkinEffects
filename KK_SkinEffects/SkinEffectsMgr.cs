@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using BepInEx;
 using KKAPI.Chara;
+using KKAPI.MainGame;
 using KKAPI.Studio;
 using KKAPI.Studio.UI;
 using Studio;
@@ -46,6 +47,10 @@ namespace KK_SkinEffects
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableDrl { get; private set; }
 
+        [DisplayName("After H effects persist in school")]
+        [Description("Characters keep the skin effects after H in story mode. Effects get cleared after period change.")]
+        public static ConfigWrapper<bool> EnablePersistance { get; private set; }
+
         private void Start()
         {
             EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);
@@ -54,10 +59,12 @@ namespace KK_SkinEffects
             EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
             EnableTear = new ConfigWrapper<bool>(nameof(EnableTear), this, true);
             EnableDrl = new ConfigWrapper<bool>(nameof(EnableDrl), this, true);
+            EnablePersistance = new ConfigWrapper<bool>(nameof(EnablePersistance), this, true);
 
             Hooks.InstallHook();
 
             CharacterApi.RegisterExtraBehaviour<SkinEffectsController>(GUID);
+            GameAPI.RegisterExtraBehaviour<SkinEffectGameController>(GUID);
 
             if (StudioAPI.InsideStudio)
             {

@@ -56,8 +56,6 @@ namespace KK_SkinEffects
                 HarmonyInstance.Create(typeof(Hooks).FullName).PatchAll(typeof(Hooks));
             }
 
-            //private void ChangeAnimator(HSceneProc.AnimationListInfo _nextAinmInfo, bool _isForceCameraReset = false)
-
             private static SkinEffectsController GetEffectController(SaveData.Heroine heroine)
             {
                 return heroine.chaCtrl.GetComponent<SkinEffectsController>();
