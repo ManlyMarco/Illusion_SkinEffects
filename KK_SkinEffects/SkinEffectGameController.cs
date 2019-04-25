@@ -30,7 +30,7 @@ namespace KK_SkinEffects
 
         protected override void OnEndH(HSceneProc proc, bool freeH)
         {
-            if (!SkinEffectsMgr.EnablePersistance.Value) return;
+            if (freeH || !SkinEffectsMgr.EnablePersistance.Value) return;
 
             var isShower = proc.flags.IsShowerPeeping();
             foreach (var heroine in proc.flags.lstHeroine)
