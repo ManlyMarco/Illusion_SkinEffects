@@ -13,19 +13,27 @@ namespace KK_SkinEffects
     /// </summary>
     internal class SkinEffectGameController : GameCustomFunctionController
     {
-        private static readonly Dictionary<SaveData.Heroine, IDictionary<string, object>> _persistentData = new Dictionary<SaveData.Heroine, IDictionary<string, object>>();
+        private static readonly Dictionary<SaveData.Heroine, IDictionary<string, object>> _persistentFluidData = new Dictionary<SaveData.Heroine, IDictionary<string, object>>();
+        private static readonly HashSet<SaveData.Heroine> _disableDeflowering = new HashSet<SaveData.Heroine>();
 
         protected override void OnPeriodChange(Cycle.Type period)
         {
-            foreach (var heroine in _persistentData.Keys)
-                heroine.chaCtrl.GetComponent<SkinEffectsController>().ClearState(true);
+            ClearFluidState();
+        }
 
-            _persistentData.Clear();
+        protected override void OnDayChange(Cycle.Week day)
+        {
+            ClearFluidState();
+            _disableDeflowering.Clear();
         }
 
         protected override void OnStartH(HSceneProc proc, bool freeH)
         {
             StopAllCoroutines();
+
+            // Prevent the HymenRegen taking effect every time H is done in a day
+            foreach (var heroine in proc.flags.lstHeroine)
+                heroine.chaCtrl.GetComponent<SkinEffectsController>().DisableDeflowering = _disableDeflowering.Contains(heroine);
         }
 
         protected override void OnEndH(HSceneProc proc, bool freeH)
@@ -38,12 +46,15 @@ namespace KK_SkinEffects
                 if (isShower)
                 {
                     // Clear effects after a shower, save them after other types of h scenes
-                    _persistentData.Remove(heroine);
+                    _persistentFluidData.Remove(heroine);
                 }
                 else
                 {
                     var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
                     SavePersistData(heroine, controller);
+
+                    if (controller.DisableDeflowering)
+                        _disableDeflowering.Add(heroine);
                 }
 
                 StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
@@ -72,6 +83,18 @@ namespace KK_SkinEffects
             }
         }
 
+        private static void ClearFluidState()
+        {
+            foreach (var heroine in _persistentFluidData.Keys)
+            {
+                var chaCtrl = heroine.chaCtrl;
+                if (chaCtrl != null)
+                    chaCtrl.GetComponent<SkinEffectsController>().ClearFluidState(true);
+            }
+
+            _persistentFluidData.Clear();
+        }
+
         public static void ApplyPersistData(SkinEffectsController controller)
         {
             if (controller == null) throw new ArgumentNullException(nameof(controller));
@@ -80,9 +103,9 @@ namespace KK_SkinEffects
 
             var heroine = controller.ChaControl.GetHeroine();
             if (heroine != null)
-                _persistentData.TryGetValue(heroine, out stateDict);
+                _persistentFluidData.TryGetValue(heroine, out stateDict);
 
-            controller.ApplyState(stateDict);
+            controller.ApplyFluidState(stateDict);
         }
 
         private static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
@@ -90,11 +113,11 @@ namespace KK_SkinEffects
             if (heroine == null) throw new ArgumentNullException(nameof(heroine));
             if (controller == null) throw new ArgumentNullException(nameof(controller));
 
-            _persistentData.TryGetValue(heroine, out var dict);
+            _persistentFluidData.TryGetValue(heroine, out var dict);
             if (dict == null)
-                _persistentData[heroine] = dict = new Dictionary<string, object>();
+                _persistentFluidData[heroine] = dict = new Dictionary<string, object>();
 
-            controller.WriteState(dict);
+            controller.WriteFluidState(dict);
         }
     }
 }

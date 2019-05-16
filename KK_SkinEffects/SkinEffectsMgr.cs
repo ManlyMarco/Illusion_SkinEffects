@@ -1,13 +1,8 @@
-﻿using System;
-using System.ComponentModel;
+﻿using System.ComponentModel;
 using BepInEx;
+using KKAPI;
 using KKAPI.Chara;
 using KKAPI.MainGame;
-using KKAPI.Studio;
-using KKAPI.Studio.UI;
-using Studio;
-using UniRx;
-using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace KK_SkinEffects
@@ -66,11 +61,9 @@ namespace KK_SkinEffects
             CharacterApi.RegisterExtraBehaviour<SkinEffectsController>(GUID);
             GameAPI.RegisterExtraBehaviour<SkinEffectGameController>(GUID);
 
-            if (StudioAPI.InsideStudio)
-            {
-                RegisterStudioControls();
-            }
-            else
+            SkinEffectsGui.Init(this);
+
+            if (KoikatuAPI.GetCurrentGameMode() != GameMode.Studio)
             {
                 SceneManager.sceneLoaded += (arg0, mode) =>
                 {
@@ -79,44 +72,6 @@ namespace KK_SkinEffects
                         TextureLoader.InitializeTextures();
                 };
             }
-        }
-
-        private static void RegisterStudioControls()
-        {
-            CurrentStateCategoryToggle CreateToggle(string name, int textureCount, Action<SkinEffectsController, int> set, Func<SkinEffectsController, int> get)
-            {
-                var tgl = new CurrentStateCategoryToggle(name,
-                    Mathf.Min(4, textureCount + 1),
-                    c => RescaleLevel(get(c.charInfo.GetComponent<SkinEffectsController>()), textureCount, 3));
-
-                tgl.SelectedIndex.Subscribe(Observer.Create((int x) =>
-                {
-                    var controller = GetSelectedController();
-                    if (controller != null)
-                        set(controller, RescaleLevel(x, tgl.ToggleCount - 1, textureCount));
-                }));
-
-                return tgl;
-            }
-
-            var sweatTgl = CreateToggle("Sweat", TextureLoader.WetTexturesFaceCount, (controller, i) => controller.SweatLevel = i, controller => controller.SweatLevel);
-            var tearsTgl = CreateToggle("Tears", TextureLoader.TearTexturesCount, (controller, i) => controller.TearLevel = i, controller => controller.TearLevel);
-            var droolTgl = CreateToggle("Drool", TextureLoader.DroolTexturesCount, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
-            var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
-            var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
-
-            StudioAPI.CreateCurrentStateCategory(new CurrentStateCategory("Additional skin effects", new[] { sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl }));
-        }
-
-        private static SkinEffectsController GetSelectedController()
-        {
-            return FindObjectOfType<MPCharCtrl>()?.ociChar?.charInfo?.GetComponent<SkinEffectsController>();
-        }
-
-        private static int RescaleLevel(int lvl, int maxInLvl, int maxOutLvl)
-        {
-            var rescaledLvl = maxInLvl < maxOutLvl ? lvl : Mathf.RoundToInt(lvl * (float)maxOutLvl / maxInLvl);
-            return Mathf.Clamp(rescaledLvl, 0, maxOutLvl);
         }
     }
 }
