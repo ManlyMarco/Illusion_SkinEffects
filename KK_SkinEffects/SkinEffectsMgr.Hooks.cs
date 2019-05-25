@@ -68,7 +68,7 @@ namespace KK_SkinEffects
 
             private static int GetLeadHeroineId(HFlag __instance)
             {
-                return __instance.mode >= HFlag.EMode.houshi3P ? __instance.nowAnimationInfo.id % 2 : 0;
+                return __instance.mode == HFlag.EMode.houshi3P || __instance.mode == HFlag.EMode.sonyu3P ? __instance.nowAnimationInfo.id % 2 : 0;
             }
         }
     }
