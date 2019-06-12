@@ -323,6 +323,9 @@ namespace KK_SkinEffects
             _clothingState = _siruState = null;
             _accessoryState = null;
 
+            // Siru needs special removal
+            RemoveSiru();
+
             if (refreshTextures)
                 UpdateAllTextures();
 
@@ -477,26 +480,37 @@ namespace KK_SkinEffects
 
         private void UpdateSiruState()
         {
+            var cha = this.ChaControl;
             if (_siruState != null)
             {
-                var cha = this.ChaControl;
                 foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
                 {
                     cha.SetSiruFlags(s, _siruState[(int)s]);
                 }
-
-                bool hiPoly = cha.hiPoly;
-                // Set hiPoly on Overworld
-                PropertyInfo property = typeof(ChaControl).GetProperty("hiPoly");
-                property.DeclaringType.GetProperty("Property");
-                property.GetSetMethod(true).Invoke(cha, new object[] { true });
-
-                // Trigger Semen update
-                typeof(ChaControl).GetMethod("UpdateSiru", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cha, new object[] { true });
-
-                // Reset
-                property.GetSetMethod(true).Invoke(cha, new object[] { hiPoly });
             }
+
+            bool hiPoly = cha.hiPoly;
+            // Set hiPoly on Overworld
+            PropertyInfo property = typeof(ChaControl).GetProperty("hiPoly");
+            property.DeclaringType.GetProperty("Property");
+            property.GetSetMethod(true).Invoke(cha, new object[] { true });
+
+            // Trigger Semen update
+            typeof(ChaControl).GetMethod("UpdateSiru", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cha, new object[] { true });
+
+            // Reset
+            property.GetSetMethod(true).Invoke(cha, new object[] { hiPoly });
+        }
+
+        private void RemoveSiru()
+        {
+            var cha = this.ChaControl;
+            foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
+            {
+                cha.SetSiruFlags(s, 0);
+            }
+            this.UpdateSiruState();
+
         }
 
 

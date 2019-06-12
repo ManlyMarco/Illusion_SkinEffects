@@ -16,7 +16,6 @@ namespace KK_SkinEffects
     {
         private static readonly Dictionary<SaveData.Heroine, IDictionary<string, object>> _persistentCharaState = new Dictionary<SaveData.Heroine, IDictionary<string, object>>();
         private static readonly HashSet<SaveData.Heroine> _disableDeflowering = new HashSet<SaveData.Heroine>();
-        private static bool _nextUnloadShouldApplyData = false;
 
         protected override void OnPeriodChange(Cycle.Type period)
         {
@@ -65,9 +64,6 @@ namespace KK_SkinEffects
 
         private static IEnumerator AfterHCo(SaveData.Heroine heroine, ChaControl previousControl)
         {
-            // No longer need to Apply on Unload
-            _nextUnloadShouldApplyData = false;
-
             // Wait until we switch from h scene to map characters
             yield return new WaitUntil(() => heroine.chaCtrl != previousControl && heroine.chaCtrl != null);
             yield return new WaitForEndOfFrame();
@@ -78,7 +74,6 @@ namespace KK_SkinEffects
 
             // Apply the stored state from h scene
             var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
-            controller.WriteCharaState(previousControl);
             ApplyPersistData(controller);
 
             // Slowly remove sweat effect ("cool down")
@@ -117,17 +112,12 @@ namespace KK_SkinEffects
         internal void OnTalkEnd(SaveData.Heroine heroine, SkinEffectsController controller)
         {
             SavePersistData(heroine, controller);
-            _nextUnloadShouldApplyData = true;
         }
 
         internal void OnUnload(SaveData.Heroine heroine, SkinEffectsController controller)
         {
-            if (_nextUnloadShouldApplyData)
-            {
-                ApplyPersistData(controller);
-                StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
-                _nextUnloadShouldApplyData = false;
-            }
+            ApplyPersistData(controller);
+            StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
         }
 
         private static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
