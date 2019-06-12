@@ -2,6 +2,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using ActionGame;
+using ActionGame.Chara;
 using KKAPI.MainGame;
 using Manager;
 using UnityEngine;
@@ -13,8 +14,9 @@ namespace KK_SkinEffects
     /// </summary>
     internal class SkinEffectGameController : GameCustomFunctionController
     {
-        private static readonly Dictionary<SaveData.Heroine, IDictionary<string, object>> _persistentFluidData = new Dictionary<SaveData.Heroine, IDictionary<string, object>>();
+        private static readonly Dictionary<SaveData.Heroine, IDictionary<string, object>> _persistentCharaState = new Dictionary<SaveData.Heroine, IDictionary<string, object>>();
         private static readonly HashSet<SaveData.Heroine> _disableDeflowering = new HashSet<SaveData.Heroine>();
+        private static bool _nextUnloadShouldApplyData = false;
 
         protected override void OnPeriodChange(Cycle.Type period)
         {
@@ -46,7 +48,7 @@ namespace KK_SkinEffects
                 if (isShower)
                 {
                     // Clear effects after a shower, save them after other types of h scenes
-                    _persistentFluidData.Remove(heroine);
+                    _persistentCharaState.Remove(heroine);
                 }
                 else
                 {
@@ -63,6 +65,9 @@ namespace KK_SkinEffects
 
         private static IEnumerator AfterHCo(SaveData.Heroine heroine, ChaControl previousControl)
         {
+            // No longer need to Apply on Unload
+            _nextUnloadShouldApplyData = false;
+
             // Wait until we switch from h scene to map characters
             yield return new WaitUntil(() => heroine.chaCtrl != previousControl && heroine.chaCtrl != null);
             yield return new WaitForEndOfFrame();
@@ -73,6 +78,7 @@ namespace KK_SkinEffects
 
             // Apply the stored state from h scene
             var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
+            controller.WriteCharaState(previousControl);
             ApplyPersistData(controller);
 
             // Slowly remove sweat effect ("cool down")
@@ -85,14 +91,14 @@ namespace KK_SkinEffects
 
         private static void ClearFluidState()
         {
-            foreach (var heroine in _persistentFluidData.Keys)
+            foreach (var heroine in _persistentCharaState.Keys)
             {
                 var chaCtrl = heroine.chaCtrl;
                 if (chaCtrl != null)
-                    chaCtrl.GetComponent<SkinEffectsController>().ClearFluidState(true);
+                    chaCtrl.GetComponent<SkinEffectsController>().ClearCharaState(true);
             }
 
-            _persistentFluidData.Clear();
+            _persistentCharaState.Clear();
         }
 
         public static void ApplyPersistData(SkinEffectsController controller)
@@ -103,9 +109,25 @@ namespace KK_SkinEffects
 
             var heroine = controller.ChaControl.GetHeroine();
             if (heroine != null)
-                _persistentFluidData.TryGetValue(heroine, out stateDict);
+                _persistentCharaState.TryGetValue(heroine, out stateDict);
 
-            controller.ApplyFluidState(stateDict);
+            controller.ApplyCharaState(stateDict);
+        }
+
+        internal void OnTalkEnd(SaveData.Heroine heroine, SkinEffectsController controller)
+        {
+            SavePersistData(heroine, controller);
+            _nextUnloadShouldApplyData = true;
+        }
+
+        internal void OnUnload(SaveData.Heroine heroine, SkinEffectsController controller)
+        {
+            if (_nextUnloadShouldApplyData)
+            {
+                ApplyPersistData(controller);
+                StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
+                _nextUnloadShouldApplyData = false;
+            }
         }
 
         private static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
@@ -113,11 +135,11 @@ namespace KK_SkinEffects
             if (heroine == null) throw new ArgumentNullException(nameof(heroine));
             if (controller == null) throw new ArgumentNullException(nameof(controller));
 
-            _persistentFluidData.TryGetValue(heroine, out var dict);
+            _persistentCharaState.TryGetValue(heroine, out var dict);
             if (dict == null)
-                _persistentFluidData[heroine] = dict = new Dictionary<string, object>();
+                _persistentCharaState[heroine] = dict = new Dictionary<string, object>();
 
-            controller.WriteFluidState(dict);
+            controller.WriteCharaState(dict);
         }
     }
 }

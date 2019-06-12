@@ -1,4 +1,7 @@
-﻿using Harmony;
+﻿using ActionGame.Chara;
+using Harmony;
+using System.Collections;
+using System.Reflection;
 
 namespace KK_SkinEffects
 {
@@ -50,6 +53,52 @@ namespace KK_SkinEffects
                 var heroine = GetLeadHeroine(__instance.flags);
                 GetEffectController(heroine).OnHSceneProcStart(heroine, __instance.flags);
             }
+
+            // KK_Persist Hooks
+            private static SaveData.Heroine GetCurrentVisibleGirl()
+            {
+                var result = FindObjectOfType<TalkScene>()?.targetHeroine;
+                if (result != null)
+                    return result;
+
+                try
+                {
+                    var nowScene = Manager.Game.Instance?.actScene?.AdvScene?.nowScene;
+                    if (nowScene)
+                    {
+                        var advSceneTargetHeroineProp = typeof(ADV.ADVScene).GetField("m_TargetHeroine", BindingFlags.Instance | BindingFlags.NonPublic);
+                        var girl = advSceneTargetHeroineProp?.GetValue(nowScene) as SaveData.Heroine;
+                        if (girl != null) return girl;
+                    }
+                }
+                catch
+                {
+                }
+                return null;
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(TalkScene), "TalkEnd")]
+            public static void PreTalkSceneEndHook()
+            {
+                // Save clothing state changes at end of TalkScene, specifically from ClothingStateMenu
+                var heroine = GetCurrentVisibleGirl();
+                if (heroine != null)
+                    Singleton<SkinEffectGameController>.Instance.OnTalkEnd(heroine, GetEffectController(heroine));
+
+            }
+
+            
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(Manager.Scene), "UnLoad")]
+            public static void PostSceneUnloadHook()
+            {
+                // Called after TalkScene ends
+                var heroine = GetCurrentVisibleGirl();
+                if (heroine != null)
+                    Singleton<SkinEffectGameController>.Instance.OnUnload(heroine, GetEffectController(heroine));
+            }
+            
 
             public static void InstallHook()
             {
