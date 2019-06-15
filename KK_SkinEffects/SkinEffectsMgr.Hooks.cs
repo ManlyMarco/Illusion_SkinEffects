@@ -174,6 +174,12 @@ namespace KK_SkinEffects
                 int[] actions = GetLastActions(__instance, npc);
                 int n = actions.Length;
 
+                // 17 (change mind) seems to happen when redirected by the player while desire is something else
+                if (actions[n-1] == 17)
+                {
+                    return;
+                }
+
                 // Multiple change clothes actions can be queued up.
                 // Put clothes on when the latest action is not in the set.
                 if (n >= 2 && (_replaceClothesActions.Contains(actions[n-2])) && actions[n-2] != actions[n-1])
