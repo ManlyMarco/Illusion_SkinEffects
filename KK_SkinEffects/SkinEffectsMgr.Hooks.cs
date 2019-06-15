@@ -158,6 +158,7 @@ namespace KK_SkinEffects
             private static HashSet<int> _replaceClothesActions = new HashSet<int>(new int[]
             {
                 0, // Change Clothes
+                1, // Toilet
                 2, // Shower
                 4, // H Solo
                 26, // Lez
@@ -178,6 +179,10 @@ namespace KK_SkinEffects
                 if (n >= 2 && (_replaceClothesActions.Contains(actions[n-2])) && actions[n-2] != actions[n-1])
                 {
                     npc.heroine.chaCtrl.SetClothesStateAll(0);
+                    if (actions[n - 1] == 2) //shower
+                    {
+                        npc.heroine.chaCtrl.GetComponent<SkinEffectsController>().ClearCharaState(true);
+                    }
                 }
             }
 

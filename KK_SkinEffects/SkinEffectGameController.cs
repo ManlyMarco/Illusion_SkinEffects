@@ -19,12 +19,12 @@ namespace KK_SkinEffects
 
         protected override void OnPeriodChange(Cycle.Type period)
         {
-            ClearFluidState();
+            ClearCharaState();
         }
 
         protected override void OnDayChange(Cycle.Week day)
         {
-            ClearFluidState();
+            ClearCharaState();
             _disableDeflowering.Clear();
         }
 
@@ -84,7 +84,7 @@ namespace KK_SkinEffects
             }
         }
 
-        private static void ClearFluidState()
+        private static void ClearCharaState()
         {
             foreach (var heroine in _persistentCharaState.Keys)
             {
