@@ -161,6 +161,7 @@ namespace KK_SkinEffects
                 1, // Toilet
                 2, // Shower
                 4, // H Solo
+                25, // Embarrassment
                 26, // Lez
                 27, // Lez Partner
             });
@@ -184,7 +185,8 @@ namespace KK_SkinEffects
                 // Put clothes on when the latest action is not in the set.
                 if (n >= 2 && (_replaceClothesActions.Contains(actions[n - 2])) && actions[n - 2] != actions[n - 1])
                 {
-                    npc.heroine.chaCtrl.SetClothesStateAll(0);
+                    if (actions[n - 1] != 25) // Changing Clothes -> Embarrassment
+                        npc.heroine.chaCtrl.SetClothesStateAll(0);
                     if (actions[n - 1] == 2) //shower
                     {
                         npc.heroine.chaCtrl.GetComponent<SkinEffectsController>().ClearCharaState(true);
