@@ -157,12 +157,12 @@ namespace KK_SkinEffects
 
             private static HashSet<int> _replaceClothesActions = new HashSet<int>(new int[]
             {
-                0x0, // Change Clothes
-                0x1, // Toilet
-                0x2, // Shower
-                0x4, // H Solo
-                0x26, // Lez
-                0x27, // Lez Partner
+                0, // Change Clothes
+                1, // Toilet
+                2, // Shower
+                4, // H Solo
+                26, // Lez
+                27, // Lez Partner
             });
 
             [HarmonyPrefix]
@@ -175,7 +175,7 @@ namespace KK_SkinEffects
                 int n = actions.Length;
 
                 // 17 (change mind) seems to happen when redirected by the player while desire is something else
-                if (actions[n - 1] == 0x17)
+                if (actions[n - 1] == 23)
                 {
                     return;
                 }
