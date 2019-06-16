@@ -467,6 +467,9 @@ namespace KK_SkinEffects
 
         private void UpdateClothingState()
         {
+            if (this.ChaControl.fileParam.sex == 1)
+                // VisibleSonAlways causes bottomless girls to have penises
+                this.ChaControl.chaFile.status.visibleSonAlways = false;
             if (_clothingState != null)
                 this.ChaControl.chaFile.status.clothesState = _clothingState;
         }
