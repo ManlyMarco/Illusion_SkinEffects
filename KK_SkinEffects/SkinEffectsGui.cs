@@ -46,7 +46,7 @@ namespace KK_SkinEffects
         {
             yield return null;
 
-            if (MakerAPI.InsideMaker)
+            if (MakerAPI.InsideMaker && _stretched != null)
             {
                 var ctrl = GetMakerController();
 
