@@ -8,6 +8,7 @@ using KKAPI.Maker;
 using KKAPI.Studio;
 using KoiSkinOverlayX;
 using UnityEngine;
+using System.Reflection;
 
 namespace KK_SkinEffects
 {
@@ -18,6 +19,9 @@ namespace KK_SkinEffects
         private int _sweatLevel;
         private int _tearLevel;
         private int _droolLevel;
+        private byte[] _clothingState;
+        private bool[] _accessoryState;
+        private byte[] _siruState;
         private KoiSkinOverlayController _ksox;
 
         public int BloodLevel
@@ -87,6 +91,45 @@ namespace KK_SkinEffects
                     _droolLevel = value;
                     UpdateDroolTexture();
                 }
+            }
+        }
+
+        public byte[] ClothingState
+        {
+            get => _clothingState;
+            set
+            {
+                if (_clothingState != value)
+                {
+                    _clothingState = value;
+                    UpdateClothingState();
+                }
+            }
+        }
+        public bool[] AccessoryState
+        {
+            get => _accessoryState;
+            set
+            {
+                if (_accessoryState != value)
+                {
+                    _accessoryState = value;
+                    UpdateAccessoryState();
+                }
+
+            }
+        }
+        public byte[] SiruState
+        {
+            get => _siruState;
+            set
+            {
+                if (_siruState != value)
+                {
+                    _siruState = value;
+                    UpdateSiruState();
+                }
+
             }
         }
 
@@ -221,7 +264,7 @@ namespace KK_SkinEffects
             data.data[nameof(FragileVag)] = FragileVag;
 
             if (currentGameMode == GameMode.Studio)
-                WriteFluidState(data.data);
+                WriteCharaState(data.data);
 
             SetExtendedData(data);
         }
@@ -254,7 +297,7 @@ namespace KK_SkinEffects
             {
                 case GameMode.Studio:
                     // Get the state set in the character state menu
-                    ApplyFluidState(data?.data);
+                    ApplyCharaState(data?.data);
                     break;
 
                 case GameMode.MainGame:
@@ -263,12 +306,12 @@ namespace KK_SkinEffects
                     break;
 
                 default:
-                    ClearFluidState(true);
+                    ClearCharaState(true);
                     break;
             }
         }
 
-        public bool ClearFluidState(bool refreshTextures = false)
+        public bool ClearCharaState(bool refreshTextures = false)
         {
             var needsUpdate = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
 
@@ -277,6 +320,11 @@ namespace KK_SkinEffects
             _sweatLevel = 0;
             _tearLevel = 0;
             _droolLevel = 0;
+            _clothingState = _siruState = null;
+            _accessoryState = null;
+
+            // Siru needs special removal
+            RemoveSiru();
 
             if (refreshTextures)
                 UpdateAllTextures();
@@ -284,9 +332,9 @@ namespace KK_SkinEffects
             return needsUpdate;
         }
 
-        public void ApplyFluidState(IDictionary<string, object> dataDict)
+        public void ApplyCharaState(IDictionary<string, object> dataDict)
         {
-            var needsUpdate = ClearFluidState();
+            var needsUpdate = ClearCharaState();
             if (dataDict != null && dataDict.Count > 0)
             {
                 if (dataDict.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int)obj;
@@ -294,12 +342,18 @@ namespace KK_SkinEffects
                 if (dataDict.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
                 if (dataDict.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
                 if (dataDict.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
+                if (dataDict.TryGetValue(nameof(ClothingState), out var obj6)) _clothingState = (byte[])obj6;
+                if (dataDict.TryGetValue(nameof(AccessoryState), out var obj7)) _accessoryState = (bool[])obj7;
+                if (dataDict.TryGetValue(nameof(SiruState), out var obj8)) _siruState = (byte[])obj8;
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
                 UpdateCumTexture(false);
                 UpdateDroolTexture(false);
                 UpdateTearTexture(false);
+                UpdateClothingState();
+                UpdateAccessoryState();
+                UpdateSiruState();
 
                 needsUpdate = true;
             }
@@ -308,13 +362,16 @@ namespace KK_SkinEffects
                 UpdateAllTextures();
         }
 
-        public void WriteFluidState(IDictionary<string, object> dataDict)
+        public void WriteCharaState(IDictionary<string, object> dataDict)
         {
             dataDict[nameof(BukkakeLevel)] = BukkakeLevel;
             dataDict[nameof(SweatLevel)] = SweatLevel;
             dataDict[nameof(BloodLevel)] = BloodLevel;
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
+            dataDict[nameof(ClothingState)] = this.ChaControl.chaFile.status.clothesState.Clone();
+            dataDict[nameof(AccessoryState)] = this.ChaControl.chaFile.status.showAccessory.Clone();
+            dataDict[nameof(SiruState)] = this.ChaControl.chaFile.status.siruLv.Clone();
         }
 
         protected override void Start()
@@ -407,5 +464,58 @@ namespace KK_SkinEffects
                     _ksox.UpdateTexture(TexType.FaceOver);
             }
         }
+
+        private void UpdateClothingState()
+        {
+            if (this.ChaControl.fileParam.sex == 1)
+                // VisibleSonAlways causes bottomless girls to have penises
+                this.ChaControl.chaFile.status.visibleSonAlways = false;
+            if (_clothingState != null)
+                this.ChaControl.chaFile.status.clothesState = _clothingState;
+        }
+
+        private void UpdateAccessoryState()
+        {
+            if (_accessoryState != null)
+                this.ChaControl.chaFile.status.showAccessory = _accessoryState;
+
+        }
+
+        private void UpdateSiruState()
+        {
+            var cha = this.ChaControl;
+            if (_siruState != null)
+            {
+                foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
+                {
+                    cha.SetSiruFlags(s, _siruState[(int)s]);
+                }
+            }
+
+            bool hiPoly = cha.hiPoly;
+            // Set hiPoly on Overworld
+            PropertyInfo property = typeof(ChaControl).GetProperty("hiPoly");
+            property.DeclaringType.GetProperty("Property");
+            property.GetSetMethod(true).Invoke(cha, new object[] { true });
+
+            // Trigger Semen update
+            typeof(ChaControl).GetMethod("UpdateSiru", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cha, new object[] { true });
+
+            // Reset
+            property.GetSetMethod(true).Invoke(cha, new object[] { hiPoly });
+        }
+
+        private void RemoveSiru()
+        {
+            var cha = this.ChaControl;
+            foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
+            {
+                cha.SetSiruFlags(s, 0);
+            }
+            this.UpdateSiruState();
+
+        }
+
+
     }
 }
