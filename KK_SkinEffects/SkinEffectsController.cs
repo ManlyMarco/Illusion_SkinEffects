@@ -8,7 +8,7 @@ using KKAPI.Maker;
 using KKAPI.Studio;
 using KoiSkinOverlayX;
 using UnityEngine;
-using System.Reflection;
+using Harmony;
 
 namespace KK_SkinEffects
 {
@@ -102,10 +102,15 @@ namespace KK_SkinEffects
                 if (_clothingState != value)
                 {
                     _clothingState = value;
-                    UpdateClothingState();
+
+                    if (value == null)
+                        ChaControl.SetClothesStateAll(0);
+                    else
+                        UpdateClothingState();
                 }
             }
         }
+
         public bool[] AccessoryState
         {
             get => _accessoryState;
@@ -119,6 +124,7 @@ namespace KK_SkinEffects
 
             }
         }
+
         public byte[] SiruState
         {
             get => _siruState;
@@ -323,8 +329,7 @@ namespace KK_SkinEffects
             _clothingState = _siruState = null;
             _accessoryState = null;
 
-            // Siru needs special removal
-            RemoveSiru();
+            UpdateSiruState();
 
             if (refreshTextures)
                 UpdateAllTextures();
@@ -369,9 +374,9 @@ namespace KK_SkinEffects
             dataDict[nameof(BloodLevel)] = BloodLevel;
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
-            dataDict[nameof(ClothingState)] = this.ChaControl.chaFile.status.clothesState.Clone();
-            dataDict[nameof(AccessoryState)] = this.ChaControl.chaFile.status.showAccessory.Clone();
-            dataDict[nameof(SiruState)] = this.ChaControl.chaFile.status.siruLv.Clone();
+            dataDict[nameof(ClothingState)] = ChaFileControl.status.clothesState.Clone();
+            dataDict[nameof(AccessoryState)] = ChaFileControl.status.showAccessory.Clone();
+            dataDict[nameof(SiruState)] = ChaFileControl.status.siruLv.Clone();
         }
 
         protected override void Start()
@@ -467,55 +472,43 @@ namespace KK_SkinEffects
 
         private void UpdateClothingState()
         {
-            if (this.ChaControl.fileParam.sex == 1)
+            if (ChaControl.fileParam.sex == 1)
+            {
                 // VisibleSonAlways causes bottomless girls to have penises
-                this.ChaControl.chaFile.status.visibleSonAlways = false;
+                // todo futas and traps
+                ChaFileControl.status.visibleSonAlways = false;
+            }
+
             if (_clothingState != null)
-                this.ChaControl.chaFile.status.clothesState = _clothingState;
+                ChaFileControl.status.clothesState = _clothingState;
         }
 
         private void UpdateAccessoryState()
         {
             if (_accessoryState != null)
-                this.ChaControl.chaFile.status.showAccessory = _accessoryState;
-
+                ChaFileControl.status.showAccessory = _accessoryState;
         }
 
         private void UpdateSiruState()
         {
-            var cha = this.ChaControl;
-            if (_siruState != null)
-            {
-                foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
-                {
-                    cha.SetSiruFlags(s, _siruState[(int)s]);
-                }
-            }
-
-            bool hiPoly = cha.hiPoly;
-            // Set hiPoly on Overworld
-            PropertyInfo property = typeof(ChaControl).GetProperty("hiPoly");
-            property.DeclaringType.GetProperty("Property");
-            property.GetSetMethod(true).Invoke(cha, new object[] { true });
-
-            // Trigger Semen update
-            typeof(ChaControl).GetMethod("UpdateSiru", BindingFlags.NonPublic | BindingFlags.Instance).Invoke(cha, new object[] { true });
-
-            // Reset
-            property.GetSetMethod(true).Invoke(cha, new object[] { hiPoly });
-        }
-
-        private void RemoveSiru()
-        {
-            var cha = this.ChaControl;
             foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
             {
-                cha.SetSiruFlags(s, 0);
+                if (_siruState != null)
+                    ChaControl.SetSiruFlags(s, _siruState[(int)s]);
+                else
+                    ChaControl.SetSiruFlags(s, 0);
             }
-            this.UpdateSiruState();
 
+            var traverse = Traverse.Create(ChaControl);
+
+            var prop = traverse.Property(nameof(ChaControl.hiPoly));
+            var hiPoly = prop.GetValue<bool>();
+            prop.SetValue(true);
+
+            // Trigger Semen update
+            traverse.Method("UpdateSiru").GetValue(true);
+
+            prop.SetValue(hiPoly);
         }
-
-
     }
 }

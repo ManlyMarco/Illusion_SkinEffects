@@ -109,18 +109,13 @@ namespace KK_SkinEffects
             controller.ApplyCharaState(stateDict);
         }
 
-        internal void OnTalkEnd(SaveData.Heroine heroine, SkinEffectsController controller)
-        {
-            SavePersistData(heroine, controller);
-        }
-
-        internal void OnUnload(SaveData.Heroine heroine, SkinEffectsController controller)
+        internal void OnSceneUnload(SaveData.Heroine heroine, SkinEffectsController controller)
         {
             ApplyPersistData(controller);
             StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
         }
 
-        private static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
+        public static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
         {
             if (heroine == null) throw new ArgumentNullException(nameof(heroine));
             if (controller == null) throw new ArgumentNullException(nameof(controller));

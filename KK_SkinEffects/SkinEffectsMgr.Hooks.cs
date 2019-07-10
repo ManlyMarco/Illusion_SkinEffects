@@ -1,12 +1,11 @@
-﻿using ActionGame;
+﻿using System;
+using ActionGame;
 using ActionGame.Chara;
-using BepInEx;
 using Harmony;
-using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Linq;
-using System.Reflection;
+using System.Reflection.Emit;
+using Manager;
 
 namespace KK_SkinEffects
 {
@@ -59,28 +58,7 @@ namespace KK_SkinEffects
                 GetEffectController(heroine).OnHSceneProcStart(heroine, __instance.flags);
             }
 
-            // KK_Persist Hooks
-            private static SaveData.Heroine GetCurrentVisibleGirl()
-            {
-                var result = FindObjectOfType<TalkScene>()?.targetHeroine;
-                if (result != null)
-                    return result;
-
-                try
-                {
-                    var nowScene = Manager.Game.Instance?.actScene?.AdvScene?.nowScene;
-                    if (nowScene)
-                    {
-                        var advSceneTargetHeroineProp = typeof(ADV.ADVScene).GetField("m_TargetHeroine", BindingFlags.Instance | BindingFlags.NonPublic);
-                        var girl = advSceneTargetHeroineProp?.GetValue(nowScene) as SaveData.Heroine;
-                        if (girl != null) return girl;
-                    }
-                }
-                catch
-                {
-                }
-                return null;
-            }
+            #region KK_Persist Hooks
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(TalkScene), "TalkEnd")]
@@ -88,115 +66,126 @@ namespace KK_SkinEffects
             {
                 // Save clothing state changes at end of TalkScene, specifically from ClothingStateMenu
                 var heroine = GetCurrentVisibleGirl();
-                if (heroine != null && Singleton<SkinEffectGameController>.Instance != null)
-                    Singleton<SkinEffectGameController>.Instance.OnTalkEnd(heroine, GetEffectController(heroine));
+                if (heroine != null)
+                    SkinEffectGameController.SavePersistData(heroine, GetEffectController(heroine));
             }
-            
+
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(Manager.Scene), "UnLoad")]
+            [HarmonyPatch(typeof(Scene), "UnLoad")]
             public static void PostSceneUnloadHook()
             {
                 // Called after TalkScene ends
                 var heroine = GetCurrentVisibleGirl();
                 if (heroine != null)
-                    Singleton<SkinEffectGameController>.Instance.OnUnload(heroine, GetEffectController(heroine));
+                    GetGameController()?.OnSceneUnload(heroine, GetEffectController(heroine));
             }
-            
-            [HarmonyTranspiler]
+
+            /*[HarmonyTranspiler]
             [HarmonyPatch(typeof(ChaControl), "RandomChangeOfClothesLowPolyEnd")]
             public static IEnumerable<CodeInstruction> RandomChangeTranspiler(IEnumerable<CodeInstruction> instructions)
             {
-                /*
-                 * IL_0000: ldarg.0
-                 * IL_0001: ldc.i4.0
-                 * IL_0002: call instance void ChaControl::SetClothesStateAll(uint8)
-                 * IL_0007: ldarg.0
-                 * IL_0008: ldc.i4.0
-                 * IL_0009: call instance void ChaControl::set_isChangeOfClothesRandom(bool)
-                 * IL_000E: ret
-                 */
+                // IL_0000: ldarg.0
+                // IL_0001: ldc.i4.0
+                // IL_0002: call instance void ChaControl::SetClothesStateAll(uint8)
+                // IL_0007: ldarg.0
+                // IL_0008: ldc.i4.0
+                // IL_0009: call instance void ChaControl::set_isChangeOfClothesRandom(bool)
+                // IL_000E: ret
 
-                // Kill first call to SetClothesStateAll
-                var codes = new List<CodeInstruction>(instructions);
-                codes.RemoveRange(0, 3);
-                return codes.AsEnumerable();
-
-            }
-
-            public static NPC GetNPC(AI ai)
-            {
-                PropertyInfo npc_property = typeof(AI).GetProperty("npc", BindingFlags.NonPublic | BindingFlags.Instance);
-                return (NPC)npc_property.GetGetMethod(true).Invoke(ai, new object[] { });
-            }
+                var target = AccessTools.Method(typeof(ChaControl), nameof(ChaControl.SetClothesStateAll));
+                if (target == null) throw new ArgumentNullException(nameof(target));
+                foreach (var instruction in instructions)
+                {
+                    if (instruction.operand == target)
+                    {
+                        //todo why? necessary?
+                        // Kill call to SetClothesStateAll
+                        // Pop both of its arguments to be as compatible as possible
+                        instruction.operand = null;
+                        instruction.opcode = OpCodes.Pop;
+                        yield return instruction;
+                        yield return new CodeInstruction(OpCodes.Pop);
+                    }
+                    else
+                    {
+                        yield return instruction;
+                    }
+                }
+            }*/
 
             // Gets a list of the last ten actions the AI has taken
-            public static int[] GetLastActions(AI ai, NPC npc = null)
+            private static int[] GetLastActions(AI ai, NPC npc = null)
             {
-                if (npc == null)
-                {
-                    npc = GetNPC(ai);
-                }
-                PropertyInfo actScene_property = typeof(AI).GetProperty("actScene", BindingFlags.NonPublic | BindingFlags.Instance);
-                ActionScene scene = (ActionScene)actScene_property.GetGetMethod(true).Invoke(ai, new object[] { });
+                if (npc == null) npc = GetNPC(ai);
 
-                // Private dictionary with a private type of value causes a huge headache.
-                FieldInfo dicTarget_property = typeof(ActionControl).GetField("dicTarget", BindingFlags.NonPublic | BindingFlags.Instance);
-                IDictionary dicTarget = (IDictionary) dicTarget_property.GetValue(scene.actCtrl);
+                var scene = Traverse.Create(ai).Property("actScene").GetValue<ActionScene>();
 
-                //DesireInfo
-                object di = dicTarget[npc.heroine];
+                // Dictionary<SaveData.Heroine, ActionControl.DesireInfo>
+                var dicTarget = Traverse.Create(scene.actCtrl).Field("dicTarget").GetValue<IDictionary>();
 
-                Type DesireInfo_type = typeof(ActionControl).GetNestedType("DesireInfo", BindingFlags.NonPublic);
-                FieldInfo queueAction_property = DesireInfo_type.GetField("_queueAction", BindingFlags.Instance | BindingFlags.NonPublic);
-                Queue<int> lastActions = (Queue<int>)queueAction_property.GetValue(di);
-                
+                // ActionControl.DesireInfo
+                var di = dicTarget[npc.heroine];
+                var lastActions = Traverse.Create(di).Field("_queueAction").GetValue<Queue<int>>();
+
                 // _queueAction is limited to ten elements
                 return lastActions.ToArray();
-
             }
-
-            private static HashSet<int> _replaceClothesActions = new HashSet<int>(new int[]
-            {
-                0, // Change Clothes
-                1, // Toilet
-                2, // Shower
-                4, // H Solo
-                25, // Embarrassment
-                26, // Lez
-                27, // Lez Partner
-            });
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(AI), "Result")]
             public static void AfterResult(ActionControl.ResultInfo result, AI __instance)
             {
-                NPC npc = GetNPC(__instance);
+                var npc = GetNPC(__instance);
 
-                int[] actions = GetLastActions(__instance, npc);
-                int n = actions.Length;
+                var actions = GetLastActions(__instance, npc);
+                var n = actions.Length;
+
+                if (n == 0) return;
 
                 // 17 (change mind) seems to happen when redirected by the player while desire is something else
-                if (actions[n - 1] == 23)
+                if (actions[n - 1] == 23) return;
+
+                var replaceClothesActions = new HashSet<int>(new int[]
                 {
-                    return;
-                }
+                    0, // Change Clothes
+                    1, // Toilet
+                    2, // Shower
+                    4, // H Solo
+                    25, // Embarrassment
+                    26, // Lez
+                    27, // Lez Partner
+                });
 
                 // Multiple change clothes actions can be queued up.
                 // Put clothes on when the latest action is not in the set.
-                if (n >= 2 && (_replaceClothesActions.Contains(actions[n - 2])) && actions[n - 2] != actions[n - 1])
+                if (n >= 2 && actions[n - 2] != actions[n - 1] && replaceClothesActions.Contains(actions[n - 2]))
                 {
-                    if (actions[n - 1] != 25) // Changing Clothes -> Embarrassment
-                        npc.heroine.chaCtrl.SetClothesStateAll(0);
-                    if (actions[n - 1] == 2) //shower
+                    var effectsController = GetEffectController(npc.heroine);
+                    // Changing Clothes -> Embarrassment
+                    if (actions[n - 1] != 25)
                     {
-                        npc.heroine.chaCtrl.GetComponent<SkinEffectsController>().ClearCharaState(true);
+                        effectsController.ClothingState = null;
+                        SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
+                    }
+                    //shower
+                    if (actions[n - 1] == 2)
+                    {
+                        effectsController.ClearCharaState(true);
+                        SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
                     }
                 }
             }
 
+            #endregion
+
             public static void InstallHook()
             {
                 HarmonyInstance.Create(typeof(Hooks).FullName).PatchAll(typeof(Hooks));
+            }
+
+            private static SkinEffectGameController GetGameController()
+            {
+                return FindObjectOfType<SkinEffectGameController>();
             }
 
             private static SkinEffectsController GetEffectController(SaveData.Heroine heroine)
@@ -212,6 +201,30 @@ namespace KK_SkinEffects
             private static int GetLeadHeroineId(HFlag __instance)
             {
                 return __instance.mode == HFlag.EMode.houshi3P || __instance.mode == HFlag.EMode.sonyu3P ? __instance.nowAnimationInfo.id % 2 : 0;
+            }
+
+            private static SaveData.Heroine GetCurrentVisibleGirl()
+            {
+                var result = FindObjectOfType<TalkScene>()?.targetHeroine;
+                if (result != null)
+                    return result;
+
+                var nowScene = Game.Instance?.actScene?.AdvScene?.nowScene;
+                if (nowScene != null)
+                {
+                    var traverse = Traverse.Create(nowScene).Field("m_TargetHeroine");
+                    if (traverse.FieldExists())
+                    {
+                        var girl = traverse.GetValue<SaveData.Heroine>();
+                        if (girl != null) return girl;
+                    }
+                }
+                return null;
+            }
+
+            private static NPC GetNPC(AI ai)
+            {
+                return Traverse.Create(ai).Property("npc").GetValue<NPC>();
             }
         }
     }
