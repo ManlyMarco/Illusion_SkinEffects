@@ -68,6 +68,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Hooks.cs" />
+    <Compile Include="Hooks.HSceneTriggers.cs" />
+    <Compile Include="Hooks.PersistClothes.cs" />
     <Compile Include="Overlays.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -78,8 +81,8 @@
     <Compile Include="SkinEffectsController.cs" />
     <Compile Include="SkinEffectsGui.cs" />
     <Compile Include="SkinEffectsMgr.cs" />
-    <Compile Include="SkinEffectsMgr.Hooks.cs" />
     <Compile Include="TextureLoader.cs" />
+    <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Overlays.resx">

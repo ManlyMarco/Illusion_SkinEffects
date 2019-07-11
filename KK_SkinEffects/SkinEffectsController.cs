@@ -103,10 +103,7 @@ namespace KK_SkinEffects
                 {
                     _clothingState = value;
 
-                    if (value == null)
-                        ChaControl.SetClothesStateAll(0);
-                    else
-                        UpdateClothingState();
+                    UpdateClothingState(true);
                 }
             }
         }
@@ -135,7 +132,6 @@ namespace KK_SkinEffects
                     _siruState = value;
                     UpdateSiruState();
                 }
-
             }
         }
 
@@ -317,7 +313,7 @@ namespace KK_SkinEffects
             }
         }
 
-        public bool ClearCharaState(bool refreshTextures = false)
+        public bool ClearCharaState(bool refreshTextures = false, bool forceClothesStateUpdate = false)
         {
             var needsUpdate = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
 
@@ -333,6 +329,9 @@ namespace KK_SkinEffects
 
             if (refreshTextures)
                 UpdateAllTextures();
+
+            if(forceClothesStateUpdate)
+                UpdateClothingState(true);
 
             return needsUpdate;
         }
@@ -470,7 +469,7 @@ namespace KK_SkinEffects
             }
         }
 
-        private void UpdateClothingState()
+        private void UpdateClothingState(bool forceClothesStateUpdate = false)
         {
             if (ChaControl.fileParam.sex == 1)
             {
@@ -481,6 +480,8 @@ namespace KK_SkinEffects
 
             if (_clothingState != null)
                 ChaFileControl.status.clothesState = _clothingState;
+            else if (forceClothesStateUpdate)
+                ChaControl.SetClothesStateAll(0);
         }
 
         private void UpdateAccessoryState()
@@ -506,7 +507,7 @@ namespace KK_SkinEffects
             prop.SetValue(true);
 
             // Trigger Semen update
-            traverse.Method("UpdateSiru").GetValue(true);
+            traverse.Method("UpdateSiru", true).GetValue();
 
             prop.SetValue(hiPoly);
         }
