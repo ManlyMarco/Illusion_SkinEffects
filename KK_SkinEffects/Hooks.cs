@@ -9,7 +9,8 @@ namespace KK_SkinEffects
         {
             var instance = HarmonyInstance.Create(typeof(Hooks).FullName);
             instance.PatchAll(typeof(HSceneTriggers));
-            instance.PatchAll(typeof(PersistClothes));
+            if (SkinEffectsMgr.EnableClothesPersistance.Value)
+                instance.PatchAll(typeof(PersistClothes));
         }
 
         private static SkinEffectGameController GetGameController()

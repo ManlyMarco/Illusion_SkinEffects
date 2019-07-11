@@ -42,9 +42,18 @@ namespace KK_SkinEffects
         [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableDrl { get; private set; }
 
-        [DisplayName("After H effects persist in school")]
-        [Description("Characters keep the skin effects after H in story mode. Effects get cleared after period change.")]
+        [DisplayName("Persist skin effects in school")]
+        [Description("Characters keep the skin effects after H in story mode.\n\n" +
+                     "Effects get cleared after period change or taking a shower.")]
         public static ConfigWrapper<bool> EnablePersistance { get; private set; }
+
+        [DisplayName("Persist clothes state in school")]
+        [Description("Characters keep the state of their clothes after H and talk scenes (for example if you " +
+                     "undress them with ClothingStateMenu they will stay undressed after ending the conversation). " +
+                     "Cum on clothes is maintained as well.\n\n" +
+                     "Effects get cleared after period change or changing clothes/taking a shower.\n\n" +
+                     "Changes take effect after game restart.")]
+        public static ConfigWrapper<bool> EnableClothesPersistance { get; private set; }
 
         private void Start()
         {
@@ -55,6 +64,7 @@ namespace KK_SkinEffects
             EnableTear = new ConfigWrapper<bool>(nameof(EnableTear), this, true);
             EnableDrl = new ConfigWrapper<bool>(nameof(EnableDrl), this, true);
             EnablePersistance = new ConfigWrapper<bool>(nameof(EnablePersistance), this, true);
+            EnableClothesPersistance = new ConfigWrapper<bool>(nameof(EnableClothesPersistance), this, true);
 
             Hooks.InstallHook();
 
