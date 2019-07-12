@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExtensibleSaveFormat;
@@ -265,7 +266,7 @@ namespace KK_SkinEffects
             data.data[nameof(FragileVag)] = FragileVag;
 
             if (currentGameMode == GameMode.Studio)
-                WriteCharaState(data.data);
+                WriteCharaState(data.data, true);
 
             SetExtendedData(data);
         }
@@ -298,7 +299,7 @@ namespace KK_SkinEffects
             {
                 case GameMode.Studio:
                     // Get the state set in the character state menu
-                    ApplyCharaState(data?.data);
+                    ApplyCharaState(data?.data, true);
                     break;
 
                 case GameMode.MainGame:
@@ -329,13 +330,13 @@ namespace KK_SkinEffects
             if (refreshTextures)
                 UpdateAllTextures();
 
-            if(forceClothesStateUpdate)
+            if (forceClothesStateUpdate)
                 UpdateClothingState(true);
 
             return needsUpdate;
         }
 
-        public void ApplyCharaState(IDictionary<string, object> dataDict)
+        public void ApplyCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
         {
             var needsUpdate = ClearCharaState();
             if (dataDict != null && dataDict.Count > 0)
@@ -345,18 +346,23 @@ namespace KK_SkinEffects
                 if (dataDict.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
                 if (dataDict.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
                 if (dataDict.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
-                if (dataDict.TryGetValue(nameof(ClothingState), out var obj6)) _clothingState = (byte[])obj6;
-                if (dataDict.TryGetValue(nameof(AccessoryState), out var obj7)) _accessoryState = (bool[])obj7;
-                if (dataDict.TryGetValue(nameof(SiruState), out var obj8)) _siruState = (byte[])obj8;
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
                 UpdateCumTexture(false);
                 UpdateDroolTexture(false);
                 UpdateTearTexture(false);
-                UpdateClothingState();
-                UpdateAccessoryState();
-                UpdateSiruState();
+
+                if (!onlyCustomEffects)
+                {
+                    // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
+                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj6)) _clothingState = ((IEnumerable)obj6).Cast<byte>().ToArray();
+                    if (dataDict.TryGetValue(nameof(AccessoryState), out var obj7)) _accessoryState = ((IEnumerable)obj7).Cast<bool>().ToArray();
+                    if (dataDict.TryGetValue(nameof(SiruState), out var obj8)) _siruState = ((IEnumerable)obj8).Cast<byte>().ToArray();
+                    UpdateClothingState();
+                    UpdateAccessoryState();
+                    UpdateSiruState();
+                }
 
                 needsUpdate = true;
             }
@@ -365,16 +371,20 @@ namespace KK_SkinEffects
                 UpdateAllTextures();
         }
 
-        public void WriteCharaState(IDictionary<string, object> dataDict)
+        public void WriteCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
         {
             dataDict[nameof(BukkakeLevel)] = BukkakeLevel;
             dataDict[nameof(SweatLevel)] = SweatLevel;
             dataDict[nameof(BloodLevel)] = BloodLevel;
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
-            dataDict[nameof(ClothingState)] = ChaFileControl.status.clothesState.Clone();
-            dataDict[nameof(AccessoryState)] = ChaFileControl.status.showAccessory.Clone();
-            dataDict[nameof(SiruState)] = ChaFileControl.status.siruLv.Clone();
+
+            if (!onlyCustomEffects)
+            {
+                dataDict[nameof(ClothingState)] = (byte[])ChaFileControl.status.clothesState.Clone();
+                dataDict[nameof(AccessoryState)] = (bool[])ChaFileControl.status.showAccessory.Clone();
+                dataDict[nameof(SiruState)] = (byte[])ChaFileControl.status.siruLv.Clone();
+            }
         }
 
         protected override void Start()
