@@ -5,10 +5,12 @@ namespace KK_SkinEffects
 {
     internal static partial class Hooks
     {
-        public static void InstallHook()
+        public static void InstallHooks()
         {
             var instance = HarmonyInstance.Create(typeof(Hooks).FullName);
+
             instance.PatchAll(typeof(HSceneTriggers));
+
             if (SkinEffectsMgr.EnableClothesPersistance.Value)
                 instance.PatchAll(typeof(PersistClothes));
         }
@@ -20,7 +22,7 @@ namespace KK_SkinEffects
 
         private static SkinEffectsController GetEffectController(SaveData.Heroine heroine)
         {
-            return heroine.chaCtrl.GetComponent<SkinEffectsController>();
+            return heroine?.chaCtrl != null ? heroine.chaCtrl.GetComponent<SkinEffectsController>() : null;
         }
     }
 }

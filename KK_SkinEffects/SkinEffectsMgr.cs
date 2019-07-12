@@ -66,7 +66,7 @@ namespace KK_SkinEffects
             EnablePersistance = new ConfigWrapper<bool>(nameof(EnablePersistance), this, true);
             EnableClothesPersistance = new ConfigWrapper<bool>(nameof(EnableClothesPersistance), this, true);
 
-            Hooks.InstallHook();
+            Hooks.InstallHooks();
 
             CharacterApi.RegisterExtraBehaviour<SkinEffectsController>(GUID);
             GameAPI.RegisterExtraBehaviour<SkinEffectGameController>(GUID);

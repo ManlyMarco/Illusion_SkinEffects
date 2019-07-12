@@ -118,7 +118,6 @@ namespace KK_SkinEffects
                     _accessoryState = value;
                     UpdateAccessoryState();
                 }
-
             }
         }
 

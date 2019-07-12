@@ -2,6 +2,7 @@
 using ActionGame.Chara;
 using Harmony;
 using System.Collections.Generic;
+using KKAPI.MainGame;
 using Manager;
 
 namespace KK_SkinEffects
@@ -19,15 +20,17 @@ namespace KK_SkinEffects
             {
                 // Save clothing state changes at end of TalkScene, specifically from ClothingStateMenu
                 var heroine = Utils.GetCurrentVisibleGirl();
-                if (heroine != null)
-                    SkinEffectGameController.SavePersistData(heroine, GetEffectController(heroine));
+                var controller = GetEffectController(heroine);
+                if (controller != null)
+                    SkinEffectGameController.SavePersistData(heroine, controller);
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(Scene), nameof(Scene.UnLoad), new Type[0])]
             public static void PostSceneUnloadHook()
             {
-                // Called after TalkScene ends
+                // Update the character used outside of current talk scene. Called after any TalkScene ends, including 
+                // when entering H mode. This will copy clothes state into a H scene, and out to the main map.
                 var heroine = Utils.GetCurrentVisibleGirl();
                 if (heroine != null)
                     GetGameController()?.OnSceneUnload(heroine, GetEffectController(heroine));
@@ -39,7 +42,25 @@ namespace KK_SkinEffects
             {
                 // Prevent the method from running if the clothes were not actually changed by RandomChangeOfClothesLowPoly
                 // Avoids overriding our saved clothes state at the end of pretty much all actions, no real effect otherwise
-                return __instance.isChangeOfClothesRandom;
+                if (__instance.isChangeOfClothesRandom)
+                {
+                    // Clear clothes state and save it
+                    var controller = __instance.GetComponent<SkinEffectsController>();
+                    if (controller != null)
+                    {
+                        controller.SiruState = null;
+                        controller.ClothingState = null;
+                        controller.AccessoryState = null;
+
+                        var heroine = __instance.GetHeroine();
+                        if (heroine != null)
+                            SkinEffectGameController.SavePersistData(heroine, controller);
+                    }
+
+                    return true;
+                }
+
+                return false;
             }
 
             /// <summary>
@@ -74,11 +95,11 @@ namespace KK_SkinEffects
                 {
                     var npc = __instance.GetNPC();
                     var effectsController = GetEffectController(npc.heroine);
+                    if (effectsController == null) return;
 
                     if (actions[n - 1] == 2)
                     {
                         // 2 - shower
-                        // todo should it force update clothes state?
                         effectsController.ClearCharaState(true);
                         SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
                     }

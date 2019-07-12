@@ -2,7 +2,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using ActionGame;
-using ActionGame.Chara;
 using KKAPI.MainGame;
 using Manager;
 using UnityEngine;
@@ -58,29 +57,40 @@ namespace KK_SkinEffects
                         _disableDeflowering.Add(heroine);
                 }
 
-                StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
+                StartCoroutine(RefreshOnSceneChangeCo(heroine, true));
             }
         }
 
-        private static IEnumerator AfterHCo(SaveData.Heroine heroine, ChaControl previousControl)
+        /// <summary>
+        /// Needed to apply new state to the copy of current character used outside of current scene.
+        /// Must be called before the current scene exits. Can happen for Talk > Roaming, Talk > H, H > Roaming
+        /// </summary>
+        private static IEnumerator RefreshOnSceneChangeCo(SaveData.Heroine heroine, bool afterH)
         {
-            // Wait until we switch from h scene to map characters
+            // Store reference to the character copy used in current scene
+            var previousControl = heroine.chaCtrl;
+            // Wait until we switch from temporary character copy to the character used in the next scene
             yield return new WaitUntil(() => heroine.chaCtrl != previousControl && heroine.chaCtrl != null);
             yield return new WaitForEndOfFrame();
-
-            // Make the girl want to take a shower after H. Index 2 is shower
-            var actCtrl = Game.Instance?.actScene?.actCtrl;
-            actCtrl?.SetDesire(2, heroine, 200);
+            yield return new WaitForEndOfFrame();
 
             // Apply the stored state from h scene
             var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
             ApplyPersistData(controller);
 
-            // Slowly remove sweat effect ("cool down")
-            while (controller.SweatLevel > 0)
+            if (afterH)
             {
-                yield return new WaitForSeconds(60);
-                controller.SweatLevel--;
+                // Make the girl want to take a shower after H. Index 2 is shower
+                var actCtrl = Game.Instance?.actScene?.actCtrl;
+                actCtrl?.SetDesire(2, heroine, 200);
+
+                // Slowly remove sweat effect ("cool down")
+                // todo make this universal? add sweating when running for a while or lots of touching in talk mode?
+                while (controller.SweatLevel > 0)
+                {
+                    yield return new WaitForSeconds(60);
+                    controller.SweatLevel--;
+                }
             }
         }
 
@@ -111,8 +121,7 @@ namespace KK_SkinEffects
 
         internal void OnSceneUnload(SaveData.Heroine heroine, SkinEffectsController controller)
         {
-            ApplyPersistData(controller);
-            StartCoroutine(AfterHCo(heroine, heroine.chaCtrl));
+            StartCoroutine(RefreshOnSceneChangeCo(heroine, false));
         }
 
         public static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)
