@@ -1,4 +1,5 @@
 ﻿using Harmony;
+using KKAPI.Studio;
 
 namespace KK_SkinEffects
 {
@@ -6,12 +7,15 @@ namespace KK_SkinEffects
     {
         public static void InstallHooks()
         {
-            var instance = HarmonyInstance.Create(typeof(Hooks).FullName);
+            if (!StudioAPI.InsideStudio)
+            {
+                var instance = HarmonyInstance.Create(typeof(Hooks).FullName);
 
-            instance.PatchAll(typeof(HSceneTriggers));
+                instance.PatchAll(typeof(HSceneTriggers));
 
-            if (SkinEffectsPlugin.EnableClothesPersistance.Value)
-                instance.PatchAll(typeof(PersistClothes));
+                if (SkinEffectsPlugin.EnableClothesPersistance.Value)
+                    instance.PatchAll(typeof(PersistClothes));
+            }
         }
 
         private static SkinEffectGameController GetGameController()

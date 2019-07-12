@@ -1,8 +1,8 @@
 ﻿using System.ComponentModel;
 using BepInEx;
-using KKAPI;
 using KKAPI.Chara;
 using KKAPI.MainGame;
+using KKAPI.Studio;
 using UnityEngine.SceneManagement;
 
 namespace KK_SkinEffects
@@ -57,14 +57,24 @@ namespace KK_SkinEffects
 
         private void Start()
         {
-            EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);
-            EnableBldAlways = new ConfigWrapper<bool>(nameof(EnableBldAlways), this, false);
-            EnableCum = new ConfigWrapper<bool>(nameof(EnableCum), this, true);
-            EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
-            EnableTear = new ConfigWrapper<bool>(nameof(EnableTear), this, true);
-            EnableDrl = new ConfigWrapper<bool>(nameof(EnableDrl), this, true);
-            EnablePersistance = new ConfigWrapper<bool>(nameof(EnablePersistance), this, true);
-            EnableClothesPersistance = new ConfigWrapper<bool>(nameof(EnableClothesPersistance), this, true);
+            if (!StudioAPI.InsideStudio)
+            {
+                EnableBld = new ConfigWrapper<bool>(nameof(EnableBld), this, true);
+                EnableBldAlways = new ConfigWrapper<bool>(nameof(EnableBldAlways), this, false);
+                EnableCum = new ConfigWrapper<bool>(nameof(EnableCum), this, true);
+                EnableSwt = new ConfigWrapper<bool>(nameof(EnableSwt), this, true);
+                EnableTear = new ConfigWrapper<bool>(nameof(EnableTear), this, true);
+                EnableDrl = new ConfigWrapper<bool>(nameof(EnableDrl), this, true);
+                EnablePersistance = new ConfigWrapper<bool>(nameof(EnablePersistance), this, true);
+                EnableClothesPersistance = new ConfigWrapper<bool>(nameof(EnableClothesPersistance), this, true);
+
+                SceneManager.sceneLoaded += (scene, mode) =>
+                {
+                    // Preload effects for H scene in case they didn't get loaded yet to prevent freeze on first effect appearing
+                    if (scene.name == "H")
+                        TextureLoader.InitializeTextures();
+                };
+            }
 
             Hooks.InstallHooks();
 
@@ -72,16 +82,6 @@ namespace KK_SkinEffects
             GameAPI.RegisterExtraBehaviour<SkinEffectGameController>(GUID);
 
             SkinEffectsGui.Init(this);
-
-            if (KoikatuAPI.GetCurrentGameMode() != GameMode.Studio)
-            {
-                SceneManager.sceneLoaded += (arg0, mode) =>
-                {
-                    // Preload effects for H scene in case they didn't get loaded yet to prevent freeze on first effect appearing
-                    if (arg0.name == "H")
-                        TextureLoader.InitializeTextures();
-                };
-            }
         }
     }
 }
