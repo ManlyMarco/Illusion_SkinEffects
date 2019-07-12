@@ -30,20 +30,22 @@ namespace KK_SkinEffects
         public static ConfigWrapper<bool> EnableCum { get; private set; }
 
         [DisplayName("Enable sweating/wet under shower")]
-        [Description("When excited girls sweat, same deal under the shower." +
+        [Description("When excited girls sweat. Also triggers under shower because it makes things wet." +
                      "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableSwt { get; private set; }
 
         [DisplayName("Enable tears")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        [Description("Triggers on multiple occasions, e.g. in case of a virgin or after BJ." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableTear { get; private set; }
 
         [DisplayName("Enable drool")]
-        [Description("Doesn't affect studio. May need to reload the current scene to take effects.")]
+        [Description("Triggers when cumming inside the mouth." +
+                     "\n\nDoesn't affect studio. May need to reload the current scene to take effects.")]
         public static ConfigWrapper<bool> EnableDrl { get; private set; }
 
         [DisplayName("Persist skin effects in school")]
-        [Description("Characters keep the skin effects after H in story mode.\n\n" +
+        [Description("Characters keep the skin effects after H in story mode (only the modded effects).\n\n" +
                      "Effects get cleared after period change or taking a shower.")]
         public static ConfigWrapper<bool> EnablePersistance { get; private set; }
 
