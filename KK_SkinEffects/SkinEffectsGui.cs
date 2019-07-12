@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections;
-using KKAPI.Chara;
 using KKAPI.Maker;
 using KKAPI.Maker.UI;
 using KKAPI.Studio;
@@ -17,11 +16,11 @@ namespace KK_SkinEffects
         private static MakerToggle _fragile;
         private static MakerToggle _regen;
 
-        private static SkinEffectsMgr _skinEffectsMgr;
+        private static SkinEffectsPlugin _skinEffectsPlugin;
 
-        public static void Init(SkinEffectsMgr skinEffectsMgr)
+        public static void Init(SkinEffectsPlugin skinEffectsPlugin)
         {
-            _skinEffectsMgr = skinEffectsMgr;
+            _skinEffectsPlugin = skinEffectsPlugin;
 
             if (StudioAPI.InsideStudio)
             {
@@ -30,7 +29,7 @@ namespace KK_SkinEffects
             else
             {
                 MakerAPI.RegisterCustomSubCategories += RegisterMakerControls;
-                MakerAPI.ChaFileLoaded += (sender, args) => _skinEffectsMgr.StartCoroutine(ChaFileLoadedCo());
+                MakerAPI.ChaFileLoaded += (sender, args) => _skinEffectsPlugin.StartCoroutine(ChaFileLoadedCo());
                 MakerAPI.MakerExiting += MakerExiting;
             }
         }
@@ -63,15 +62,15 @@ namespace KK_SkinEffects
 
             var cat = MakerConstants.GetBuiltInCategory("05_ParameterTop", "tglH");
 
-            _stretched = e.AddControl(new MakerToggle(cat, "Stretched hymen", false, _skinEffectsMgr));
+            _stretched = e.AddControl(new MakerToggle(cat, "Stretched hymen", false, _skinEffectsPlugin));
             _stretched.ValueChanged.Subscribe(b => GetMakerController().StretchedHymen = b);
-            e.AddControl(new MakerText("Makes it much less likely that she will bleed during the first time.", cat, _skinEffectsMgr)).TextColor = new Color(0.7f, 0.7f, 0.7f);
-            _regen = e.AddControl(new MakerToggle(cat, "Hymen regenerates", false, _skinEffectsMgr));
+            e.AddControl(new MakerText("Makes it much less likely that she will bleed during the first time.", cat, _skinEffectsPlugin)).TextColor = new Color(0.7f, 0.7f, 0.7f);
+            _regen = e.AddControl(new MakerToggle(cat, "Hymen regenerates", false, _skinEffectsPlugin));
             _regen.ValueChanged.Subscribe(b => GetMakerController().HymenRegen = b);
-            e.AddControl(new MakerText("The hymen grows back after a good night's sleep (to the state before sex).", cat, _skinEffectsMgr)).TextColor = new Color(0.7f, 0.7f, 0.7f);
-            _fragile = e.AddControl(new MakerToggle(cat, "Fragile vagina", false, _skinEffectsMgr));
+            e.AddControl(new MakerText("The hymen grows back after a good night's sleep (to the state before sex).", cat, _skinEffectsPlugin)).TextColor = new Color(0.7f, 0.7f, 0.7f);
+            _fragile = e.AddControl(new MakerToggle(cat, "Fragile vagina", false, _skinEffectsPlugin));
             _fragile.ValueChanged.Subscribe(b => GetMakerController().FragileVag = b);
-            e.AddControl(new MakerText("When going at it very roughly has a chance to bleed, be gentle!", cat, _skinEffectsMgr)).TextColor = new Color(0.7f, 0.7f, 0.7f);
+            e.AddControl(new MakerText("When going at it very roughly has a chance to bleed, be gentle!", cat, _skinEffectsPlugin)).TextColor = new Color(0.7f, 0.7f, 0.7f);
         }
 
         private static SkinEffectsController GetMakerController()

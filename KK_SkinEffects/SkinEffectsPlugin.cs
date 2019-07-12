@@ -8,7 +8,7 @@ using UnityEngine.SceneManagement;
 namespace KK_SkinEffects
 {
     [BepInPlugin(GUID, "Additional Skin Effects", Version)]
-    internal partial class SkinEffectsMgr : BaseUnityPlugin
+    internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
         internal const string Version = "1.5.2";

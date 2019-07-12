@@ -234,11 +234,11 @@ namespace KK_SkinEffects
                 if (FragileVag)
                     lvl += 2;
 
-                var minLvl = SkinEffectsMgr.EnableBldAlways.Value ? 1 : 0;
+                var minLvl = SkinEffectsPlugin.EnableBldAlways.Value ? 1 : 0;
 
                 BloodLevel = Mathf.Clamp(lvl, minLvl, TextureLoader.BldTexturesCount);
 
-                if (SkinEffectsMgr.EnableTear.Value)
+                if (SkinEffectsPlugin.EnableTear.Value)
                 {
                     if (BloodLevel == TextureLoader.BldTexturesCount)
                         TearLevel += 2;
@@ -393,7 +393,7 @@ namespace KK_SkinEffects
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BldTextures.Contains(x.Texture));
 
-            if (StudioAPI.InsideStudio || SkinEffectsMgr.EnableBld.Value)
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableBld.Value)
             {
                 if (BloodLevel > 0)
                 {
@@ -410,7 +410,7 @@ namespace KK_SkinEffects
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumTextures.Contains(x.Texture));
 
-            if (StudioAPI.InsideStudio || SkinEffectsMgr.EnableCum.Value)
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableCum.Value)
             {
                 if (BukkakeLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this));
@@ -424,7 +424,7 @@ namespace KK_SkinEffects
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.WetTexturesBody.Contains(x.Texture) || TextureLoader.WetTexturesFace.Contains(x.Texture));
 
-            if (StudioAPI.InsideStudio || SkinEffectsMgr.EnableSwt.Value)
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableSwt.Value)
             {
                 if (SweatLevel > 0)
                 {
@@ -444,7 +444,7 @@ namespace KK_SkinEffects
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.TearTextures.Contains(x.Texture));
 
-            if (StudioAPI.InsideStudio || SkinEffectsMgr.EnableTear.Value)
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableTear.Value)
             {
                 if (TearLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.TearTextures[TearLevel - 1], TexType.FaceOver, this));
@@ -458,7 +458,7 @@ namespace KK_SkinEffects
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.DroolTextures.Contains(x.Texture));
 
-            if (StudioAPI.InsideStudio || SkinEffectsMgr.EnableDrl.Value)
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
             {
                 if (DroolLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this));

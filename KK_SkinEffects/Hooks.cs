@@ -1,5 +1,4 @@
 ﻿using Harmony;
-using Object = UnityEngine.Object;
 
 namespace KK_SkinEffects
 {
@@ -11,13 +10,13 @@ namespace KK_SkinEffects
 
             instance.PatchAll(typeof(HSceneTriggers));
 
-            if (SkinEffectsMgr.EnableClothesPersistance.Value)
+            if (SkinEffectsPlugin.EnableClothesPersistance.Value)
                 instance.PatchAll(typeof(PersistClothes));
         }
 
         private static SkinEffectGameController GetGameController()
         {
-            return Object.FindObjectOfType<SkinEffectGameController>();
+            return UnityEngine.Object.FindObjectOfType<SkinEffectGameController>();
         }
 
         private static SkinEffectsController GetEffectController(SaveData.Heroine heroine)

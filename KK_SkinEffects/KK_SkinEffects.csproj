@@ -80,7 +80,7 @@
     <Compile Include="SkinEffectGameController.cs" />
     <Compile Include="SkinEffectsController.cs" />
     <Compile Include="SkinEffectsGui.cs" />
-    <Compile Include="SkinEffectsMgr.cs" />
+    <Compile Include="SkinEffectsPlugin.cs" />
     <Compile Include="TextureLoader.cs" />
     <Compile Include="Utils.cs" />
   </ItemGroup>
