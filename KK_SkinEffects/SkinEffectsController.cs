@@ -488,7 +488,10 @@ namespace KK_SkinEffects
             }
 
             if (_clothingState != null)
-                ChaFileControl.status.clothesState = _clothingState;
+            {
+                ChaControl.fileStatus.clothesState = _clothingState;
+                ChaControl.UpdateClothesStateAll();
+            }
             else if (forceClothesStateUpdate)
                 ChaControl.SetClothesStateAll(0);
         }
