@@ -11,7 +11,7 @@ namespace KK_SkinEffects
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        internal const string Version = "1.6";
+        internal const string Version = "1.6.1";
 
         [DisplayName("!Enable virgin bleeding")]
         [Description("When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status." +
