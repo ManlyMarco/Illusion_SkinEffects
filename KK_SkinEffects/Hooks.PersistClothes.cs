@@ -16,7 +16,7 @@ namespace KK_SkinEffects
         /// </summary>
         private static class PersistClothes
         {
-            [HarmonyPrefix]
+            [HarmonyPostfix]
             [HarmonyPatch(typeof(TalkScene), "TalkEnd")]
             public static void PreTalkSceneEndHook()
             {
@@ -57,8 +57,15 @@ namespace KK_SkinEffects
                         controller.AccessoryState = null;
 
                         var heroine = __instance.GetHeroine();
+
                         if (heroine != null)
-                            SkinEffectGameController.SavePersistData(heroine, controller);
+                        {
+                            // If leaving a special scene (e.g. lunch), maintain clothes from scene.
+                            if (heroine.charaBase is NPC npc && npc.IsExitingScene())
+                                return false;
+                            else
+                                SkinEffectGameController.SavePersistData(heroine, controller);
+                        }
                     }
 
                     return true;
@@ -114,13 +121,16 @@ namespace KK_SkinEffects
                 if (previousAction != currentAction && replaceClothesActions.Contains(previousAction))
                 {
                     var npc = __instance.GetNPC();
+
+                    // If leaving a special scene (e.g. lunch), maintain clothes from scene.
+                    if (npc.IsExitingScene()) return;
                     var effectsController = GetEffectController(npc.heroine);
                     if (effectsController == null) return;
 
                     if (previousAction == 2)
                     {
                         // After shower clear everything
-                        effectsController.ClearCharaState(true);
+                        effectsController.ClearCharaState(true, true);
                         SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
                     }
                     else if (currentAction == 2)

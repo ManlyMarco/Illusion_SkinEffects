@@ -61,5 +61,14 @@ namespace KK_SkinEffects
             var di = dicTarget[npc.heroine];
             return Traverse.Create(di).Field("_queueAction").GetValue<Queue<int>>();
         }
+
+        /// <summary>
+        /// Returns whether the NPC is exiting a scene
+        /// </summary>
+        public static bool IsExitingScene(this NPC npc)
+        {
+            // A guess that seems to work. 
+            return npc.isActive;
+        }
     }
 }
