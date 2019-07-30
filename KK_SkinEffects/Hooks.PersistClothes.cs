@@ -16,7 +16,7 @@ namespace KK_SkinEffects
         /// </summary>
         private static class PersistClothes
         {
-            [HarmonyPrefix]
+            [HarmonyPostfix]
             [HarmonyPatch(typeof(TalkScene), "TalkEnd")]
             public static void PreTalkSceneEndHook()
             {
