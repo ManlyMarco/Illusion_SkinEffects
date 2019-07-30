@@ -130,7 +130,7 @@ namespace KK_SkinEffects
                     if (previousAction == 2)
                     {
                         // After shower clear everything
-                        effectsController.ClearCharaState(true);
+                        effectsController.ClearCharaState(true, true);
                         SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
                     }
                     else if (currentAction == 2)
