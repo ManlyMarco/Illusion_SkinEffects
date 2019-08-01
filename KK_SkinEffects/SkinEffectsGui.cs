@@ -4,7 +4,6 @@ using KKAPI.Maker;
 using KKAPI.Maker.UI;
 using KKAPI.Studio;
 using KKAPI.Studio.UI;
-using Studio;
 using UniRx;
 using UnityEngine;
 
@@ -86,10 +85,9 @@ namespace KK_SkinEffects
                     Mathf.Min(4, textureCount + 1),
                     c => RescaleStudioLevel(get(c.charInfo.GetComponent<SkinEffectsController>()), textureCount, 3));
 
-                tgl.SelectedIndex.Subscribe(Observer.Create((int x) =>
+                tgl.Value.Subscribe(Observer.Create((int x) =>
                 {
-                    var controller = GetSelectedStudioController();
-                    if (controller != null)
+                    foreach (var controller in StudioAPI.GetSelectedControllers<SkinEffectsController>())
                         set(controller, RescaleStudioLevel(x, tgl.ToggleCount - 1, textureCount));
                 }));
 
@@ -102,12 +100,7 @@ namespace KK_SkinEffects
             var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
             var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
 
-            StudioAPI.CreateCurrentStateCategory(new CurrentStateCategory("Additional skin effects", new[] { sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl }));
-        }
-
-        private static SkinEffectsController GetSelectedStudioController()
-        {
-            return UnityEngine.Object.FindObjectOfType<MPCharCtrl>()?.ociChar?.charInfo?.GetComponent<SkinEffectsController>();
+            StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl);
         }
 
         private static int RescaleStudioLevel(int lvl, int maxInLvl, int maxOutLvl)
