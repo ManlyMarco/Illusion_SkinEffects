@@ -353,7 +353,7 @@ namespace KK_SkinEffects
                 UpdateDroolTexture(false);
                 UpdateTearTexture(false);
 
-                if (!onlyCustomEffects)
+                if (!onlyCustomEffects && !StudioAPI.InsideStudio)
                 {
                     // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
                     if (dataDict.TryGetValue(nameof(ClothingState), out var obj6)) _clothingState = ((IEnumerable)obj6).Cast<byte>().ToArray();
@@ -379,7 +379,7 @@ namespace KK_SkinEffects
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
 
-            if (!onlyCustomEffects)
+            if (!onlyCustomEffects && !StudioAPI.InsideStudio)
             {
                 dataDict[nameof(ClothingState)] = (byte[])ChaFileControl.status.clothesState.Clone();
                 dataDict[nameof(AccessoryState)] = (bool[])ChaFileControl.status.showAccessory.Clone();
@@ -480,6 +480,8 @@ namespace KK_SkinEffects
 
         private void UpdateClothingState(bool forceClothesStateUpdate = false)
         {
+            if (StudioAPI.InsideStudio) return;
+
             if (ChaControl.fileParam.sex == 1)
             {
                 // VisibleSonAlways causes bottomless girls to have penises
@@ -498,12 +500,16 @@ namespace KK_SkinEffects
 
         private void UpdateAccessoryState()
         {
+            if (StudioAPI.InsideStudio) return;
+
             if (_accessoryState != null)
                 ChaFileControl.status.showAccessory = _accessoryState;
         }
 
         private void UpdateSiruState()
         {
+            if (StudioAPI.InsideStudio) return;
+
             foreach (ChaFileDefine.SiruParts s in Enum.GetValues(typeof(ChaFileDefine.SiruParts)))
             {
                 if (_siruState != null)
