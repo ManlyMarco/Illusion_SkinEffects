@@ -100,7 +100,7 @@ namespace KK_SkinEffects
             get => _clothingState;
             set
             {
-                if (_clothingState != value)
+                if (_clothingState != value || _clothingState == null)
                 {
                     _clothingState = value;
 
@@ -114,7 +114,7 @@ namespace KK_SkinEffects
             get => _accessoryState;
             set
             {
-                if (_accessoryState != value)
+                if (_accessoryState != value || _accessoryState == null)
                 {
                     _accessoryState = value;
                     UpdateAccessoryState();
@@ -127,7 +127,7 @@ namespace KK_SkinEffects
             get => _siruState;
             set
             {
-                if (_siruState != value)
+                if (_siruState != value || _siruState == null)
                 {
                     _siruState = value;
                     UpdateSiruState();
