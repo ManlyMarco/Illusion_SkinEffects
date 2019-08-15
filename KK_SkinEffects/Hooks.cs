@@ -17,7 +17,7 @@ namespace KK_SkinEffects
                 {
                     instance.PatchAll(typeof(PersistClothes));
 
-                    // Patch TalkEnd
+                    // Patch TalkScene.TalkEnd's iterator
                     var iteratorType = typeof(TalkScene).GetNestedType("<TalkEnd>c__Iterator5", AccessTools.all);
                     var iteratorMethod = AccessTools.Method(iteratorType, "MoveNext");
                     var prefix = new HarmonyMethod(typeof(PersistClothes), nameof(PersistClothes.PreTalkSceneIteratorEndHook));

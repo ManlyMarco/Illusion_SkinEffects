@@ -19,10 +19,12 @@ namespace KK_SkinEffects
         {
             public static void PreTalkSceneIteratorEndHook(object __instance)
             {
-                int counter = (int) Traverse.Create(__instance).Field("$PC").GetValue();
+                // __instance is of the compiler_generated type TalkScene+<TalkEnd>c__Iterator5
+                // $PC is the number of times yield return has been called
+                // We want this to run just before the third yield return in TalkScene.TalkEnd, just before fading out
+                int counter = Traverse.Create(__instance).Field("$PC").GetValue<int>();
                 if (counter == 2)
                 {
-                    // Just before fading out of talk scene.
                     var heroine = Utils.GetCurrentVisibleGirl();
                     var controller = GetEffectController(heroine);
                     if (controller != null)
