@@ -22,7 +22,7 @@ namespace KK_SkinEffects
                 // __instance is of the compiler_generated type TalkScene+<TalkEnd>c__Iterator5
                 // $PC is the number of times yield return has been called
                 // We want this to run just before the third yield return in TalkScene.TalkEnd, just before fading out
-                int counter = Traverse.Create(__instance).Field("$PC").GetValue<int>();
+                int? counter = Traverse.Create(__instance)?.Field("$PC")?.GetValue<int>();
                 if (counter == 2)
                 {
                     var heroine = Utils.GetCurrentVisibleGirl();
