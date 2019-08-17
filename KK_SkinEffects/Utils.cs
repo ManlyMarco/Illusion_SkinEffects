@@ -25,14 +25,18 @@ namespace KK_SkinEffects
             if (result != null)
                 return result;
 
-            var nowScene = Game.Instance?.actScene?.AdvScene?.nowScene;
-            if (nowScene != null)
+            var advScene = Game.Instance?.actScene?.AdvScene;
+            if (advScene != null)
             {
-                var traverse = Traverse.Create(nowScene).Field("m_TargetHeroine");
-                if (traverse.FieldExists())
+                if (advScene.Scenario?.currentHeroine != null) return advScene.Scenario.currentHeroine;
+                if (advScene.nowScene != null)
                 {
-                    var girl = traverse.GetValue<SaveData.Heroine>();
-                    if (girl != null) return girl;
+                    var traverse = Traverse.Create(advScene.nowScene).Field("m_TargetHeroine");
+                    if (traverse.FieldExists())
+                    {
+                        var girl = traverse.GetValue<SaveData.Heroine>();
+                        if (girl != null) return girl;
+                    }
                 }
             }
             return null;
