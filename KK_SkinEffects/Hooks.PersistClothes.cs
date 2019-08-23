@@ -6,6 +6,7 @@ using System.Linq;
 using ActionGame;
 using KKAPI.MainGame;
 using Manager;
+using ADV;
 
 namespace KK_SkinEffects
 {
@@ -16,11 +17,24 @@ namespace KK_SkinEffects
         /// </summary>
         private static class PersistClothes
         {
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(TalkScene), "TalkEnd")]
-            public static void PreTalkSceneEndHook()
+            public static void PreTalkSceneIteratorEndHook(object __instance)
             {
-                // Save clothing state changes at end of TalkScene, specifically from ClothingStateMenu
+                // __instance is of the compiler_generated type TalkScene+<TalkEnd>c__Iterator5
+                // $PC is the number of times yield return has been called
+                // We want this to run just before the third yield return in TalkScene.TalkEnd, just before fading out
+                int? counter = Traverse.Create(__instance)?.Field("$PC")?.GetValue<int>();
+                if (counter == 2)
+                {
+                    var heroine = Utils.GetCurrentVisibleGirl();
+                    var controller = GetEffectController(heroine);
+                    if (controller != null)
+                        SkinEffectGameController.SavePersistData(heroine, controller);
+                }
+            }
+
+            [HarmonyPrefix, HarmonyPatch(typeof(TextScenario), nameof(ADV.Commands.EventCG.Release))]
+            public static void PreTextScenarioReleaseHook()
+            {
                 var heroine = Utils.GetCurrentVisibleGirl();
                 var controller = GetEffectController(heroine);
                 if (controller != null)
