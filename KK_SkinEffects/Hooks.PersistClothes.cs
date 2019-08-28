@@ -48,8 +48,9 @@ namespace KK_SkinEffects
                 // Update the character used outside of current talk scene. Called after any TalkScene ends, including 
                 // when entering H mode. This will copy clothes state into a H scene, and out to the main map.
                 var heroine = Utils.GetCurrentVisibleGirl();
-                if (heroine != null)
-                    GetGameController()?.OnSceneUnload(heroine, GetEffectController(heroine));
+                var controller = GetEffectController(heroine);
+                if (controller != null)
+                    GetGameController()?.OnSceneUnload(heroine, controller);
             }
 
             [HarmonyPrefix]

@@ -21,25 +21,19 @@ namespace KK_SkinEffects
 
         public static SaveData.Heroine GetCurrentVisibleGirl()
         {
-            var result = Object.FindObjectOfType<TalkScene>()?.targetHeroine;
-            if (result != null)
-                return result;
-
-            var advScene = Game.Instance?.actScene?.AdvScene;
-            if (advScene != null)
+            if (!Game.IsInstance()) return null;
+            
+            if (Game.Instance.actScene != null &&
+                Game.Instance.actScene.AdvScene != null)
             {
-                if (advScene.Scenario?.currentHeroine != null) return advScene.Scenario.currentHeroine;
-                if (advScene.nowScene != null)
-                {
-                    var traverse = Traverse.Create(advScene.nowScene).Field("m_TargetHeroine");
-                    if (traverse.FieldExists())
-                    {
-                        var girl = traverse.GetValue<SaveData.Heroine>();
-                        if (girl != null) return girl;
-                    }
-                }
+                var advScene = Game.Instance.actScene.AdvScene;
+                if (advScene.Scenario?.currentHeroine != null)
+                    return advScene.Scenario.currentHeroine;
+                if (advScene.nowScene is TalkScene s && s.targetHeroine != null)
+                    return s.targetHeroine;
             }
-            return null;
+
+            return Object.FindObjectOfType<TalkScene>()?.targetHeroine;
         }
 
         /// <summary>
