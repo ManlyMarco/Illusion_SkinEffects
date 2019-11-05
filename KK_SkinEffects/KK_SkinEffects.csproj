@@ -52,14 +52,13 @@
       <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\ExtensibleSaveFormat.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="KK.OverlayMods, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\KKEC\KoikatsuOverlayMods\bin\KK.OverlayMods.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="KKAPI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\KKEC\KKAPI\bin\KKAPI.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="KK_OverlayMods">
+      <HintPath>..\..\..\KKEC\KoikatsuOverlayMods\bin\KK_OverlayMods.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />

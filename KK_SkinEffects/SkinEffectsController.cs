@@ -426,8 +426,8 @@ namespace KK_SkinEffects
 			{
 				if (BloodLevel > 0)
 				{
-					// Insert bld at lowest position to keep it under cum
-					_ksox.AdditionalTextures.Insert(0, new AdditionalTexture(TextureLoader.BldTextures[BloodLevel - 1], TexType.BodyOver, this));
+					// Keep it under the cum tex
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BldTextures[BloodLevel - 1], TexType.BodyOver, this, 101));
 				}
 
 				if (refresh)
@@ -442,7 +442,7 @@ namespace KK_SkinEffects
 			if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableCum.Value)
 			{
 				if (BukkakeLevel > 0)
-					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this));
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this, 102));
 
 				if (refresh)
 					UpdateTextures(true, false);
@@ -457,8 +457,8 @@ namespace KK_SkinEffects
 			{
 				if (SweatLevel > 0)
 				{
-					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesBody[SweatLevel - 1], TexType.BodyOver, this));
-					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesFace[SweatLevel - 1], TexType.FaceOver, this));
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesBody[SweatLevel - 1], TexType.BodyOver, this, 100));
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesFace[SweatLevel - 1], TexType.FaceOver, this, 100));
 				}
 
 				if (refresh)
@@ -473,7 +473,7 @@ namespace KK_SkinEffects
 			if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableTear.Value)
 			{
 				if (TearLevel > 0)
-					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.TearTextures[TearLevel - 1], TexType.FaceOver, this));
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.TearTextures[TearLevel - 1], TexType.FaceOver, this, 102));
 
 				if (refresh)
 					UpdateTextures(false, true);
@@ -487,7 +487,7 @@ namespace KK_SkinEffects
 			if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
 			{
 				if (DroolLevel > 0)
-					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this));
+					_ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this, 101));
 
 				if (refresh)
 					UpdateTextures(false, true);
