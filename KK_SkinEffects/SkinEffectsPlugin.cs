@@ -53,7 +53,7 @@ namespace KK_SkinEffects
                 {
                     // Preload effects for H scene in case they didn't get loaded yet to prevent freeze on first effect appearing
                     if (scene.name == "H")
-                        TextureLoader.InitializeTextures();
+                        TextureLoader.PreloadAllTextures();
                 };
             }
 

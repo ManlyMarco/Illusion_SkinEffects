@@ -1,39 +1,54 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
+using System.Reflection;
+using KKAPI.Utilities;
 using UnityEngine;
 
 namespace KK_SkinEffects
 {
     internal static class TextureLoader
     {
-        /// <summary>
-        /// Just add textures for additional levels here, everything should scale automatically.
-        /// Blood might require tweaking of the severity algorithm to make it work well.
-        /// </summary>
-        private static byte[][] GetBldResources() => new[] { Overlays.BloodBody_01, Overlays.BloodBody_02, Overlays.BloodBody_03 };
-        private static byte[][] GetCumResources() => new[] { Overlays.BukkakeBody_01, Overlays.BukkakeBody_02, Overlays.BukkakeBody_03 };
-        private static byte[][] GetWetBodyResources() => new[] { Overlays.SweatBody, Overlays.WetBody_01, Overlays.WetBody_02 };
-        private static byte[][] GetWetFaceResources() => new[] { Overlays.SweatFace, Overlays.WetFace_01, Overlays.WetFace_02 };
-        private static byte[][] GetTearResources() => new[] { Overlays.TearFace_01, Overlays.TearFace_02, Overlays.TearFace_03 };
-        private static byte[][] GetDroolResources() => new[] { Overlays.Drool_Face };
+        private static readonly Assembly _resourceAssembly;
+
+        private static Texture2D[] GetTextures(string[] resourceNames)
+        {
+            byte[] ReadResource(string resourceName)
+            {
+                using (var stream = _resourceAssembly.GetManifestResourceStream(resourceName))
+                    return (stream ?? throw new InvalidOperationException($"The resource {resourceName} was not found")).ReadAllBytes();
+            }
+
+            return resourceNames.Select(ReadResource).Select(bytes => bytes.LoadTexture(TextureFormat.DXT5)).ToArray();
+        }
+
+        // Just add textures for additional levels here, everything should scale automatically.
+        // Blood might require tweaking of the severity algorithm to make it work well.
+        private static readonly string[] _bldResources;
+        private static readonly string[] _cumResources;
+        private static readonly string[] _wetBodyResources;
+        private static readonly string[] _wetFaceResources;
+        private static readonly string[] _tearResources;
+        private static readonly string[] _droolResources;
 
         static TextureLoader()
         {
-            BldTexturesCount = GetBldResources().Length;
-            CumTexturesCount = GetCumResources().Length;
-            WetTexturesBodyCount = GetWetBodyResources().Length;
-            WetTexturesFaceCount = GetWetFaceResources().Length;
-            DroolTexturesCount = GetDroolResources().Length;
-            TearTexturesCount = GetTearResources().Length;
+            _resourceAssembly = Assembly.GetExecutingAssembly();
+            var resourceNames = _resourceAssembly.GetManifestResourceNames().OrderBy(x => x).ToList();
 
-            Overlays.ResourceManager.ReleaseAllResources();
+            _bldResources = resourceNames.Where(x => x.IndexOf("BloodBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _cumResources = resourceNames.Where(x => x.IndexOf("BukkakeBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _wetBodyResources = resourceNames.Where(x => x.IndexOf("WetBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _wetFaceResources = resourceNames.Where(x => x.IndexOf("WetFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _tearResources = resourceNames.Where(x => x.IndexOf("TearFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _droolResources = resourceNames.Where(x => x.IndexOf("DroolFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
         }
 
-        public static int BldTexturesCount { get; }
-        public static int CumTexturesCount { get; }
-        public static int WetTexturesBodyCount { get; }
-        public static int WetTexturesFaceCount { get; }
-        public static int DroolTexturesCount { get; }
-        public static int TearTexturesCount { get; }
+        public static int BldTexturesCount => _bldResources.Length;
+        public static int CumTexturesCount => _cumResources.Length;
+        public static int WetTexturesBodyCount => _wetBodyResources.Length;
+        public static int WetTexturesFaceCount => _wetFaceResources.Length;
+        public static int DroolTexturesCount => _droolResources.Length;
+        public static int TearTexturesCount => _tearResources.Length;
 
         private static Texture2D[] _bldTextures;
         private static Texture2D[] _cumTextures;
@@ -47,7 +62,7 @@ namespace KK_SkinEffects
             get
             {
                 if (_bldTextures == null)
-                    InitializeTextures();
+                    _bldTextures = GetTextures(_bldResources);
 
                 return _bldTextures;
             }
@@ -58,7 +73,8 @@ namespace KK_SkinEffects
             get
             {
                 if (_cumTextures == null)
-                    InitializeTextures();
+                    _cumTextures = GetTextures(_cumResources);
+
                 return _cumTextures;
             }
         }
@@ -68,7 +84,8 @@ namespace KK_SkinEffects
             get
             {
                 if (_wetTexturesBody == null)
-                    InitializeTextures();
+                    _wetTexturesBody = GetTextures(_wetBodyResources);
+
                 return _wetTexturesBody;
             }
         }
@@ -78,7 +95,8 @@ namespace KK_SkinEffects
             get
             {
                 if (_wetTexturesFace == null)
-                    InitializeTextures();
+                    _wetTexturesFace = GetTextures(_wetFaceResources);
+
                 return _wetTexturesFace;
             }
         }
@@ -88,7 +106,8 @@ namespace KK_SkinEffects
             get
             {
                 if (_droolTextures == null)
-                    InitializeTextures();
+                    _droolTextures = GetTextures(_droolResources);
+
                 return _droolTextures;
             }
         }
@@ -98,37 +117,21 @@ namespace KK_SkinEffects
             get
             {
                 if (_tearTextures == null)
-                    InitializeTextures();
+                    _tearTextures = GetTextures(_tearResources);
+
                 return _tearTextures;
             }
         }
 
-        public static void InitializeTextures()
+        public static void PreloadAllTextures()
         {
-            if(_bldTextures != null) return;
-
-            Texture2D[] MakeArray(byte[][] textures)
-            {
-                return textures.Select(x =>
-                {
-                    var texture2D = new Texture2D(1, 1, TextureFormat.DXT5, false);
-                    texture2D.LoadImage(x);
-                    return texture2D;
-                }).ToArray();
-            }
-
-            _bldTextures = MakeArray(GetBldResources());
-
-            _cumTextures = MakeArray(GetCumResources());
-
-            _wetTexturesBody = MakeArray(GetWetBodyResources());
-            _wetTexturesFace = MakeArray(GetWetFaceResources());
-
-            _tearTextures = MakeArray(GetTearResources());
-
-            _droolTextures = MakeArray(GetDroolResources());
-
-            Overlays.ResourceManager.ReleaseAllResources();
+            // Preload the textures
+            var _ = TearTextures;
+            _ = DroolTextures;
+            _ = WetTexturesBody;
+            _ = WetTexturesFace;
+            _ = CumTextures;
+            _ = BldTextures;
         }
     }
 }

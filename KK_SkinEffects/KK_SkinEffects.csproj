@@ -77,11 +77,6 @@
     <Compile Include="Hooks.cs" />
     <Compile Include="Hooks.HSceneTriggers.cs" />
     <Compile Include="Hooks.PersistClothes.cs" />
-    <Compile Include="Overlays.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Overlays.resx</DependentUpon>
-    </Compile>
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkinEffectGameController.cs" />
     <Compile Include="SkinEffectsController.cs" />
@@ -91,59 +86,52 @@
     <Compile Include="Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="Overlays.resx">
-      <Generator>ResXFileCodeGenerator</Generator>
-      <LastGenOutput>Overlays.Designer.cs</LastGenOutput>
-      <SubType>Designer</SubType>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\WetBody_01.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SweatBody.png" />
+    <EmbeddedResource Include="Resources\WetFace_01.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\SweatFace.png" />
+    <EmbeddedResource Include="Resources\BloodBody_01.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BloodBody_01.png" />
+    <EmbeddedResource Include="Resources\BloodBody_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BloodBody_02.png" />
+    <EmbeddedResource Include="Resources\BloodBody_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BloodBody_03.png" />
+    <EmbeddedResource Include="Resources\BukkakeBody_01.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BukkakeBody_01.png" />
+    <EmbeddedResource Include="Resources\BukkakeBody_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BukkakeBody_02.png" />
+    <EmbeddedResource Include="Resources\BukkakeBody_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\BukkakeBody_03.png" />
+    <EmbeddedResource Include="Resources\DroolFace.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\Drool_Face.png" />
+    <EmbeddedResource Include="Resources\TearFace_01.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\TearFace_01.png" />
+    <EmbeddedResource Include="Resources\TearFace_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\TearFace_02.png" />
+    <EmbeddedResource Include="Resources\TearFace_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\TearFace_03.png" />
+    <EmbeddedResource Include="Resources\WetBody_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\WetBody_01.png" />
+    <EmbeddedResource Include="Resources\WetBody_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\WetBody_02.png" />
+    <EmbeddedResource Include="Resources\WetFace_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\WetFace_01.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\WetFace_02.png" />
+    <EmbeddedResource Include="Resources\WetFace_03.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
