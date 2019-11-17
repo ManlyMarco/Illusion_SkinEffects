@@ -1,6 +1,7 @@
 ﻿using BepInEx;
 using BepInEx.Configuration;
 using BepInEx.Logging;
+using KKAPI;
 using KKAPI.Chara;
 using KKAPI.MainGame;
 using KKAPI.Studio;
@@ -10,6 +11,7 @@ using UnityEngine.SceneManagement;
 namespace KK_SkinEffects
 {
     [BepInPlugin(GUID, "Additional Skin Effects", Version)]
+    [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
