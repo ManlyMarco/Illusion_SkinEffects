@@ -80,16 +80,23 @@ namespace KK_SkinEffects
 
             if (afterH)
             {
-                // Make the girl want to take a shower after H. Index 2 is shower
-                var actCtrl = Game.Instance?.actScene?.actCtrl;
-                actCtrl?.SetDesire(2, heroine, 200);
+                if (Game.Instance != null && Game.Instance.actScene != null)
+                {
+                    // Make the girl want to take a shower after H. Index 2 is shower
+                    var actCtrl = Game.Instance.actScene.actCtrl;
+                    actCtrl?.SetDesire(2, heroine, 200);
+                }
 
-                // Slowly remove sweat effect ("cool down")
-                // todo make this universal? add sweating when running for a while or lots of touching in talk mode?
-                while (controller.SweatLevel > 0)
+                // Slowly remove sweat effects as she "cools down"
+                while (controller.SweatLevel > 0 || controller.TearLevel > 0)
                 {
                     yield return new WaitForSeconds(60);
-                    controller.SweatLevel--;
+
+                    if (Scene.Instance.IsNowLoadingFade) break;
+
+                    if (controller.SweatLevel > 0) controller.SweatLevel--;
+                    if (controller.TearLevel > 0) controller.TearLevel--;
+                    if (controller.DroolLevel > 0) controller.DroolLevel--;
                 }
             }
         }
