@@ -1,4 +1,4 @@
-﻿using Harmony;
+﻿using HarmonyLib;
 
 namespace KK_SkinEffects
 {
@@ -55,5 +55,4 @@ namespace KK_SkinEffects
             }
         }
     }
-
 }

@@ -1,7 +1,7 @@
 ﻿using ActionGame.Chara;
-using Harmony;
 using System.Collections;
 using System.Collections.Generic;
+using HarmonyLib;
 using Manager;
 using Object = UnityEngine.Object;
 
@@ -22,7 +22,7 @@ namespace KK_SkinEffects
         public static SaveData.Heroine GetCurrentVisibleGirl()
         {
             if (!Game.IsInstance()) return null;
-            
+
             if (Game.Instance.actScene != null &&
                 Game.Instance.actScene.AdvScene != null)
             {

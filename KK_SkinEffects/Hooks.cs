@@ -1,6 +1,6 @@
-﻿using Harmony;
+﻿using BepInEx.Harmony;
 using KKAPI.Studio;
-using System.Linq;
+using HarmonyLib;
 
 namespace KK_SkinEffects
 {
@@ -10,11 +10,9 @@ namespace KK_SkinEffects
         {
             if (!StudioAPI.InsideStudio)
             {
-                var instance = HarmonyInstance.Create(typeof(Hooks).FullName);
+                var instance = HarmonyWrapper.PatchAll(typeof(HSceneTriggers));
 
-                instance.PatchAll(typeof(HSceneTriggers));
-
-                if (SkinEffectsPlugin.EnableClothesPersistance.Value)
+                if (SkinEffectsPlugin.EnableClothesPersistence.Value)
                 {
                     instance.PatchAll(typeof(PersistClothes));
 
@@ -22,7 +20,7 @@ namespace KK_SkinEffects
                     var iteratorType = AccessTools.FirstInner(typeof(TalkScene), x => x.FullName.Contains("<TalkEnd>c__Iterator"));
                     if (iteratorType == null)
                     {
-                        BepInEx.Logger.Log(BepInEx.Logging.LogLevel.Error, "[KK_SkinEffects] Did not find TalkEnd iterator to patch.");
+                        SkinEffectsPlugin.Logger.LogError("Could not find TalkEnd iterator to patch.");
                         return;
                     }
                     var iteratorMethod = AccessTools.Method(iteratorType, "MoveNext");
@@ -30,8 +28,6 @@ namespace KK_SkinEffects
 
                     instance.Patch(iteratorMethod, prefix, null, null);
                 }
-
-
             }
         }
 

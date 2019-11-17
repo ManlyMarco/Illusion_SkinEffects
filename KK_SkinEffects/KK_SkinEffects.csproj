@@ -33,7 +33,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="0Harmony">
-      <HintPath>..\..\CheatTools\Libs\0Harmony.dll</HintPath>
+      <HintPath>..\..\..\KKEC\KKAPI\paket-files\IllusionMods\IllusionLibs\lib\BepInEx\0Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="Assembly-CSharp">
@@ -45,11 +45,15 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="BepInEx">
-      <HintPath>..\..\CheatTools\Libs\BepInEx.dll</HintPath>
+      <HintPath>..\..\..\KKEC\KKAPI\paket-files\IllusionMods\IllusionLibs\lib\BepInEx\BepInEx.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="BepInEx.Harmony">
+      <HintPath>..\..\..\KKEC\KKAPI\paket-files\IllusionMods\IllusionLibs\lib\BepInEx\BepInEx.Harmony.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="ExtensibleSaveFormat">
-      <HintPath>..\..\..\..\Games\Koikatsu\BepInEx\ExtensibleSaveFormat.dll</HintPath>
+      <HintPath>..\..\BepisPlugins\bin\BepInEx\plugins\KK_BepisPlugins\ExtensibleSaveFormat.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="KKAPI, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
