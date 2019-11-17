@@ -4,6 +4,7 @@ using BepInEx.Logging;
 using KKAPI.Chara;
 using KKAPI.MainGame;
 using KKAPI.Studio;
+using UnityEngine;
 using UnityEngine.SceneManagement;
 
 namespace KK_SkinEffects
@@ -22,8 +23,11 @@ namespace KK_SkinEffects
         public static ConfigEntry<bool> EnableSwt { get; private set; }
         public static ConfigEntry<bool> EnableTear { get; private set; }
         public static ConfigEntry<bool> EnableDrl { get; private set; }
+
         public static ConfigEntry<bool> EnablePersistence { get; private set; }
         public static ConfigEntry<bool> EnableClothesPersistence { get; private set; }
+
+        public static ConfigEntry<KeyboardShortcut> ClearEffectsKey { get; private set; }
 
         private void Start()
         {
@@ -48,6 +52,8 @@ namespace KK_SkinEffects
                     "Characters keep the skin effects after H in story mode (only the modded effects).\n\nEffects get cleared after period change or taking a shower.");
                 EnableClothesPersistence = Config.AddSetting("Persistence", "Persist clothes state in school", true,
                     "Characters keep the state of their clothes after H and talk scenes (for example if you undress them with ClothingStateMenu they will stay undressed after ending the conversation). Cum on clothes is maintained as well.\n\nEffects get cleared after period change or changing clothes/taking a shower.\n\nChanges take effect after game restart.");
+
+                ClearEffectsKey = Config.AddSetting("Effects", "Clear all effects in H scene", new KeyboardShortcut(KeyCode.Alpha0), "Clears all effects from all characters in the current H scene. Only works in H scenes.");
 
                 SceneManager.sceneLoaded += (scene, mode) =>
                 {

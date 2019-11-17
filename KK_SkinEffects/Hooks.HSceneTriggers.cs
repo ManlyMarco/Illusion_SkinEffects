@@ -1,4 +1,5 @@
 ﻿using HarmonyLib;
+using UnityEngine;
 
 namespace KK_SkinEffects
 {
@@ -52,6 +53,23 @@ namespace KK_SkinEffects
             {
                 var heroine = __instance.flags.GetLeadHeroine();
                 GetEffectController(heroine).OnHSceneProcStart(heroine, __instance.flags);
+            }
+
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(HSceneProc), "ShortCut")]
+            public static void OnShortCut()
+            {
+                if (SkinEffectsPlugin.ClearEffectsKey.Value.IsDown())
+                {
+                    foreach (var effectsController in Object.FindObjectsOfType<SkinEffectsController>())
+                    {
+                        effectsController.DroolLevel = 0;
+                        effectsController.TearLevel = 0;
+                        effectsController.BloodLevel = 0;
+                        effectsController.BukkakeLevel = 0;
+                        effectsController.SweatLevel = 0;
+                    }
+                }
             }
         }
     }
