@@ -12,6 +12,7 @@ namespace KK_SkinEffects
 {
     [BepInPlugin(GUID, "Additional Skin Effects", Version)]
     [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
+    [BepInDependency(KoiSkinOverlayX.KoiSkinOverlayMgr.GUID)]
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
