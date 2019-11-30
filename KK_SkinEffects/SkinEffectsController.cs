@@ -531,17 +531,31 @@ namespace KK_SkinEffects
                 else
                     ChaControl.SetSiruFlags(s, 0);
             }
+            try
+            {
 
-            var traverse = Traverse.Create(ChaControl);
+                var ccType = typeof(ChaControl);
 
-            var prop = traverse.Property(nameof(ChaControl.hiPoly));
-            var hiPoly = prop.GetValue<bool>();
-            prop.SetValue(true);
+                // Store previous high poly value and if it's off then force it on so the semen can appear
+                var hiPolyProperty = ccType.GetProperty(nameof(ChaControl.hiPoly), AccessTools.all);
+                if (hiPolyProperty == null) throw new ArgumentNullException(nameof(hiPolyProperty));
+                var hiPoly = (bool)hiPolyProperty.GetValue(ChaControl, null);
+                if (!hiPoly)
+                    hiPolyProperty.SetValue(ChaControl, true, null);
 
-            // Trigger Semen update
-            traverse.Method("UpdateSiru", true).GetValue();
+                // Trigger Semen update
+                var updateSiruMethod = ccType.GetMethod("UpdateSiru", AccessTools.all);
+                if (updateSiruMethod == null) throw new ArgumentNullException(nameof(updateSiruMethod));
+                updateSiruMethod.Invoke(ChaControl, new object[] { true });
 
-            prop.SetValue(hiPoly);
+                // Restore previous high poly value
+                if (!hiPoly)
+                    hiPolyProperty.SetValue(ChaControl, false, null);
+            }
+            catch (Exception e)
+            {
+                SkinEffectsPlugin.Logger.LogError(e);
+            }
         }
     }
 }
