@@ -16,7 +16,7 @@ namespace KK_SkinEffects
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        public const string Version = "1.7.1";
+        public const string Version = "1.7.2";
 
         internal static new ManualLogSource Logger { get; private set; }
 
