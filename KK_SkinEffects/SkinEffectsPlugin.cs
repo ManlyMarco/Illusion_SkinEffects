@@ -38,25 +38,25 @@ namespace KK_SkinEffects
 
             if (!StudioAPI.InsideStudio)
             {
-                EnableBld = Config.AddSetting("Effects", "Enable virgin bleeding", true,
+                EnableBld = Config.Bind("Effects", "Enable virgin bleeding", true,
                     "When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                EnableBldAlways = Config.AddSetting("Effects", "Virgins always bleed", false,
+                EnableBldAlways = Config.Bind("Effects", "Virgins always bleed", false,
                     "By default some girls might not bleed on their first time depending on some parameters. This setting makes sure some blood to always be there.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                EnableCum = Config.AddSetting("Effects", "Enable bukkake", true,
+                EnableCum = Config.Bind("Effects", "Enable bukkake", true,
                     "Triggers when cumming inside.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                EnableSwt = Config.AddSetting("Effects", "Enable sweating/wet under shower", true,
+                EnableSwt = Config.Bind("Effects", "Enable sweating/wet under shower", true,
                     "When excited girls sweat. Also triggers under shower because it makes things wet.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                EnableTear = Config.AddSetting("Effects", "Enable tears", true,
+                EnableTear = Config.Bind("Effects", "Enable tears", true,
                     "Triggers on multiple occasions, e.g. in case of a virgin or after BJ.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                EnableDrl = Config.AddSetting("Effects", "Enable drool", true,
+                EnableDrl = Config.Bind("Effects", "Enable drool", true,
                     "Triggers when cumming inside the mouth.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
 
-                EnablePersistence = Config.AddSetting("Persistence", "Persist skin effects in school", true,
+                EnablePersistence = Config.Bind("Persistence", "Persist skin effects in school", true,
                     "Characters keep the skin effects after H in story mode (only the modded effects).\n\nEffects get cleared after period change or taking a shower.");
-                EnableClothesPersistence = Config.AddSetting("Persistence", "Persist clothes state in school", true,
+                EnableClothesPersistence = Config.Bind("Persistence", "Persist clothes state in school", true,
                     "Characters keep the state of their clothes after H and talk scenes (for example if you undress them with ClothingStateMenu they will stay undressed after ending the conversation). Cum on clothes is maintained as well.\n\nEffects get cleared after period change or changing clothes/taking a shower.\n\nChanges take effect after game restart.");
 
-                ClearEffectsKey = Config.AddSetting("Effects", "Clear all effects in H scene", new KeyboardShortcut(KeyCode.Alpha0), "Clears all effects from all characters in the current H scene. Only works in H scenes.");
+                ClearEffectsKey = Config.Bind("Effects", "Clear all effects in H scene", new KeyboardShortcut(KeyCode.Alpha0), "Clears all effects from all characters in the current H scene. Only works in H scenes.");
 
                 SceneManager.sceneLoaded += (scene, mode) =>
                 {
