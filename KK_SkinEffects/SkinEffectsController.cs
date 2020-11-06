@@ -25,6 +25,7 @@ namespace KK_SkinEffects
         private bool[] _accessoryState;
         private byte[] _siruState;
         private KoiSkinOverlayController _ksox;
+        private bool _studioInitialLoad = true;
 
         public int BloodLevel
         {
@@ -274,7 +275,7 @@ namespace KK_SkinEffects
 
         protected override void OnReload(GameMode currentGameMode, bool maintainState)
         {
-            if (maintainState) return;
+            if (currentGameMode != GameMode.Studio && maintainState) return;
 
             _insertCount = 0;
             _fragileVagTriggeredLvl = 0;
@@ -299,8 +300,22 @@ namespace KK_SkinEffects
             switch (currentGameMode)
             {
                 case GameMode.Studio:
+                    var dataDict = data?.data;
+
+                    if (!_studioInitialLoad)
+                    {
+                       // persist current state when replacing character in studio
+                       dataDict = dataDict ?? new Dictionary<string, object>();
+                       dataDict[nameof(BukkakeLevel)] = _bukkakeLevel;
+                       dataDict[nameof(SweatLevel)] = _sweatLevel;
+                       dataDict[nameof(BloodLevel)] = _bloodLevel;
+                       dataDict[nameof(TearLevel)] = _tearLevel;
+                       dataDict[nameof(DroolLevel)] = _droolLevel;
+                    }
+
+                    _studioInitialLoad = false;
                     // Get the state set in the character state menu
-                    ApplyCharaState(data?.data, true);
+                    ApplyCharaState(dataDict, true);
                     break;
 
                 case GameMode.MainGame:
