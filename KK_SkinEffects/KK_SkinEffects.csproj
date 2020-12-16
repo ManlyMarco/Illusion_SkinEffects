@@ -84,6 +84,7 @@
   <ItemGroup>
     <Compile Include="Hooks.cs" />
     <Compile Include="Hooks.HSceneTriggers.cs" />
+    <Compile Include="Hooks.MainGameHooks.cs" />
     <Compile Include="Hooks.PersistClothes.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SkinEffectGameController.cs" />

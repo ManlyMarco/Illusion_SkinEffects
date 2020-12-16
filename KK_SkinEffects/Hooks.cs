@@ -15,6 +15,7 @@ namespace KK_SkinEffects
                 if (SkinEffectsPlugin.EnableClothesPersistence.Value)
                 {
                     instance.PatchAll(typeof(PersistClothes));
+                    instance.PatchAll(typeof(MainGameHooks));
 
                     // Patch TalkScene.TalkEnd iterator nested class
                     var iteratorType = AccessTools.FirstInner(typeof(TalkScene), x => x.FullName.Contains("<TalkEnd>c__Iterator"));

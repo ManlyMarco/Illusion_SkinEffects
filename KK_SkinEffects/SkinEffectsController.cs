@@ -280,6 +280,7 @@ namespace KK_SkinEffects
             _insertCount = 0;
             _fragileVagTriggeredLvl = 0;
             DisableDeflowering = false;
+            _talkSceneTouchCount = 0;
 
             var data = GetExtendedData();
 
@@ -304,13 +305,13 @@ namespace KK_SkinEffects
 
                     if (!_studioInitialLoad)
                     {
-                       // persist current state when replacing character in studio
-                       dataDict = dataDict ?? new Dictionary<string, object>();
-                       dataDict[nameof(BukkakeLevel)] = _bukkakeLevel;
-                       dataDict[nameof(SweatLevel)] = _sweatLevel;
-                       dataDict[nameof(BloodLevel)] = _bloodLevel;
-                       dataDict[nameof(TearLevel)] = _tearLevel;
-                       dataDict[nameof(DroolLevel)] = _droolLevel;
+                        // persist current state when replacing character in studio
+                        dataDict = dataDict ?? new Dictionary<string, object>();
+                        dataDict[nameof(BukkakeLevel)] = _bukkakeLevel;
+                        dataDict[nameof(SweatLevel)] = _sweatLevel;
+                        dataDict[nameof(BloodLevel)] = _bloodLevel;
+                        dataDict[nameof(TearLevel)] = _tearLevel;
+                        dataDict[nameof(DroolLevel)] = _droolLevel;
                     }
 
                     _studioInitialLoad = false;
@@ -378,6 +379,7 @@ namespace KK_SkinEffects
                     UpdateClothingState();
                     UpdateAccessoryState();
                     UpdateSiruState();
+                    //Traverse.Create(ChaControl).Method("UpdateVisible").GetValue();
                 }
 
                 needsUpdate = true;
@@ -570,6 +572,24 @@ namespace KK_SkinEffects
             catch (Exception e)
             {
                 SkinEffectsPlugin.Logger.LogError(e);
+            }
+        }
+
+        private int _talkSceneTouchCount;
+        // Sweat after touching a bunch in talk scene
+        public void OnTalkSceneTouch(SaveData.Heroine heroine, string touchKind)
+        {
+            if (touchKind == "MuneL" || touchKind == "MuneR")
+            {
+                if (heroine.lewdness > 80)
+                {
+                    _talkSceneTouchCount++;
+                    if (_talkSceneTouchCount >= 4 && _talkSceneTouchCount % 4 == 0) // Trigger every 4 touch events
+                    {
+                        if (SweatLevel < TextureLoader.WetTexturesFaceCount - 1) // Limit to not allow reaching max level
+                            SweatLevel++;
+                    }
+                }
             }
         }
     }
