@@ -592,5 +592,12 @@ namespace KK_SkinEffects
                 }
             }
         }
+
+        public void OnRunning()
+        {
+            StartCoroutine(CoroutineUtils.CreateCoroutine(
+                new WaitForSeconds(25),
+                () => SweatLevel += UnityEngine.Random.Range(0, TextureLoader.WetTexturesFaceCount)));
+        }
     }
 }

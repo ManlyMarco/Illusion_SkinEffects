@@ -1,4 +1,7 @@
-﻿using HarmonyLib;
+﻿using System;
+using ActionGame;
+using ActionGame.Chara;
+using HarmonyLib;
 using UnityEngine;
 
 namespace KK_SkinEffects
@@ -14,6 +17,20 @@ namespace KK_SkinEffects
                 GetEffectController(__instance.targetHeroine).OnTalkSceneTouch(__instance.targetHeroine, _kind);
             }
 
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(AI), "Result")]
+            public static void AfterResult(AI __instance, ActionControl.ResultInfo result)
+            {
+                if (result == null) return;
+
+                // Add sweat if the character is doing running workout. Checks need to be in postfix
+                if ((result.actionNo == 6 || result.actionNo == 18) && result.point != null && result.point.transform.childCount > 0)
+                {
+                    var heroine = __instance.GetNPC()?.heroine;
+                    var c = GetEffectController(heroine);
+                    if (c != null) c.OnRunning();
+                }
+            }
         }
     }
 }
