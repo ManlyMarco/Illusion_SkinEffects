@@ -595,9 +595,11 @@ namespace KK_SkinEffects
 
         public void OnRunning()
         {
+            //Console.WriteLine("running " + gameObject.FullPath());
+            // todo not working reliably?
             StartCoroutine(CoroutineUtils.CreateCoroutine(
                 new WaitForSeconds(25),
-                () => SweatLevel += UnityEngine.Random.Range(0, TextureLoader.WetTexturesFaceCount)));
+                () => SweatLevel += UnityEngine.Random.Range(1, TextureLoader.WetTexturesFaceCount)));
         }
     }
 }
