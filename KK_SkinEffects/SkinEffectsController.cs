@@ -513,13 +513,6 @@ namespace KK_SkinEffects
         {
             if (StudioAPI.InsideStudio) return;
 
-            if (ChaControl.fileParam.sex == 1)
-            {
-                // VisibleSonAlways causes bottomless girls to have penises
-                // todo futas and traps
-                ChaFileControl.status.visibleSonAlways = false;
-            }
-
             if (_clothingState != null)
             {
                 ChaControl.fileStatus.clothesState = _clothingState;
