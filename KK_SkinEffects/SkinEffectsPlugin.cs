@@ -61,7 +61,7 @@ namespace KK_SkinEffects
                 SceneManager.sceneLoaded += (scene, mode) =>
                 {
                     // Preload effects for H scene in case they didn't get loaded yet to prevent freeze on first effect appearing
-                    if (scene.name == "H")
+                    if (scene.name == "H" || scene.name == "VRHScene")
                         TextureLoader.PreloadAllTextures();
                 };
             }
