@@ -29,6 +29,7 @@ namespace KK_SkinEffects
         private static readonly string[] _wetFaceResources;
         private static readonly string[] _tearResources;
         private static readonly string[] _droolResources;
+        private static readonly string[] _buttResources;
 
         static TextureLoader()
         {
@@ -41,6 +42,7 @@ namespace KK_SkinEffects
             _wetFaceResources = resourceNames.Where(x => x.IndexOf("WetFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _tearResources = resourceNames.Where(x => x.IndexOf("TearFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _droolResources = resourceNames.Where(x => x.IndexOf("DroolFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _buttResources = resourceNames.Where(x => x.IndexOf("ButtBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
         }
 
         public static int BldTexturesCount => _bldResources.Length;
@@ -49,6 +51,7 @@ namespace KK_SkinEffects
         public static int WetTexturesFaceCount => _wetFaceResources.Length;
         public static int DroolTexturesCount => _droolResources.Length;
         public static int TearTexturesCount => _tearResources.Length;
+        public static int ButtTexturesCount => _tearResources.Length;
 
         private static Texture2D[] _bldTextures;
         private static Texture2D[] _cumTextures;
@@ -56,6 +59,7 @@ namespace KK_SkinEffects
         private static Texture2D[] _wetTexturesFace;
         private static Texture2D[] _droolTextures;
         private static Texture2D[] _tearTextures;
+        private static Texture2D[] _buttTextures;
 
         public static Texture2D[] BldTextures
         {
@@ -120,6 +124,17 @@ namespace KK_SkinEffects
                     _tearTextures = GetTextures(_tearResources);
 
                 return _tearTextures;
+            }
+        }
+
+        public static Texture2D[] ButtTextures
+        {
+            get
+            {
+                if (_buttTextures == null)
+                    _buttTextures = GetTextures(_buttResources);
+
+                return _buttTextures;
             }
         }
 

@@ -26,6 +26,7 @@ namespace KK_SkinEffects
         public static ConfigEntry<bool> EnableSwt { get; private set; }
         public static ConfigEntry<bool> EnableTear { get; private set; }
         public static ConfigEntry<bool> EnableDrl { get; private set; }
+        public static ConfigEntry<bool> EnableButt { get; private set; }
 
         public static ConfigEntry<bool> EnablePersistence { get; private set; }
         public static ConfigEntry<bool> EnableClothesPersistence { get; private set; }
@@ -50,6 +51,8 @@ namespace KK_SkinEffects
                     "Triggers on multiple occasions, e.g. in case of a virgin or after BJ.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 EnableDrl = Config.Bind("Effects", "Enable drool", true,
                     "Triggers when cumming inside the mouth.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
+                EnableButt = Config.Bind("Effects", "Enable butt blush", true,
+                    "Triggers when massaging roughly.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
 
                 EnablePersistence = Config.Bind("Persistence", "Persist skin effects in school", true,
                     "Characters keep the skin effects after H in story mode (only the modded effects).\n\nEffects get cleared after period change or taking a shower.");

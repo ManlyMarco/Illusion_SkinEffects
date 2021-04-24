@@ -56,14 +56,15 @@ namespace KK_SkinEffects
 
                 return tgl;
             }
-
+            
+            var buttTgl = CreateToggle("Butt blush", TextureLoader.BldTexturesCount, (controller, i) => controller.ButtLevel = i, controller => controller.ButtLevel);
             var sweatTgl = CreateToggle("Sweat", TextureLoader.WetTexturesFaceCount, (controller, i) => controller.SweatLevel = i, controller => controller.SweatLevel);
             var tearsTgl = CreateToggle("Tears", TextureLoader.TearTexturesCount, (controller, i) => controller.TearLevel = i, controller => controller.TearLevel);
             var droolTgl = CreateToggle("Drool", TextureLoader.DroolTexturesCount, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
             var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
             var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
 
-            StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl);
+            StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(buttTgl, sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl);
         }
 
         private static int RescaleStudioLevel(int lvl, int maxInLvl, int maxOutLvl)

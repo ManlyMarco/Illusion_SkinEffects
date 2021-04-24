@@ -21,6 +21,7 @@ namespace KK_SkinEffects
         private int _sweatLevel;
         private int _tearLevel;
         private int _droolLevel;
+        private int _buttLevel;
         private byte[] _clothingState;
         private bool[] _accessoryState;
         private byte[] _siruState;
@@ -93,6 +94,20 @@ namespace KK_SkinEffects
                 {
                     _droolLevel = value;
                     UpdateDroolTexture();
+                }
+            }
+        }
+
+        public int ButtLevel
+        {
+            get => _buttLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.ButtTexturesCount);
+                if (_buttLevel != value)
+                {
+                    _buttLevel = value;
+                    UpdateButtTexture();
                 }
             }
         }
@@ -363,19 +378,21 @@ namespace KK_SkinEffects
                 if (dataDict.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
                 if (dataDict.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
                 if (dataDict.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
+                if (dataDict.TryGetValue(nameof(ButtLevel), out var obj6)) _buttLevel = (int)obj6;
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
                 UpdateCumTexture(false);
                 UpdateDroolTexture(false);
                 UpdateTearTexture(false);
+                UpdateButtTexture(false);
 
                 if (!onlyCustomEffects && !StudioAPI.InsideStudio)
                 {
                     // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
-                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj6)) _clothingState = ((IEnumerable)obj6).Cast<byte>().ToArray();
-                    if (dataDict.TryGetValue(nameof(AccessoryState), out var obj7)) _accessoryState = ((IEnumerable)obj7).Cast<bool>().ToArray();
-                    if (dataDict.TryGetValue(nameof(SiruState), out var obj8)) _siruState = ((IEnumerable)obj8).Cast<byte>().ToArray();
+                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
+                    if (dataDict.TryGetValue(nameof(AccessoryState), out var obj8)) _accessoryState = ((IEnumerable)obj8).Cast<bool>().ToArray();
+                    if (dataDict.TryGetValue(nameof(SiruState), out var obj9)) _siruState = ((IEnumerable)obj9).Cast<byte>().ToArray();
                     UpdateClothingState();
                     UpdateAccessoryState();
                     UpdateSiruState();
@@ -396,6 +413,7 @@ namespace KK_SkinEffects
             dataDict[nameof(BloodLevel)] = BloodLevel;
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
+            dataDict[nameof(ButtLevel)] = ButtLevel;
 
             if (!onlyCustomEffects && !StudioAPI.InsideStudio)
             {
@@ -506,6 +524,20 @@ namespace KK_SkinEffects
 
                 if (refresh)
                     UpdateTextures(false, true);
+            }
+        }
+
+        private void UpdateButtTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.ButtTextures.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableButt.Value)
+            {
+                if (ButtLevel > 0)
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.ButtTextures[ButtLevel - 1], TexType.BodyOver, this, 99));
+
+                if (refresh)
+                    UpdateTextures(true, false);
             }
         }
 
