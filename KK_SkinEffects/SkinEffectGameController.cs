@@ -75,9 +75,12 @@ namespace KK_SkinEffects
 
             var controllers = proc.flags.lstHeroine.Select(x => x?.chaCtrl != null ? x.chaCtrl.GetComponent<SkinEffectsController>() : null).ToArray();
             var roughTouchTimers = new float[controllers.Length];
+            var previousButtLevel = new int[controllers.Length];
 
             var hands = new[] { proc.hand, proc.hand1 };
             var aibuItems = Traverse.Create(proc.hand).Field<HandCtrl.AibuItem[]>("useItems").Value;
+
+            const int secondsPerLevel = 10;
 
             while (proc)
             {
@@ -92,6 +95,12 @@ namespace KK_SkinEffects
                     var anyChanged = false;
                     var hand = hands[i];
                     var timer = roughTouchTimers[i];
+
+                    if (previousButtLevel[i] != ctrl.ButtLevel)
+                    {
+                        // Something outside of this loop changed ButtLevel, respect it and don't overwrite it
+                        timer = (ctrl.ButtLevel + 0.5f) * secondsPerLevel;
+                    }
 
                     // Touching during 3p and some other positions, also additional contact damage during touch position
                     var kindTouch = hand.SelectKindTouch;
@@ -114,13 +123,15 @@ namespace KK_SkinEffects
                         }
                     }
 
-                    // Slow decay
-                    if (!anyChanged) timer = Mathf.Max(0, timer - Time.deltaTime / 9);
+                    // Slow decay, but don't go below lvl 1
+                    if (!anyChanged && timer > secondsPerLevel) timer -= Time.deltaTime / 9;
+
+                    var level = (int)(timer / secondsPerLevel);
+                    // Don't go back to lvl 0, the change is too noticeable
+                    if (level > 0) ctrl.ButtLevel = level;
 
                     roughTouchTimers[i] = timer;
-                    var level = (int)(timer / 10);
-                    // Don't go back to 0, the change is too noticeable also doesn't really make sense
-                    if (level != 0) ctrl.ButtLevel = level;
+                    previousButtLevel[i] = ctrl.ButtLevel;
 
                     //if (timer > 0) Console.WriteLine(timer);
                 }
