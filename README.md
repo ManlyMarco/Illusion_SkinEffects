@@ -6,6 +6,8 @@ Note: Level of the virgin effect during 1st time depends on the girl's parameter
 
 You can support development of my plugins through my Patreon page: https://www.patreon.com/ManlyMarco
 
+Thanks to HCM06 for sweat, bukkake drool and blood textures. Thanks to Keitaro for butt textures.
+
 ## How to use 
 1. Make sure your game is updated and has latest versions of all of these plugins installed: [BepInEx v5.x](https://github.com/BepInEx/BepInEx), [BepisPlugins](https://github.com/bbepis/BepisPlugins), [KKAPI](https://github.com/ManlyMarco/KKAPI) and [Overlay Mods](https://github.com/ManlyMarco/Koikatu-Overlay-Mods)
 2. Download the latest release from [releases](https://github.com/ManlyMarco/KK_SkinEffects/releases).
