@@ -55,7 +55,7 @@ namespace KK_SkinEffects
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ChaControl), nameof(ChaControl.RandomChangeOfClothesLowPolyEnd))]
-            public static bool RandomChangeOfClothseLowPolyEndPrefix(ChaControl __instance)
+            public static bool RandomChangeOfClothesLowPolyEndPrefix(ChaControl __instance)
             {
                 // Prevent the method from running if the clothes were not actually changed by RandomChangeOfClothesLowPoly
                 // Avoids overriding our saved clothes state at the end of pretty much all actions, no real effect otherwise
