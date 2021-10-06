@@ -10,7 +10,7 @@ namespace KK_SkinEffects
         {
             if (!StudioAPI.InsideStudio)
             {
-                var instance = HarmonyWrapper.PatchAll(typeof(HSceneTriggers));
+                var instance = Harmony.CreateAndPatchAll(typeof(HSceneTriggers));
 
                 if (SkinEffectsPlugin.EnableClothesPersistence.Value)
                 {
