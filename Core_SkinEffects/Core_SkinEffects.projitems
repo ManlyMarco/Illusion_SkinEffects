@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <MSBuildAllProjects Condition="'$(MSBuildVersion)' == '' Or '$(MSBuildVersion)' &lt; '16.0'">$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <SharedGUID>3cad9b8e-dc2c-4908-b6fd-0079d7dc38cc</SharedGUID>
+  </PropertyGroup>
+  <PropertyGroup Label="Configuration">
+    <Import_RootNamespace>Core_SkinEffects</Import_RootNamespace>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Hooks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Hooks.HSceneTriggers.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Hooks.MainGameHooks.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Hooks.PersistClothes.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkinEffectGameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsGui.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsPlugin.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)TextureLoader.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\DroolFace.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_03.png" />
+  </ItemGroup>
+</Project>

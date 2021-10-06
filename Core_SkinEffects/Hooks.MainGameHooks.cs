@@ -17,6 +17,7 @@ namespace KK_SkinEffects
                 GetEffectController(__instance.targetHeroine).OnTalkSceneTouch(__instance.targetHeroine, _kind);
             }
 
+#if KK // todo implement in kks, maybe for stuff done in water and sunbathing? perf hit?
             [HarmonyPostfix]
             [HarmonyPatch(typeof(AI), "Result")]
             public static void AfterResult(AI __instance, ActionControl.ResultInfo result)
@@ -31,6 +32,7 @@ namespace KK_SkinEffects
                     if (c != null) c.OnRunning();
                 }
             }
+#endif
         }
     }
 }

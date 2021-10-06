@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ActionGame;
 using HarmonyLib;
+using KKAPI;
 using KKAPI.MainGame;
 using Manager;
 using UnityEngine;
@@ -29,23 +30,32 @@ namespace KK_SkinEffects
             _disableDeflowering.Clear();
         }
 
-        protected override void OnStartH(HSceneProc proc, bool freeH)
+#if KK
+        protected override void OnStartH(BaseLoader proc, HFlag hFlag, bool vr)
+#elif KKS
+        protected override void OnStartH(MonoBehaviour proc, HFlag hFlag, bool vr)
+#endif
         {
             StopAllCoroutines();
 
             // Prevent the HymenRegen taking effect every time H is done in a day
-            foreach (var heroine in proc.flags.lstHeroine)
+            foreach (var heroine in hFlag.lstHeroine)
                 heroine.chaCtrl.GetComponent<SkinEffectsController>().DisableDeflowering = _disableDeflowering.Contains(heroine);
 
-            proc.StartCoroutine(HsceneUpdate(proc, freeH));
+            if (proc is HSceneProc hSceneProc)
+                proc.StartCoroutine(HsceneUpdate(hSceneProc, hFlag));
         }
 
-        protected override void OnEndH(HSceneProc proc, bool freeH)
+#if KK
+        protected override void OnEndH(BaseLoader proc, HFlag flags, bool vr)
+#elif KKS
+        protected override void OnEndH(MonoBehaviour proc, HFlag flags, bool vr)
+#endif
         {
-            if (freeH || !SkinEffectsPlugin.EnablePersistence.Value) return;
+            if (flags.isFreeH || !SkinEffectsPlugin.EnablePersistence.Value) return;
 
-            var isShower = proc.flags.IsShowerPeeping();
-            foreach (var heroine in proc.flags.lstHeroine)
+            var isShower = flags.IsShowerPeeping();
+            foreach (var heroine in flags.lstHeroine)
             {
                 if (isShower)
                 {
@@ -69,11 +79,11 @@ namespace KK_SkinEffects
         /// Runs during h scene
         /// Handles butt blushing
         /// </summary>
-        private static IEnumerator HsceneUpdate(HSceneProc proc, bool freeH)
+        private static IEnumerator HsceneUpdate(HSceneProc proc, HFlag flags)
         {
-            yield return new WaitWhile(() => Scene.Instance.IsNowLoadingFade);
+            yield return new WaitWhile(SceneApi.GetIsNowLoadingFade);
 
-            var controllers = proc.flags.lstHeroine.Select(x => x?.chaCtrl != null ? x.chaCtrl.GetComponent<SkinEffectsController>() : null).ToArray();
+            var controllers = flags.lstHeroine.Select(x => x?.chaCtrl != null ? x.chaCtrl.GetComponent<SkinEffectsController>() : null).ToArray();
             var roughTouchTimers = new float[controllers.Length];
             var previousButtLevel = new int[controllers.Length];
 
@@ -84,9 +94,9 @@ namespace KK_SkinEffects
 
             while (proc)
             {
-                var isAibu = proc.flags.mode == HFlag.EMode.aibu;
-                var fastSpeed = proc.flags.speed >= 1f; // max 1.5
-                var slowSpeed = proc.flags.speed >= 0.5f;
+                var isAibu = flags.mode == HFlag.EMode.aibu;
+                var fastSpeed = flags.speed >= 1f; // max 1.5
+                var slowSpeed = flags.speed >= 0.5f;
                 for (int i = 0; i < controllers.Length; i++)
                 {
                     var ctrl = controllers[i];
@@ -159,11 +169,11 @@ namespace KK_SkinEffects
 
             if (afterH)
             {
-                if (Game.Instance != null && Game.Instance.actScene != null)
+                var actCtrl = Utils.GetActionControl();
+                if (actCtrl != null)
                 {
                     // Make the girl want to take a shower after H. Index 2 is shower
-                    var actCtrl = Game.Instance.actScene.actCtrl;
-                    actCtrl?.SetDesire(2, heroine, 200);
+                    actCtrl.SetDesire(2, heroine, 200);
                 }
 
                 // Slowly remove sweat effects as she "cools down"
@@ -171,7 +181,7 @@ namespace KK_SkinEffects
                 {
                     yield return new WaitForSeconds(60);
 
-                    if (Scene.Instance.IsNowLoadingFade) break;
+                    if (SceneApi.GetIsNowLoadingFade()) break;
 
                     if (controller.SweatLevel > 0) controller.SweatLevel--;
                     if (controller.TearLevel > 0) controller.TearLevel--;

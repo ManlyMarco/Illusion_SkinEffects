@@ -1,8 +1,9 @@
 ﻿using ActionGame.Chara;
 using System.Collections;
 using System.Collections.Generic;
+using ActionGame;
+using ADV;
 using HarmonyLib;
-using Manager;
 using Object = UnityEngine.Object;
 
 namespace KK_SkinEffects
@@ -21,19 +22,16 @@ namespace KK_SkinEffects
 
         public static SaveData.Heroine GetCurrentVisibleGirl()
         {
-            if (!Game.IsInstance()) return null;
-
-            if (Game.Instance.actScene != null &&
-                Game.Instance.actScene.AdvScene != null)
+            var advScene = GetADVScene();
+            if (advScene != null)
             {
-                var advScene = Game.Instance.actScene.AdvScene;
                 if (advScene.Scenario?.currentHeroine != null)
                     return advScene.Scenario.currentHeroine;
                 if (advScene.nowScene is TalkScene s && s.targetHeroine != null)
                     return s.targetHeroine;
             }
-
-            return Object.FindObjectOfType<TalkScene>()?.targetHeroine;
+            
+            return GetActionControl() != null ? Object.FindObjectOfType<TalkScene>()?.targetHeroine : null;
         }
 
         /// <summary>
@@ -67,6 +65,24 @@ namespace KK_SkinEffects
         {
             // A guess that seems to work. 
             return npc.isActive;
+        }
+
+        public static ActionControl GetActionControl()
+        {
+#if KK
+            return Manager.Game.IsInstance() ? Manager.Game.Instance.actScene?.actCtrl : null;
+#elif KKS
+            return ActionControl.initialized ? ActionControl.instance : null;
+#endif
+        }
+
+        public static ADVScene GetADVScene()
+        {
+#if KK
+            return Manager.Game.IsInstance() ? Manager.Game.Instance.actScene?.advScene : null;
+#elif KKS
+            return ActionControl.initialized ? ActionControl.instance.actionScene?.AdvScene : null;
+#endif
         }
     }
 }

@@ -42,7 +42,11 @@ namespace KK_SkinEffects
             }
 
             [HarmonyPostfix]
+#if KK
             [HarmonyPatch(typeof(Scene), nameof(Scene.UnLoad), new Type[0])]
+#elif KKS
+            [HarmonyPatch(typeof(Scene), nameof(Scene.Unload))]
+#endif
             public static void PostSceneUnloadHook()
             {
                 // Update the character used outside of current talk scene. Called after any TalkScene ends, including 

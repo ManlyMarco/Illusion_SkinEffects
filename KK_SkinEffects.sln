@@ -1,11 +1,20 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.28010.2016
+# Visual Studio Version 16
+VisualStudioVersion = 16.0.31424.327
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KK_SkinEffects", "KK_SkinEffects\KK_SkinEffects.csproj", "{629ACA07-5A28-4436-9022-4E07D8051412}"
 EndProject
+Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Core_SkinEffects", "Core_SkinEffects\Core_SkinEffects.shproj", "{3CAD9B8E-DC2C-4908-B6FD-0079D7DC38CC}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KKS_SkinEffects", "KKS_SkinEffects\KKS_SkinEffects.csproj", "{86DE6863-2926-48C9-94E3-BF8829ED6D5E}"
+EndProject
 Global
+	GlobalSection(SharedMSBuildProjectFiles) = preSolution
+		Core_SkinEffects\Core_SkinEffects.projitems*{3cad9b8e-dc2c-4908-b6fd-0079d7dc38cc}*SharedItemsImports = 13
+		Core_SkinEffects\Core_SkinEffects.projitems*{629aca07-5a28-4436-9022-4e07d8051412}*SharedItemsImports = 4
+		Core_SkinEffects\Core_SkinEffects.projitems*{86de6863-2926-48c9-94e3-bf8829ed6d5e}*SharedItemsImports = 4
+	EndGlobalSection
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
@@ -15,6 +24,10 @@ Global
 		{629ACA07-5A28-4436-9022-4E07D8051412}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{629ACA07-5A28-4436-9022-4E07D8051412}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{629ACA07-5A28-4436-9022-4E07D8051412}.Release|Any CPU.Build.0 = Release|Any CPU
+		{86DE6863-2926-48C9-94E3-BF8829ED6D5E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{86DE6863-2926-48C9-94E3-BF8829ED6D5E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{86DE6863-2926-48C9-94E3-BF8829ED6D5E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{86DE6863-2926-48C9-94E3-BF8829ED6D5E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

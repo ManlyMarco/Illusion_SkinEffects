@@ -445,7 +445,7 @@ namespace KK_SkinEffects
             }
 
             // Needed in rare cases to prevent body texture from becoming black during H scene, not needed outside of it
-            if (Manager.Scene.Instance.LoadSceneName == "H")
+            if (SceneApi.GetLoadSceneName() == "H")
                 StartCoroutine(new object[] { new WaitForEndOfFrame(), CoroutineUtils.CreateCoroutine(Update) }.GetEnumerator());
             else
                 Update();
