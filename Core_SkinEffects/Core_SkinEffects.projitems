@@ -12,8 +12,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)AssemblyInfo.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hooks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hooks.HSceneTriggers.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Hooks.MainGameHooks.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Hooks.PersistClothes.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectGameController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsGui.cs" />

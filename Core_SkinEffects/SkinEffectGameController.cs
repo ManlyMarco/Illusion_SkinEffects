@@ -169,7 +169,7 @@ namespace KK_SkinEffects
 
             if (afterH)
             {
-                var actCtrl = Utils.GetActionControl();
+                var actCtrl = GameAPI.GetActionControl();
                 if (actCtrl != null)
                 {
                     // Make the girl want to take a shower after H. Index 2 is shower
@@ -215,9 +215,11 @@ namespace KK_SkinEffects
             controller.ApplyCharaState(stateDict);
         }
 
-        internal void OnSceneUnload(SaveData.Heroine heroine, SkinEffectsController controller)
+        internal static void OnSceneChange(SaveData.Heroine heroine, SkinEffectsController controller)
         {
-            StartCoroutine(RefreshOnSceneChangeCo(heroine, false));
+            if (heroine == null) throw new ArgumentNullException(nameof(heroine));
+            if (controller == null) throw new ArgumentNullException(nameof(controller));
+            controller.StartCoroutine(RefreshOnSceneChangeCo(heroine, false));
         }
 
         public static void SavePersistData(SaveData.Heroine heroine, SkinEffectsController controller)

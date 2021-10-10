@@ -12,52 +12,52 @@ namespace KK_SkinEffects
         {
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuInside))]
-            public static void AddSonyuInside(HFlag __instance)
+            private static void AddSonyuInside(HFlag __instance)
             {
                 // Finish raw vaginal
                 //todo add delays? could wait for animation change
-                var heroine = __instance.GetLeadHeroine();
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 var controller = GetEffectController(heroine);
                 controller.OnFinishRawInside(heroine, __instance);
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuKokanPlay))]
-            public static void AddSonyuKokanPlay(HFlag __instance)
+            private static void AddSonyuKokanPlay(HFlag __instance)
             {
                 // Insert vaginal
-                var heroine = __instance.GetLeadHeroine();
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnInsert(heroine, __instance);
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddKuwaeFinish))]
-            public static void AddKuwaeFinish(HFlag __instance)
+            private static void AddKuwaeFinish(HFlag __instance)
             {
                 // Cum inside mouth
-                var heroine = __instance.GetLeadHeroine();
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnCumInMouth(heroine, __instance);
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.FemaleGaugeUp))]
-            public static void FemaleGaugeUp(HFlag __instance)
+            private static void FemaleGaugeUp(HFlag __instance)
             {
-                var heroine = __instance.GetLeadHeroine();
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnFemaleGaugeUp(heroine, __instance);
             }
 
             [HarmonyPostfix]
             [HarmonyPatch(typeof(HSprite), nameof(HSprite.InitHeroine))]
-            public static void InitHeroine(HSprite __instance)
+            private static void InitHeroine(HSprite __instance)
             {
-                var heroine = __instance.flags.GetLeadHeroine();
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance.flags);
                 GetEffectController(heroine).OnHSceneProcStart(heroine, __instance.flags);
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(HSceneProc), "ShortCut")]
-            public static void OnShortCut()
+            [HarmonyPatch(typeof(HSceneProc), nameof(HSceneProc.ShortCut))]
+            private static void OnShortCut()
             {
                 if (SkinEffectsPlugin.ClearEffectsKey.Value.IsDown())
                 {
@@ -70,6 +70,13 @@ namespace KK_SkinEffects
                         effectsController.SweatLevel = 0;
                     }
                 }
+            }
+            
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(TalkScene), nameof(TalkScene.TouchFunc), typeof(string), typeof(Vector3))]
+            private static void TouchFuncHook(TalkScene __instance, string _kind)
+            {
+                GetEffectController(__instance.targetHeroine).OnTalkSceneTouch(__instance.targetHeroine, _kind);
             }
         }
     }

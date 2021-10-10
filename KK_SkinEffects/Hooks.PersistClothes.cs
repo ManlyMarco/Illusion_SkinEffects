@@ -7,6 +7,7 @@ using KKAPI.MainGame;
 using Manager;
 using ADV;
 using HarmonyLib;
+using KKAPI.Utilities;
 
 namespace KK_SkinEffects
 {
@@ -17,7 +18,16 @@ namespace KK_SkinEffects
         /// </summary>
         private static class PersistClothes
         {
-            public static void PreTalkSceneIteratorEndHook(object __instance)
+            public static void InstallHooks(Harmony instance)
+            {
+                //return;
+                instance.PatchAll(typeof(PersistClothes));
+
+                // Patch TalkScene.TalkEnd iterator nested class
+                instance.PatchMoveNext(AccessTools.Method(typeof(TalkScene), nameof(TalkScene.TalkEnd)), prefix: new HarmonyMethod(typeof(PersistClothes), nameof(PreTalkSceneIteratorEndHook)));
+            }
+
+            private static void PreTalkSceneIteratorEndHook(object __instance)
             {
                 // __instance is of the compiler_generated type TalkScene+<TalkEnd>c__Iterator5
                 // $PC is the number of times yield return has been called
@@ -25,41 +35,38 @@ namespace KK_SkinEffects
                 int? counter = Traverse.Create(__instance)?.Field("$PC")?.GetValue<int>();
                 if (counter == 2)
                 {
-                    var heroine = Utils.GetCurrentVisibleGirl();
+                    var heroine = GameAPI.GetCurrentHeroine();
                     var controller = GetEffectController(heroine);
                     if (controller != null)
                         SkinEffectGameController.SavePersistData(heroine, controller);
                 }
             }
 
-            [HarmonyPrefix, HarmonyPatch(typeof(TextScenario), nameof(ADV.Commands.EventCG.Release))]
-            public static void PreTextScenarioReleaseHook()
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(TextScenario), nameof(ADV.Commands.EventCG.Release))]
+            private static void PreTextScenarioReleaseHook()
             {
-                var heroine = Utils.GetCurrentVisibleGirl();
+                var heroine = GameAPI.GetCurrentHeroine();
                 var controller = GetEffectController(heroine);
                 if (controller != null)
                     SkinEffectGameController.SavePersistData(heroine, controller);
             }
 
             [HarmonyPostfix]
-#if KK
             [HarmonyPatch(typeof(Scene), nameof(Scene.UnLoad), new Type[0])]
-#elif KKS
-            [HarmonyPatch(typeof(Scene), nameof(Scene.Unload))]
-#endif
-            public static void PostSceneUnloadHook()
+            private static void PostSceneUnloadHook()
             {
                 // Update the character used outside of current talk scene. Called after any TalkScene ends, including 
                 // when entering H mode. This will copy clothes state into a H scene, and out to the main map.
-                var heroine = Utils.GetCurrentVisibleGirl();
+                var heroine = GameAPI.GetCurrentHeroine();
                 var controller = GetEffectController(heroine);
                 if (controller != null)
-                    GetGameController()?.OnSceneUnload(heroine, controller);
+                    SkinEffectGameController.OnSceneChange(heroine, controller);
             }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(ChaControl), nameof(ChaControl.RandomChangeOfClothesLowPolyEnd))]
-            public static bool RandomChangeOfClothesLowPolyEndPrefix(ChaControl __instance)
+            private static bool RandomChangeOfClothesLowPolyEndPrefix(ChaControl __instance)
             {
                 // Prevent the method from running if the clothes were not actually changed by RandomChangeOfClothesLowPoly
                 // Avoids overriding our saved clothes state at the end of pretty much all actions, no real effect otherwise
@@ -108,7 +115,7 @@ namespace KK_SkinEffects
             /// </summary>
             [HarmonyPrefix]
             [HarmonyPatch(typeof(AI), "Result")]
-            public static void AfterResult(AI __instance, ActionControl.ResultInfo result)
+            private static void AfterResultPrefix(AI __instance, ActionControl.ResultInfo result)
             {
                 var actionHistory = __instance.GetLastActions().ToArray();
                 var actionCount = actionHistory.Length;
@@ -139,18 +146,18 @@ namespace KK_SkinEffects
                 // Put clothes on when the latest action is not in the set.
                 if (previousAction != currentAction && replaceClothesActions.Contains(previousAction))
                 {
-                    var npc = __instance.GetNPC();
-
+                    var npc = __instance.npc;
                     // If leaving a special scene (e.g. lunch), maintain clothes from scene.
                     if (npc.IsExitingScene()) return;
-                    var effectsController = GetEffectController(npc.heroine);
+                    var heroine = npc.heroine;
+                    var effectsController = GetEffectController(heroine);
                     if (effectsController == null) return;
 
-                    if (previousAction == 2)
+                    if (previousAction == 2 || previousAction == 1)
                     {
                         // After shower clear everything
                         effectsController.ClearCharaState(true, true);
-                        SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
+                        SkinEffectGameController.SavePersistData(heroine, effectsController);
                     }
                     else if (currentAction == 2)
                     {
@@ -160,7 +167,7 @@ namespace KK_SkinEffects
                             // Make the character naked (set all clothing states to fully off)
                             effectsController.ClothingState = Enumerable.Repeat((byte)3, Enum.GetValues(typeof(ChaFileDefine.ClothesKind)).Length).ToArray();
                             // Non public setter. Needed to prevent the state from being reset in RandomChangeOfClothesLowPolyEnd hook
-                            Traverse.Create(effectsController.ChaControl).Property(nameof(effectsController.ChaControl.isChangeOfClothesRandom)).SetValue(false);
+                            effectsController.ChaControl.isChangeOfClothesRandom = false;
                         }
                     }
                     else
@@ -171,8 +178,24 @@ namespace KK_SkinEffects
                         effectsController.SiruState = null;
                         effectsController.TearLevel = 0;
                         effectsController.DroolLevel = 0;
-                        SkinEffectGameController.SavePersistData(npc.heroine, effectsController);
+                        SkinEffectGameController.SavePersistData(heroine, effectsController);
                     }
+                }
+            }
+            
+            [HarmonyPostfix]
+            [HarmonyPatch(typeof(AI), "Result")]
+            private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
+            {
+                if (result == null) return;
+
+                // Add sweat if the character is doing running workout. Checks need to be in postfix
+                // This only has effect if persistance is on
+                if ((result.actionNo == 6 || result.actionNo == 18) && result.point != null && result.point.transform.childCount > 0)
+                {
+                    var heroine = __instance.npc?.heroine;
+                    var c = GetEffectController(heroine);
+                    if (c != null) c.OnRunning();
                 }
             }
         }

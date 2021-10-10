@@ -1,5 +1,6 @@
 ﻿using KKAPI.Studio;
 using HarmonyLib;
+using KKAPI.Utilities;
 
 namespace KK_SkinEffects
 {
@@ -12,22 +13,7 @@ namespace KK_SkinEffects
                 var instance = Harmony.CreateAndPatchAll(typeof(HSceneTriggers));
 
                 if (SkinEffectsPlugin.EnableClothesPersistence.Value)
-                {
-                    instance.PatchAll(typeof(PersistClothes));
-                    instance.PatchAll(typeof(MainGameHooks));
-
-                    // Patch TalkScene.TalkEnd iterator nested class
-                    var iteratorType = AccessTools.FirstInner(typeof(TalkScene), x => x.FullName.Contains("<TalkEnd>c__Iterator"));
-                    if (iteratorType == null)
-                    {
-                        SkinEffectsPlugin.Logger.LogError("Could not find TalkEnd iterator to patch.");
-                        return;
-                    }
-                    var iteratorMethod = AccessTools.Method(iteratorType, "MoveNext");
-                    var prefix = new HarmonyMethod(typeof(PersistClothes), nameof(PersistClothes.PreTalkSceneIteratorEndHook));
-
-                    instance.Patch(iteratorMethod, prefix, null, null);
-                }
+                    PersistClothes.InstallHooks(instance);
             }
         }
 

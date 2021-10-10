@@ -53,11 +53,11 @@
       <Private>False</Private>
     </Reference>
     <Reference Include="ExtensibleSaveFormat, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ExtensibleSaveFormat.Koikatu.16.4.0\lib\net35\ExtensibleSaveFormat.dll</HintPath>
+      <HintPath>..\packages\ExtensibleSaveFormat.Koikatu.16.8.1\lib\net35\ExtensibleSaveFormat.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="KKAPI, Version=1.24.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\IllusionModdingAPI.KKAPI.1.24.0\lib\net35\KKAPI.dll</HintPath>
+    <Reference Include="KKAPI, Version=1.27.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IllusionModdingAPI.KKAPI.1.27.0\lib\net35\KKAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="KK_OverlayMods, Version=6.0.1.0, Culture=neutral, processorArchitecture=MSIL">
@@ -96,6 +96,9 @@
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\KoikatuCompatibilityAnalyzer.1.0.1\analyzers\dotnet\cs\KoikatuCompatibilityAnalyzer.dll" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="Hooks.PersistClothes.cs" />
   </ItemGroup>
   <Import Project="..\Core_SkinEffects\Core_SkinEffects.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
