@@ -49,7 +49,7 @@ namespace KK_SkinEffects
 
                 var controller = __instance.GetComponent<SkinEffectsController>();
 
-                if (__instance.isChangeOfClothesRandom || !HasSiruState(controller) && !HasClothingState(controller))
+                if (__instance.isChangeOfClothesRandom)
                 {
                     // Clear clothes state and save it
                     if (controller != null)
@@ -76,15 +76,6 @@ namespace KK_SkinEffects
                 return false;
             }
 
-            private static bool HasSiruState(SkinEffectsController controller)
-            {
-                return !(controller == null || controller.SiruState == null || controller.SiruState.All(x => x == 0));
-            }
-
-            private static bool HasClothingState(SkinEffectsController controller)
-            {
-                return !(controller == null || controller.ClothingState == null || controller.ClothingState.All(x => x == 0));
-            }
 
             /// <summary>
             /// Handle resetting clothing/fluid state when the girl showers or otherwise fixes her clothes
@@ -124,20 +115,19 @@ namespace KK_SkinEffects
                 {
                     var npc = __instance.npc;
                     // If leaving a special scene (e.g. lunch), maintain clothes from scene.
-                    if (npc.IsExitingScene()) return;
                     var heroine = npc.heroine;
                     var effectsController = GetEffectController(heroine);
                     if (effectsController == null) return;
 
                     if (previousAction == 2 || previousAction == 1)
                     {
-                        // After shower clear everything
+                        // After shower/toilet clear everything
                         effectsController.ClearCharaState(true, true);
                         SkinEffectGameController.SavePersistData(heroine, effectsController);
                     }
-                    else if (currentAction == 2)
+                    else if (previousAction == 0)
                     {
-                        if (previousAction == 0)
+                        if (currentAction == 2)
                         {
                             // Going to shower now after changing clothes
                             // Make the character naked (set all clothing states to fully off)
@@ -145,8 +135,17 @@ namespace KK_SkinEffects
                             // Non public setter. Needed to prevent the state from being reset in RandomChangeOfClothesLowPolyEnd hook
                             effectsController.ChaControl.isChangeOfClothesRandom = false;
                         }
+                        else
+                        {
+                            effectsController.ClothingState = null;
+                            effectsController.AccessoryState = null;
+                            effectsController.SiruState = null;
+                            effectsController.TearLevel = 0;
+                            effectsController.DroolLevel = 0;
+                            SkinEffectGameController.SavePersistData(heroine, effectsController);
+                        }
                     }
-                    else
+                    else if (!npc.IsExitingScene())
                     {
                         // Otherwise do a partial clear
                         effectsController.ClothingState = null;
@@ -159,23 +158,40 @@ namespace KK_SkinEffects
                 }
             }
 
-#if KK // todo implement in kks, maybe for stuff done in water and sunbathing? perf hit?
             [HarmonyPostfix]
             [HarmonyPatch(typeof(AI), "Result")]
             private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
             {
                 if (result == null) return;
 
-                // Add sweat if the character is doing running workout. Checks need to be in postfix
+                var heroine = __instance.npc?.heroine;
+                var c = GetEffectController(heroine);
+                if (c == null) return;
+
                 // This only has effect if persistance is on
-                if ((result.actionNo == 6 || result.actionNo == 18) && result.point != null && result.point.transform.childCount > 0)
+                switch (result.actionNo)
                 {
-                    var heroine = __instance.npc?.heroine;
-                    var c = GetEffectController(heroine);
-                    if (c != null) c.OnRunning();
+                    // shower
+                    case 2:
+                    // excercise
+                    case 18:
+                    // run away
+                    case 20:
+                    // les
+                    case 26:
+                    case 27:
+                    // take a bath
+                    case 31:
+                        c.SweatLevel = 1;
+                        break;
+
+                    // Splashing in water
+                    case 42:
+                    case 43:
+                        c.SweatLevel = int.MaxValue;
+                        break;
                 }
             }
-#endif
         }
     }
 }
