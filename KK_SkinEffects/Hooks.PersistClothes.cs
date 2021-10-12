@@ -182,20 +182,36 @@ namespace KK_SkinEffects
                     }
                 }
             }
-            
+
             [HarmonyPostfix]
             [HarmonyPatch(typeof(AI), "Result")]
             private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
             {
                 if (result == null) return;
 
-                // Add sweat if the character is doing running workout. Checks need to be in postfix
+                var heroine = __instance.npc?.heroine;
+                var c = GetEffectController(heroine);
+                if (c == null) return;
+
                 // This only has effect if persistance is on
-                if ((result.actionNo == 6 || result.actionNo == 18) && result.point != null && result.point.transform.childCount > 0)
+                switch (result.actionNo)
                 {
-                    var heroine = __instance.npc?.heroine;
-                    var c = GetEffectController(heroine);
-                    if (c != null) c.OnRunning();
+                    // Add sweat if the character is doing running workout. Checks need to be in postfix
+                    case 6:
+                    case 18:
+                        if (result.point != null && result.point.transform.childCount > 0)
+                            c.OnRunning();
+                        break;
+
+                    // shower
+                    case 2:
+                    // run away
+                    case 20:
+                    // les
+                    case 26:
+                    case 27:
+                        c.SweatLevel = 1;
+                        break;
                 }
             }
         }
