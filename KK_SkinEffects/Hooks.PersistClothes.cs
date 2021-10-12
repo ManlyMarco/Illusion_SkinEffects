@@ -187,7 +187,7 @@ namespace KK_SkinEffects
             [HarmonyPatch(typeof(AI), "Result")]
             private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
             {
-                if (result == null) return;
+                if (result == null || !SkinEffectsPlugin.EnableSwtActions.Value) return;
 
                 var heroine = __instance.npc?.heroine;
                 var c = GetEffectController(heroine);
