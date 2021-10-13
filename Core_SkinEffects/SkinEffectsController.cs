@@ -354,16 +354,25 @@ namespace KK_SkinEffects
             _sweatLevel = 0;
             _tearLevel = 0;
             _droolLevel = 0;
-            _clothingState = _siruState = null;
-            _accessoryState = null;
 
-            UpdateSiruState();
-
-            if (refreshTextures)
-                UpdateAllTextures();
-
-            if (forceClothesStateUpdate)
+            if (_siruState != null || forceClothesStateUpdate)
+            {
+                _siruState = null;
+                UpdateSiruState();
+            }
+            if (_clothingState != null || forceClothesStateUpdate)
+            {
+                _clothingState = null;
                 UpdateClothingState(true);
+            }
+            if (_accessoryState != null || forceClothesStateUpdate)
+            {
+                _accessoryState = null;
+                UpdateAccessoryState();
+            }
+
+            if (refreshTextures && needsUpdate)
+                UpdateAllTextures();
 
             return needsUpdate;
         }
@@ -373,12 +382,23 @@ namespace KK_SkinEffects
             var needsUpdate = ClearCharaState();
             if (dataDict != null && dataDict.Count > 0)
             {
-                if (dataDict.TryGetValue(nameof(BukkakeLevel), out var obj)) _bukkakeLevel = (int)obj;
-                if (dataDict.TryGetValue(nameof(SweatLevel), out var obj2)) _sweatLevel = (int)obj2;
-                if (dataDict.TryGetValue(nameof(BloodLevel), out var obj3)) _bloodLevel = (int)obj3;
-                if (dataDict.TryGetValue(nameof(TearLevel), out var obj4)) _tearLevel = (int)obj4;
-                if (dataDict.TryGetValue(nameof(DroolLevel), out var obj5)) _droolLevel = (int)obj5;
-                if (dataDict.TryGetValue(nameof(ButtLevel), out var obj6)) _buttLevel = (int)obj6;
+                int GetValue(string propName)
+                {
+                    if (dataDict.TryGetValue(propName, out var obj))
+                    {
+                        var result = (int)obj;
+                        if (result > 0) needsUpdate = true;
+                        return result;
+                    }
+                    return 0;
+                }
+
+                _bukkakeLevel = GetValue(nameof(BukkakeLevel));
+                _sweatLevel = GetValue(nameof(SweatLevel));
+                _bloodLevel = GetValue(nameof(BloodLevel));
+                _tearLevel = GetValue(nameof(TearLevel));
+                _droolLevel = GetValue(nameof(DroolLevel));
+                _buttLevel = GetValue(nameof(ButtLevel));
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
@@ -396,10 +416,7 @@ namespace KK_SkinEffects
                     UpdateClothingState();
                     UpdateAccessoryState();
                     UpdateSiruState();
-                    //Traverse.Create(ChaControl).Method("UpdateVisible").GetValue();
                 }
-
-                needsUpdate = true;
             }
 
             if (needsUpdate)
