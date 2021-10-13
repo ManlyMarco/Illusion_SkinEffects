@@ -125,27 +125,7 @@ namespace KK_SkinEffects
                         effectsController.ClearCharaState(true, true);
                         SkinEffectGameController.SavePersistData(heroine, effectsController);
                     }
-                    else if (previousAction == 0)
-                    {
-                        if (currentAction == 2)
-                        {
-                            // Going to shower now after changing clothes
-                            // Make the character naked (set all clothing states to fully off)
-                            effectsController.ClothingState = Enumerable.Repeat((byte)3, Enum.GetValues(typeof(ChaFileDefine.ClothesKind)).Length).ToArray();
-                            // Non public setter. Needed to prevent the state from being reset in RandomChangeOfClothesLowPolyEnd hook
-                            effectsController.ChaControl.isChangeOfClothesRandom = false;
-                        }
-                        else
-                        {
-                            effectsController.ClothingState = null;
-                            effectsController.AccessoryState = null;
-                            effectsController.SiruState = null;
-                            effectsController.TearLevel = 0;
-                            effectsController.DroolLevel = 0;
-                            SkinEffectGameController.SavePersistData(heroine, effectsController);
-                        }
-                    }
-                    else if (!npc.IsExitingScene())
+                    else if (previousAction == 0 || !npc.IsExitingScene())
                     {
                         // Otherwise do a partial clear
                         effectsController.ClothingState = null;
