@@ -22,6 +22,7 @@ namespace KK_SkinEffects
         protected override void OnPeriodChange(Cycle.Type period)
         {
             ClearCharaState();
+            TextureLoader.PreloadMainGameTextures();
         }
 
         protected override void OnDayChange(Cycle.Week day)

@@ -148,5 +148,12 @@ namespace KK_SkinEffects
             _ = CumTextures;
             _ = BldTextures;
         }
+
+        public static void PreloadMainGameTextures()
+        {
+            // Preload the textures
+            var _ = WetTexturesBody;
+            _ = WetTexturesFace;
+        }
     }
 }
