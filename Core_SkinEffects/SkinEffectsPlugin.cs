@@ -59,7 +59,7 @@ namespace KK_SkinEffects
                     "Characters keep the skin effects after H in story mode (only the modded effects).\n\nEffects get cleared after period change or taking a shower.");
                 EnableClothesPersistence = Config.Bind("Persistence", "Persist clothes state in school", true,
                     "Characters keep the state of their clothes after H and talk scenes (for example if you undress them with ClothingStateMenu they will stay undressed after ending the conversation). Cum on clothes is maintained as well.\n\nEffects get cleared after period change or changing clothes/taking a shower.\n\nChanges take effect after game restart.");
-                EnableSwtActions = Config.Bind("Persistence", "Some AI actions cause sweating", false, "Some actions like excercising apply the sweat effect to the character. Persistance needs to be fully on for this to work.");
+                EnableSwtActions = Config.Bind("Persistence", "Some AI actions cause sweating", true, "Some actions like excercising apply the sweat effect to the character. Persistance needs to be fully on for this to work.\nWarning: Causes random stutter in story mode unless KSOX v6.0.6 or later is installed.");
 
                 ClearEffectsKey = Config.Bind("Effects", "Clear all effects in H scene", new KeyboardShortcut(KeyCode.Alpha0), "Clears all effects from all characters in the current H scene. Only works in H scenes.");
 
