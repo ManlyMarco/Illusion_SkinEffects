@@ -68,6 +68,7 @@ namespace KK_SkinEffects
                         effectsController.BloodLevel = 0;
                         effectsController.BukkakeLevel = 0;
                         effectsController.SweatLevel = 0;
+                        effectsController.PussyJuiceLevel = 0;
                     }
                 }
             }

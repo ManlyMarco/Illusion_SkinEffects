@@ -30,6 +30,7 @@ namespace KK_SkinEffects
         private static readonly string[] _tearResources;
         private static readonly string[] _droolResources;
         private static readonly string[] _buttResources;
+        private static readonly string[] _pussyJuiceResources;
 
         static TextureLoader()
         {
@@ -43,6 +44,7 @@ namespace KK_SkinEffects
             _tearResources = resourceNames.Where(x => x.IndexOf("TearFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _droolResources = resourceNames.Where(x => x.IndexOf("DroolFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _buttResources = resourceNames.Where(x => x.IndexOf("ButtBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _pussyJuiceResources = resourceNames.Where(x => x.IndexOf("PussyJuiceBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
         }
 
         public static int BldTexturesCount => _bldResources.Length;
@@ -52,6 +54,7 @@ namespace KK_SkinEffects
         public static int DroolTexturesCount => _droolResources.Length;
         public static int TearTexturesCount => _tearResources.Length;
         public static int ButtTexturesCount => _tearResources.Length;
+        public static int PussyJuiceTexturesCount => _pussyJuiceResources.Length;
 
         private static Texture2D[] _bldTextures;
         private static Texture2D[] _cumTextures;
@@ -60,6 +63,7 @@ namespace KK_SkinEffects
         private static Texture2D[] _droolTextures;
         private static Texture2D[] _tearTextures;
         private static Texture2D[] _buttTextures;
+        private static Texture2D[] _pussyJuiceTextures;
 
         public static Texture2D[] BldTextures
         {
@@ -138,6 +142,17 @@ namespace KK_SkinEffects
             }
         }
 
+        public static Texture2D[] PussyJuiceTextures
+        {
+            get
+            {
+                if (_pussyJuiceTextures == null)
+                    _pussyJuiceTextures = GetTextures(_pussyJuiceResources);
+
+                return _pussyJuiceTextures;
+            }
+        }
+
         public static void PreloadAllTextures()
         {
             // Preload the textures
@@ -147,6 +162,7 @@ namespace KK_SkinEffects
             _ = WetTexturesFace;
             _ = CumTextures;
             _ = BldTextures;
+            _ = PussyJuiceTextures;
         }
 
         public static void PreloadMainGameTextures()

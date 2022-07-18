@@ -63,6 +63,7 @@ namespace KK_SkinEffects
             var droolTgl = CreateToggle("Drool", TextureLoader.DroolTexturesCount, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
             var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
             var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
+            var pusTgl = CreateToggle("Pussy juice", TextureLoader.PussyJuiceTexturesCount, (controller, i) => controller.PussyJuiceLevel = i, controller => controller.PussyJuiceLevel);
 
             StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(buttTgl, sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl);
         }

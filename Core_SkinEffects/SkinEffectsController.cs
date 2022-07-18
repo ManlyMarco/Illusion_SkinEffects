@@ -11,6 +11,7 @@ using KKAPI.Studio;
 using KoiSkinOverlayX;
 using UnityEngine;
 using KKAPI.Utilities;
+using System.IO;
 
 namespace KK_SkinEffects
 {
@@ -22,6 +23,7 @@ namespace KK_SkinEffects
         private int _tearLevel;
         private int _droolLevel;
         private int _buttLevel;
+        private int _pussyJuiceLevel;
         private byte[] _clothingState;
         private bool[] _accessoryState;
         private byte[] _siruState;
@@ -112,6 +114,20 @@ namespace KK_SkinEffects
             }
         }
 
+        public int PussyJuiceLevel
+        {
+            get => _pussyJuiceLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.PussyJuiceTexturesCount);
+                if (_pussyJuiceLevel != value)
+                {
+                    _pussyJuiceLevel = value;
+                    UpdatePussyJuiceTexture();
+                }
+            }
+        }
+
         public byte[] ClothingState
         {
             get => _clothingState;
@@ -163,6 +179,7 @@ namespace KK_SkinEffects
 
         private int _fragileVagTriggeredLvl;
         private int _insertCount;
+        private bool _stopChecking;
 
         internal void OnFemaleGaugeUp(SaveData.Heroine heroine, HFlag hFlag)
         {
@@ -170,11 +187,46 @@ namespace KK_SkinEffects
 
             // Increase sweat level every time female gauge reaches 70
             if (hFlag.gaugeFemale >= 70)
-            {
+            {             
                 // Using GetOrgCount to prevent adding a level when you let gauge fall below 70 and resume
                 if (SweatLevel < orgs + 1)
+                {
                     SweatLevel = orgs + 1;
+                }          
             }
+
+
+            // Note: In my experience masturbation (peeping scenes) do not increase Org count when the girl climaxes. 
+            // So a workaround is to use a narrow check between gauge 70-71 with a boolean flag to stop checking. 
+            if (hFlag.mode == HFlag.EMode.masturbation)
+            {
+                if (hFlag.gaugeFemale >= 0 && hFlag.gaugeFemale < 5 && _stopChecking != false)
+                {
+                    _stopChecking = false; //Reset it when meter resets, only if not already set back to false.
+                }
+
+                if (hFlag.gaugeFemale >= 70 && hFlag.gaugeFemale < 71 && _stopChecking == false)
+                {
+                    
+                    // Also make this check between 70-71, as it seems to be a decimal value between these two numbers. Don't want to check consistently.
+
+                    PussyJuiceLevel = PussyJuiceLevel + 1; //TextureLoader will only go up to the Math.Max for texture count. So if we had 10 levels of texture .png files in resources it would 
+                                                           // Increment through them all step by step. By default we have 3 textures for each level. 
+                    _stopChecking = true;
+                }
+            }
+            else if (PussyJuiceLevel < orgs + 1)
+            {
+                PussyJuiceLevel = orgs + 1;
+            }
+
+            
+
+           
+
+            
+
+
 
             // When going too rough and has FragileVag, add bld effect
             if (FragileVag)
@@ -327,6 +379,7 @@ namespace KK_SkinEffects
                         dataDict[nameof(BloodLevel)] = _bloodLevel;
                         dataDict[nameof(TearLevel)] = _tearLevel;
                         dataDict[nameof(DroolLevel)] = _droolLevel;
+                        dataDict[nameof(PussyJuiceLevel)] = _pussyJuiceLevel;
                     }
 
                     _studioInitialLoad = false;
@@ -354,6 +407,7 @@ namespace KK_SkinEffects
             _sweatLevel = 0;
             _tearLevel = 0;
             _droolLevel = 0;
+            _pussyJuiceLevel = 0;
 
             if (_siruState != null || forceClothesStateUpdate)
             {
@@ -399,6 +453,7 @@ namespace KK_SkinEffects
                 _tearLevel = GetValue(nameof(TearLevel));
                 _droolLevel = GetValue(nameof(DroolLevel));
                 _buttLevel = GetValue(nameof(ButtLevel));
+                _pussyJuiceLevel = GetValue(nameof(PussyJuiceLevel));
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
@@ -406,6 +461,7 @@ namespace KK_SkinEffects
                 UpdateDroolTexture(false);
                 UpdateTearTexture(false);
                 UpdateButtTexture(false);
+                UpdatePussyJuiceTexture(false);
 
                 if (!onlyCustomEffects && !StudioAPI.InsideStudio)
                 {
@@ -431,6 +487,7 @@ namespace KK_SkinEffects
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
             dataDict[nameof(ButtLevel)] = ButtLevel;
+            dataDict[nameof(PussyJuiceLevel)] = PussyJuiceLevel;
 
             if (!onlyCustomEffects && !StudioAPI.InsideStudio)
             {
@@ -552,6 +609,23 @@ namespace KK_SkinEffects
             {
                 if (ButtLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.ButtTextures[ButtLevel - 1], TexType.BodyOver, this, 99));
+
+                if (refresh)
+                    UpdateTextures(true, false);
+            }
+        }
+
+        private void UpdatePussyJuiceTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.PussyJuiceTextures.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableJuice.Value) 
+            {
+                if (PussyJuiceLevel > 0)
+                {
+                    // Keep it under the cum tex
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.PussyJuiceTextures[PussyJuiceLevel - 1], TexType.BodyOver, this, 101));
+                }
 
                 if (refresh)
                     UpdateTextures(true, false);

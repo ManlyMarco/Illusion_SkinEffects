@@ -40,4 +40,9 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_02.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_03.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_03.png" />
+  </ItemGroup>
 </Project>
