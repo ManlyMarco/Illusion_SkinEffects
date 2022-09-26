@@ -20,6 +20,16 @@ namespace KK_SkinEffects
                 var controller = GetEffectController(heroine);
                 controller.OnFinishRawInside(heroine, __instance);
             }
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuAnalInside))]
+            public static void AddSonyuAnalInside(HFlag __instance)
+            {
+                // Finish raw Anal
+                //todo add delays? could wait for animation change
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
+                var controller = GetEffectController(heroine);
+                controller.OnFinishAnalRawInside(heroine, __instance);
+            }
 
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuKokanPlay))]
@@ -31,12 +41,30 @@ namespace KK_SkinEffects
             }
 
             [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuAnalPlay))]
+            public static void AddSonyuAnalPlay(HFlag __instance)
+            {
+                // Insert Anal
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
+                GetEffectController(heroine).OnAnalInsert(heroine, __instance);
+            }
+
+            [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddKuwaeFinish))]
             private static void AddKuwaeFinish(HFlag __instance)
             {
                 // Cum inside mouth
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnCumInMouth(heroine, __instance);
+            }
+
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddKiss))]
+            public static void AddKiss(HFlag __instance)
+            {
+                // Kiss Her
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
+                GetEffectController(heroine).OnKissing(heroine, __instance);
             }
 
             [HarmonyPostfix]
@@ -64,9 +92,12 @@ namespace KK_SkinEffects
                     foreach (var effectsController in Object.FindObjectsOfType<SkinEffectsController>())
                     {
                         effectsController.DroolLevel = 0;
+                        effectsController.SalivaLevel = 0;
+                        effectsController.CumInNoseLevel = 0;
                         effectsController.TearLevel = 0;
                         effectsController.BloodLevel = 0;
                         effectsController.BukkakeLevel = 0;
+                        effectsController.AnalBukkakeLevel = 0;
                         effectsController.SweatLevel = 0;
                         effectsController.PussyJuiceLevel = 0;
                     }

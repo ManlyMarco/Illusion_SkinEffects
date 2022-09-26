@@ -19,9 +19,13 @@ namespace KK_SkinEffects
     {
         private int _bloodLevel;
         private int _bukkakeLevel;
+        private int _analbukkakeLevel;
         private int _sweatLevel;
         private int _tearLevel;
         private int _droolLevel;
+        private int _salivaLevel;
+        private int _mouthFilledWithCumCount;
+        private int _cumInNoseLevel;
         private int _buttLevel;
         private int _pussyJuiceLevel;
         private byte[] _clothingState;
@@ -54,6 +58,19 @@ namespace KK_SkinEffects
                 {
                     _bukkakeLevel = value;
                     UpdateCumTexture();
+                }
+            }
+        }
+        public int AnalBukkakeLevel
+        {
+            get => _analbukkakeLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.AnalCumTexturesCount);
+                if (_analbukkakeLevel != value)
+                {
+                    _analbukkakeLevel = value;
+                    UpdateAnalCumTexture();
                 }
             }
         }
@@ -96,6 +113,33 @@ namespace KK_SkinEffects
                 {
                     _droolLevel = value;
                     UpdateDroolTexture();
+                }
+            }
+        }
+        public int SalivaLevel
+        {
+            get => _salivaLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.SalivaTexturesCount);
+                if (_salivaLevel != value)
+                {
+                    _salivaLevel = value;
+                    UpdateSalivaTexture();
+                }
+            }
+        }
+
+        public int CumInNoseLevel
+        {
+            get => _cumInNoseLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.CumInNoseTexturesCount);
+                if (_cumInNoseLevel != value)
+                {
+                    _cumInNoseLevel = value;
+                    UpdateCumInNoseTexture();
                 }
             }
         }
@@ -220,13 +264,6 @@ namespace KK_SkinEffects
                 PussyJuiceLevel = orgs + 1;
             }
 
-            
-
-           
-
-            
-
-
 
             // When going too rough and has FragileVag, add bld effect
             if (FragileVag)
@@ -259,6 +296,10 @@ namespace KK_SkinEffects
         internal void OnFinishRawInside(SaveData.Heroine heroine, HFlag hFlag)
         {
             BukkakeLevel += 1;
+        }
+        internal void OnFinishAnalRawInside(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            AnalBukkakeLevel += 1;
         }
 
         internal void OnHSceneProcStart(SaveData.Heroine heroine, HFlag hFlag)
@@ -320,10 +361,24 @@ namespace KK_SkinEffects
             DisableDeflowering = true;
         }
 
+        public void OnAnalInsert(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            TearLevel++;
+        }
+
         public void OnCumInMouth(SaveData.Heroine heroine, HFlag hFlag)
         {
             DroolLevel++;
             TearLevel++;
+            
+            _mouthFilledWithCumCount += 1;
+            if (_mouthFilledWithCumCount >= 3)
+                CumInNoseLevel += 1;
+        }
+
+        public void OnKissing(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            SalivaLevel++;
         }
 
         protected override void OnCardBeingSaved(GameMode currentGameMode)
@@ -375,10 +430,13 @@ namespace KK_SkinEffects
                         // persist current state when replacing character in studio
                         dataDict = dataDict ?? new Dictionary<string, object>();
                         dataDict[nameof(BukkakeLevel)] = _bukkakeLevel;
+                        dataDict[nameof(AnalBukkakeLevel)] = _analbukkakeLevel;
                         dataDict[nameof(SweatLevel)] = _sweatLevel;
                         dataDict[nameof(BloodLevel)] = _bloodLevel;
                         dataDict[nameof(TearLevel)] = _tearLevel;
                         dataDict[nameof(DroolLevel)] = _droolLevel;
+                        dataDict[nameof(SalivaLevel)] = _salivaLevel;
+                        dataDict[nameof(CumInNoseLevel)] = _cumInNoseLevel;
                         dataDict[nameof(PussyJuiceLevel)] = _pussyJuiceLevel;
                     }
 
@@ -403,10 +461,13 @@ namespace KK_SkinEffects
             var needsUpdate = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
 
             _bukkakeLevel = 0;
+            _analbukkakeLevel = 0;
             _bloodLevel = -1;
             _sweatLevel = 0;
             _tearLevel = 0;
             _droolLevel = 0;
+            _salivaLevel = 0;
+            _cumInNoseLevel = 0;
             _pussyJuiceLevel = 0;
 
             if (_siruState != null || forceClothesStateUpdate)
@@ -448,17 +509,23 @@ namespace KK_SkinEffects
                 }
 
                 _bukkakeLevel = GetValue(nameof(BukkakeLevel));
+                _analbukkakeLevel = GetValue(nameof(AnalBukkakeLevel));
                 _sweatLevel = GetValue(nameof(SweatLevel));
                 _bloodLevel = GetValue(nameof(BloodLevel));
                 _tearLevel = GetValue(nameof(TearLevel));
                 _droolLevel = GetValue(nameof(DroolLevel));
                 _buttLevel = GetValue(nameof(ButtLevel));
+                _salivaLevel = GetValue(nameof(SalivaLevel));
+                _cumInNoseLevel = GetValue(nameof(CumInNoseLevel));
                 _pussyJuiceLevel = GetValue(nameof(PussyJuiceLevel));
 
                 UpdateWetTexture(false);
                 UpdateBldTexture(false);
                 UpdateCumTexture(false);
+                UpdateAnalCumTexture(false);
                 UpdateDroolTexture(false);
+                UpdateSalivaTexture(false);
+                UpdateCumInNoseTexture(false);
                 UpdateTearTexture(false);
                 UpdateButtTexture(false);
                 UpdatePussyJuiceTexture(false);
@@ -482,10 +549,13 @@ namespace KK_SkinEffects
         public void WriteCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
         {
             dataDict[nameof(BukkakeLevel)] = BukkakeLevel;
+            dataDict[nameof(AnalBukkakeLevel)] = AnalBukkakeLevel;
             dataDict[nameof(SweatLevel)] = SweatLevel;
             dataDict[nameof(BloodLevel)] = BloodLevel;
             dataDict[nameof(TearLevel)] = TearLevel;
             dataDict[nameof(DroolLevel)] = DroolLevel;
+            dataDict[nameof(SalivaLevel)] = SalivaLevel;
+            dataDict[nameof(CumInNoseLevel)] = CumInNoseLevel;
             dataDict[nameof(ButtLevel)] = ButtLevel;
             dataDict[nameof(PussyJuiceLevel)] = PussyJuiceLevel;
 
@@ -541,7 +611,7 @@ namespace KK_SkinEffects
                     UpdateTextures(true, false);
             }
         }
-
+		
         private void UpdateCumTexture(bool refresh = true)
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumTextures.Contains(x.Texture));
@@ -550,6 +620,20 @@ namespace KK_SkinEffects
             {
                 if (BukkakeLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this, 102));
+
+                if (refresh)
+                    UpdateTextures(true, false);
+            }
+        }
+		
+        private void UpdateAnalCumTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.AnalCumTextures.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableCum.Value)
+            {
+                if (AnalBukkakeLevel > 0)
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.AnalCumTextures[AnalBukkakeLevel - 1], TexType.BodyOver, this, 102));
 
                 if (refresh)
                     UpdateTextures(true, false);
@@ -595,6 +679,34 @@ namespace KK_SkinEffects
             {
                 if (DroolLevel > 0)
                     _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this, 101));
+
+                if (refresh)
+                    UpdateTextures(false, true);
+            }
+        }
+		
+        private void UpdateSalivaTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.SalivaTextures.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
+            {
+                if (SalivaLevel > 0)
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.SalivaTextures[SalivaLevel - 1], TexType.FaceOver, this, 101));
+
+                if (refresh)
+                    UpdateTextures(false, true);
+            }
+        }
+
+        private void UpdateCumInNoseTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumInNoseTextures.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
+            {
+                if (CumInNoseLevel > 0)
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumInNoseTextures[CumInNoseLevel - 1], TexType.FaceOver, this, 101));
 
                 if (refresh)
                     UpdateTextures(false, true);

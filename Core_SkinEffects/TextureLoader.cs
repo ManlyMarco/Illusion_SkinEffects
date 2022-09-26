@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
 using KKAPI.Utilities;
@@ -25,10 +26,13 @@ namespace KK_SkinEffects
         // Blood might require tweaking of the severity algorithm to make it work well.
         private static readonly string[] _bldResources;
         private static readonly string[] _cumResources;
+        private static readonly string[] _analcumResources;
         private static readonly string[] _wetBodyResources;
         private static readonly string[] _wetFaceResources;
         private static readonly string[] _tearResources;
         private static readonly string[] _droolResources;
+        private static readonly string[] _salivaResources;
+        private static readonly string[] _cumInNoseResources;
         private static readonly string[] _buttResources;
         private static readonly string[] _pussyJuiceResources;
 
@@ -36,31 +40,39 @@ namespace KK_SkinEffects
         {
             _resourceAssembly = Assembly.GetExecutingAssembly();
             var resourceNames = _resourceAssembly.GetManifestResourceNames().OrderBy(x => x).ToList();
-
+            _analcumResources = resourceNames.Where(x => x.IndexOf("AnalBukkake", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _bldResources = resourceNames.Where(x => x.IndexOf("BloodBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _cumResources = resourceNames.Where(x => x.IndexOf("BukkakeBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _wetBodyResources = resourceNames.Where(x => x.IndexOf("WetBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _wetFaceResources = resourceNames.Where(x => x.IndexOf("WetFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _tearResources = resourceNames.Where(x => x.IndexOf("TearFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _droolResources = resourceNames.Where(x => x.IndexOf("DroolFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _salivaResources = resourceNames.Where(x => x.IndexOf("Saliva", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _cumInNoseResources = resourceNames.Where(x => x.IndexOf("CumInNose", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _buttResources = resourceNames.Where(x => x.IndexOf("ButtBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _pussyJuiceResources = resourceNames.Where(x => x.IndexOf("PussyJuiceBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
         }
 
         public static int BldTexturesCount => _bldResources.Length;
         public static int CumTexturesCount => _cumResources.Length;
+        public static int AnalCumTexturesCount => _analcumResources.Length;
         public static int WetTexturesBodyCount => _wetBodyResources.Length;
         public static int WetTexturesFaceCount => _wetFaceResources.Length;
         public static int DroolTexturesCount => _droolResources.Length;
+        public static int SalivaTexturesCount => _salivaResources.Length;
+        public static int CumInNoseTexturesCount => _cumInNoseResources.Length;
         public static int TearTexturesCount => _tearResources.Length;
         public static int ButtTexturesCount => _tearResources.Length;
         public static int PussyJuiceTexturesCount => _pussyJuiceResources.Length;
 
         private static Texture2D[] _bldTextures;
         private static Texture2D[] _cumTextures;
+        private static Texture2D[] _analcumTextures;
         private static Texture2D[] _wetTexturesBody;
         private static Texture2D[] _wetTexturesFace;
         private static Texture2D[] _droolTextures;
+        private static Texture2D[] _salivaTextures;
+        private static Texture2D[] _cumInNoseTextures;
         private static Texture2D[] _tearTextures;
         private static Texture2D[] _buttTextures;
         private static Texture2D[] _pussyJuiceTextures;
@@ -84,6 +96,16 @@ namespace KK_SkinEffects
                     _cumTextures = GetTextures(_cumResources);
 
                 return _cumTextures;
+            }
+        }
+        public static Texture2D[] AnalCumTextures
+        {
+            get
+            {
+                if (_analcumTextures == null)
+                    _analcumTextures = GetTextures(_analcumResources);
+
+                return _analcumTextures;
             }
         }
 
@@ -117,6 +139,27 @@ namespace KK_SkinEffects
                     _droolTextures = GetTextures(_droolResources);
 
                 return _droolTextures;
+            }
+        }
+        public static Texture2D[] SalivaTextures
+        {
+            get
+            {
+                if (_salivaTextures == null)
+                    _salivaTextures = GetTextures(_salivaResources);
+
+                return _salivaTextures;
+            }
+        }
+
+        public static Texture2D[] CumInNoseTextures
+        {
+            get
+            {
+                if (_cumInNoseTextures == null)
+                    _cumInNoseTextures = GetTextures(_cumInNoseResources);
+
+                return _cumInNoseTextures;
             }
         }
 
@@ -155,14 +198,21 @@ namespace KK_SkinEffects
 
         public static void PreloadAllTextures()
         {
+            var sw = Stopwatch.StartNew();
+
             // Preload the textures
             var _ = TearTextures;
             _ = DroolTextures;
+            _ = SalivaTextures;
+            _ = CumInNoseTextures;
             _ = WetTexturesBody;
             _ = WetTexturesFace;
             _ = CumTextures;
+            _ = AnalCumTextures;
             _ = BldTextures;
             _ = PussyJuiceTextures;
+
+            SkinEffectsPlugin.Logger.LogDebug($"PreloadAllTextures finished in {sw.ElapsedMilliseconds}ms");
         }
 
         public static void PreloadMainGameTextures()

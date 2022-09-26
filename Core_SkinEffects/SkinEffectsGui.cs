@@ -61,11 +61,14 @@ namespace KK_SkinEffects
             var sweatTgl = CreateToggle("Sweat", TextureLoader.WetTexturesFaceCount, (controller, i) => controller.SweatLevel = i, controller => controller.SweatLevel);
             var tearsTgl = CreateToggle("Tears", TextureLoader.TearTexturesCount, (controller, i) => controller.TearLevel = i, controller => controller.TearLevel);
             var droolTgl = CreateToggle("Drool", TextureLoader.DroolTexturesCount, (controller, i) => controller.DroolLevel = i, controller => controller.DroolLevel);
+            var salivaTgl = CreateToggle("Saliva", TextureLoader.SalivaTexturesCount, (controller, i) => controller.SalivaLevel = i, controller => controller.SalivaLevel);
+            var cuminnoseTgl = CreateToggle("CumInNose", TextureLoader.CumInNoseTexturesCount, (controller, i) => controller.CumInNoseLevel = i, controller => controller.CumInNoseLevel);
             var cumTgl = CreateToggle("Bukkake", TextureLoader.CumTexturesCount, (controller, i) => controller.BukkakeLevel = i, controller => controller.BukkakeLevel);
+            var analcumTgl = CreateToggle("AnalBukkake", TextureLoader.AnalCumTexturesCount, (controller, i) => controller.AnalBukkakeLevel = i, controller => controller.AnalBukkakeLevel);
             var bldTgl = CreateToggle("Virgin blood", TextureLoader.BldTexturesCount, (controller, i) => controller.BloodLevel = i, controller => controller.BloodLevel);
             var pusTgl = CreateToggle("Pussy juice", TextureLoader.PussyJuiceTexturesCount, (controller, i) => controller.PussyJuiceLevel = i, controller => controller.PussyJuiceLevel);
 
-            StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(buttTgl, sweatTgl, tearsTgl, droolTgl, cumTgl, bldTgl);
+            StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects").AddControls(buttTgl, sweatTgl, tearsTgl, droolTgl,salivaTgl,cuminnoseTgl, cumTgl,analcumTgl, bldTgl);
         }
 
         private static int RescaleStudioLevel(int lvl, int maxInLvl, int maxOutLvl)

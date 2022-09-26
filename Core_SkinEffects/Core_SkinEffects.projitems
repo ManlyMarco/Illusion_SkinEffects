@@ -45,4 +45,17 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_02.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_03.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_04.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_03.png" />
+  </ItemGroup>
 </Project>

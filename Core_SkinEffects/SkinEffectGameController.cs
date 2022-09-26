@@ -187,6 +187,8 @@ namespace KK_SkinEffects
                     if (controller.SweatLevel > 0) controller.SweatLevel--;
                     if (controller.TearLevel > 0) controller.TearLevel--;
                     if (controller.DroolLevel > 0) controller.DroolLevel--;
+                    if (controller.SalivaLevel > 0) controller.SalivaLevel--;
+                    if (controller.CumInNoseLevel > 0) controller.CumInNoseLevel--;
                 }
             }
         }
