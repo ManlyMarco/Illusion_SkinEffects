@@ -58,4 +58,7 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_02.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_03.png" />
   </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetBody_04.png" />
+  </ItemGroup>
 </Project>
