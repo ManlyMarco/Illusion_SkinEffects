@@ -766,7 +766,7 @@ namespace KK_SkinEffects
                 }
 
                 if (refresh)
-                    UpdateTextures(true, false);
+                    UpdateTextures(true, true);
             }
         }
 
