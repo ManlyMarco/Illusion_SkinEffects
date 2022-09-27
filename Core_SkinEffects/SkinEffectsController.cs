@@ -26,6 +26,7 @@ namespace KK_SkinEffects
         private int _mouthFilledWithCumCount;
         private int _cumInNoseLevel;
         private int _buttLevel;
+        private int _blushLevel;
         private int _pussyJuiceLevel;
         private byte[] _clothingState;
         private bool[] _accessoryState;
@@ -157,6 +158,20 @@ namespace KK_SkinEffects
             }
         }
 
+        public int BlushLevel
+        {
+            get => _blushLevel;
+            set
+            {
+                value = Math.Min(value, TextureLoader.BlushTexturesFaceCount);
+                if (_blushLevel != value)
+                {
+                    _blushLevel = value;
+                    UpdateBlushTexture();
+                }
+            }
+        }
+
         public int PussyJuiceLevel
         {
             get => _pussyJuiceLevel;
@@ -246,6 +261,9 @@ namespace KK_SkinEffects
                         // Also make this check between 70-71, as it seems to be a decimal value between these two numbers. Don't want to check consistently.
                         SweatLevel += 1;
                         PussyJuiceLevel += 1;
+                        if (SweatLevel >= 2)
+                            BlushLevel++;
+
                         _stopChecking = true;
                     }
                 }
@@ -255,11 +273,14 @@ namespace KK_SkinEffects
                 if (gaugeFemale >= 70)
                 {
                     // Using GetOrgCount to prevent adding a level when you let gauge fall below 70 and resume
-                    var orgsPlusOne = hFlag.GetOrgCount() + 1;
+                    var orgCount = hFlag.GetOrgCount();
+                    var orgsPlusOne = orgCount + 1;
                     if (SweatLevel < orgsPlusOne)
                         SweatLevel = orgsPlusOne;
                     if (PussyJuiceLevel < orgsPlusOne)
                         PussyJuiceLevel = orgsPlusOne;
+                    if (BlushLevel < orgCount / 2)
+                        BlushLevel = orgCount / 2;
                 }
             }
 
@@ -268,7 +289,8 @@ namespace KK_SkinEffects
             {
                 if (_fragileVagTriggeredLvl == 0)
                 {
-                    if (hFlag.GetOrgCount() == 0 && IsRoughPiston(hFlag))
+                    var orgCount = hFlag.GetOrgCount();
+                    if (orgCount == 0 && IsRoughPiston(hFlag))
                     {
                         BloodLevel = Mathf.Max(1, BloodLevel + 1);
                         _fragileVagTriggeredLvl = 1;
@@ -435,6 +457,7 @@ namespace KK_SkinEffects
                         dataDict[nameof(DroolLevel)] = _droolLevel;
                         dataDict[nameof(SalivaLevel)] = _salivaLevel;
                         dataDict[nameof(CumInNoseLevel)] = _cumInNoseLevel;
+                        dataDict[nameof(BlushLevel)] = _blushLevel;
                         dataDict[nameof(PussyJuiceLevel)] = _pussyJuiceLevel;
                     }
 
@@ -466,6 +489,7 @@ namespace KK_SkinEffects
             _droolLevel = 0;
             _salivaLevel = 0;
             _cumInNoseLevel = 0;
+            _blushLevel = 0;
             _pussyJuiceLevel = 0;
 
             if (_siruState != null || forceClothesStateUpdate)
@@ -515,6 +539,7 @@ namespace KK_SkinEffects
                 _buttLevel = GetValue(nameof(ButtLevel));
                 _salivaLevel = GetValue(nameof(SalivaLevel));
                 _cumInNoseLevel = GetValue(nameof(CumInNoseLevel));
+                _blushLevel = GetValue(nameof(BlushLevel));
                 _pussyJuiceLevel = GetValue(nameof(PussyJuiceLevel));
 
                 UpdateWetTexture(false);
@@ -526,6 +551,7 @@ namespace KK_SkinEffects
                 UpdateCumInNoseTexture(false);
                 UpdateTearTexture(false);
                 UpdateButtTexture(false);
+                UpdateBlushTexture(false);
                 UpdatePussyJuiceTexture(false);
 
                 if (!onlyCustomEffects && !StudioAPI.InsideStudio)
@@ -555,6 +581,7 @@ namespace KK_SkinEffects
             dataDict[nameof(SalivaLevel)] = SalivaLevel;
             dataDict[nameof(CumInNoseLevel)] = CumInNoseLevel;
             dataDict[nameof(ButtLevel)] = ButtLevel;
+            dataDict[nameof(BlushLevel)] = BlushLevel;
             dataDict[nameof(PussyJuiceLevel)] = PussyJuiceLevel;
 
             if (!onlyCustomEffects && !StudioAPI.InsideStudio)
@@ -725,6 +752,24 @@ namespace KK_SkinEffects
             }
         }
 
+        private void UpdateBlushTexture(bool refresh = true)
+        {
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BlushTexturesFace.Contains(x.Texture));
+            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BlushTexturesBody.Contains(x.Texture));
+
+            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableBlush.Value)
+            {
+                if (BlushLevel > 0)
+                {
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BlushTexturesBody[BlushLevel - 1], TexType.BodyOver, this, 98));
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BlushTexturesFace[BlushLevel - 1], TexType.FaceOver, this, 98));
+                }
+
+                if (refresh)
+                    UpdateTextures(true, false);
+            }
+        }
+
         private void UpdatePussyJuiceTexture(bool refresh = true)
         {
             _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.PussyJuiceTextures.Contains(x.Texture));
@@ -733,8 +778,8 @@ namespace KK_SkinEffects
             {
                 if (PussyJuiceLevel > 0)
                 {
-                    // Keep it under the cum tex
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.PussyJuiceTextures[PussyJuiceLevel - 1], TexType.BodyOver, this, 101));
+                    // Keep it under the cum tex but over the body blush
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.PussyJuiceTextures[PussyJuiceLevel - 1], TexType.BodyOver, this, 99));
                 }
 
                 if (refresh)

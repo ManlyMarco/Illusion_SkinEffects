@@ -16,7 +16,7 @@ namespace KK_SkinEffects
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        public const string Version = "2.1";
+        public const string Version = "2.1.1";
 
         internal static new ManualLogSource Logger { get; private set; }
 
@@ -27,6 +27,7 @@ namespace KK_SkinEffects
         public static ConfigEntry<bool> EnableTear { get; private set; }
         public static ConfigEntry<bool> EnableDrl { get; private set; }
         public static ConfigEntry<bool> EnableButt { get; private set; }
+        public static ConfigEntry<bool> EnableBlush { get; private set; }
         public static ConfigEntry<bool> EnableJuice { get; private set; }
 
         public static ConfigEntry<bool> EnablePersistence { get; private set; }
@@ -55,8 +56,11 @@ namespace KK_SkinEffects
                     "Triggers when cumming inside the mouth.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 EnableButt = Config.Bind("Effects", "Enable butt blush", true,
                     "Triggers when massaging roughly.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
+                EnableBlush = Config.Bind("Effects", "Enable face and body blush", true,
+                    "Triggers after a few orgasms and when extremely excited.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 EnableJuice = Config.Bind("Effects", "Enable pussy juice", true,
                     "Triggers when girl's H-Gauge increases over 70%.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
+
                 EnablePersistence = Config.Bind("Persistence", "Persist skin effects in school", true,
                     "Characters keep the skin effects after H in story mode (only the modded effects).\n\nEffects get cleared after period change or taking a shower.");
                 EnableClothesPersistence = Config.Bind("Persistence", "Persist clothes state in school", true,

@@ -51,7 +51,6 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_03.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_01.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetFace_04.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_01.png" />
@@ -59,6 +58,11 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\WetBody_04.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushFace_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushFace_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushFace_03.png" />
   </ItemGroup>
 </Project>

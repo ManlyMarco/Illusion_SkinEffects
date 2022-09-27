@@ -34,6 +34,8 @@ namespace KK_SkinEffects
         private static readonly string[] _salivaResources;
         private static readonly string[] _cumInNoseResources;
         private static readonly string[] _buttResources;
+        private static readonly string[] _blushBodyResources;
+        private static readonly string[] _blushFaceResources;
         private static readonly string[] _pussyJuiceResources;
 
         static TextureLoader()
@@ -50,6 +52,8 @@ namespace KK_SkinEffects
             _salivaResources = resourceNames.Where(x => x.IndexOf("Saliva", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _cumInNoseResources = resourceNames.Where(x => x.IndexOf("CumInNose", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _buttResources = resourceNames.Where(x => x.IndexOf("ButtBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _blushBodyResources = resourceNames.Where(x => x.IndexOf("BlushBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
+            _blushFaceResources = resourceNames.Where(x => x.IndexOf("BlushFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             _pussyJuiceResources = resourceNames.Where(x => x.IndexOf("PussyJuiceBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
         }
 
@@ -63,6 +67,8 @@ namespace KK_SkinEffects
         public static int CumInNoseTexturesCount => _cumInNoseResources.Length;
         public static int TearTexturesCount => _tearResources.Length;
         public static int ButtTexturesCount => _tearResources.Length;
+        public static int BlushTexturesBodyCount => _blushBodyResources.Length;
+        public static int BlushTexturesFaceCount => _blushFaceResources.Length;
         public static int PussyJuiceTexturesCount => _pussyJuiceResources.Length;
 
         private static Texture2D[] _bldTextures;
@@ -75,6 +81,8 @@ namespace KK_SkinEffects
         private static Texture2D[] _cumInNoseTextures;
         private static Texture2D[] _tearTextures;
         private static Texture2D[] _buttTextures;
+        private static Texture2D[] _blushTexturesBody;
+        private static Texture2D[] _blushTexturesFace;
         private static Texture2D[] _pussyJuiceTextures;
 
         public static Texture2D[] BldTextures
@@ -185,6 +193,28 @@ namespace KK_SkinEffects
             }
         }
 
+        public static Texture2D[] BlushTexturesBody
+        {
+            get
+            {
+                if (_blushTexturesBody == null)
+                    _blushTexturesBody = GetTextures(_blushBodyResources);
+
+                return _blushTexturesBody;
+            }
+        }
+
+        public static Texture2D[] BlushTexturesFace
+        {
+            get
+            {
+                if (_blushTexturesFace == null)
+                    _blushTexturesFace = GetTextures(_blushFaceResources);
+
+                return _blushTexturesFace;
+            }
+        }
+
         public static Texture2D[] PussyJuiceTextures
         {
             get
@@ -210,6 +240,8 @@ namespace KK_SkinEffects
             _ = CumTextures;
             _ = AnalCumTextures;
             _ = BldTextures;
+            _ = BlushTexturesBody;
+            _ = BlushTexturesFace;
             _ = PussyJuiceTextures;
 
             SkinEffectsPlugin.Logger.LogDebug($"PreloadAllTextures finished in {sw.ElapsedMilliseconds}ms");
