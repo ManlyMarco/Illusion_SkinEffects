@@ -60,8 +60,8 @@
       <HintPath>..\packages\IllusionModdingAPI.KKAPI.1.27.0\lib\net35\KKAPI.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="KK_OverlayMods, Version=6.0.1.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\OverlayMods.Koikatu.6.0.1\lib\net35\KK_OverlayMods.dll</HintPath>
+    <Reference Include="KK_OverlayMods, Version=6.0.7.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\OverlayMods.Koikatu.6.0.7\lib\net35\KK_OverlayMods.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="MonoMod.RuntimeDetour, Version=21.8.5.1, Culture=neutral, processorArchitecture=MSIL">
@@ -95,10 +95,10 @@
     <Folder Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
-    <Analyzer Include="..\packages\KoikatuCompatibilityAnalyzer.1.0.1\analyzers\dotnet\cs\KoikatuCompatibilityAnalyzer.dll" />
+    <Compile Include="Hooks.PersistClothes.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Hooks.PersistClothes.cs" />
+    <Analyzer Include="..\packages\KoikatuCompatibilityAnalyzer.1.1.0\analyzers\dotnet\cs\KoikatuCompatibilityAnalyzer.dll" />
   </ItemGroup>
   <Import Project="..\Core_SkinEffects\Core_SkinEffects.projitems" Label="Shared" />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
