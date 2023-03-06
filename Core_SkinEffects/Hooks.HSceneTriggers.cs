@@ -31,6 +31,10 @@ namespace KK_SkinEffects
                 controller.OnFinishAnalRawInside(heroine, __instance);
             }
 
+            /*
+             * Won't always be called during the H-Scene. On the first time in the scene
+             * is called but on subsequence is not. Since the way is been used to act on
+             * the first insertion is ok to continue using it.
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuKokanPlay))]
             private static void AddSonyuKokanPlay(HFlag __instance)
@@ -39,10 +43,42 @@ namespace KK_SkinEffects
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnInsert(heroine, __instance);
             }
+            */
 
+            // Always called during the H-Scene whenever there is a vaginal insertion.
+            // Another difference is that when there is blood on first insertion it will
+            // show when the penis is already inside.
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertKokan))]
+            public static void SetInsertKokan(HFlag __instance)
+            {
+                // Insert vaginal
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
+                GetEffectController(heroine).OnInsert(heroine, __instance);
+            }
+
+
+            /*
+             * Won't always be called during the H-Scene and depending on the number of
+             * insertions may even be never. If every insertion should be tracked to 
+             * increase the tears level SetInsertAnal is a better option. May depend on
+             * the animation but I stopped looking for a reason. Sometimes works with
+             * Can we do anal? and not Just do anal? the first time but a second Just do 
+             * anal? works.
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuAnalPlay))]
             public static void AddSonyuAnalPlay(HFlag __instance)
+            {
+                // Insert Anal
+                var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
+                GetEffectController(heroine).OnAnalInsert(heroine, __instance);
+            }
+            */
+
+            // Always call during the H-Scene whenever there is an anal insertion.
+            [HarmonyPrefix]
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertAnal))]
+            public static void SetInsertAnal(HFlag __instance)
             {
                 // Insert Anal
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
@@ -103,7 +139,7 @@ namespace KK_SkinEffects
                     }
                 }
             }
-            
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(TalkScene), nameof(TalkScene.TouchFunc), typeof(string), typeof(Vector3))]
             private static void TouchFuncHook(TalkScene __instance, string _kind)
