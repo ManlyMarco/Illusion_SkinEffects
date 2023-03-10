@@ -31,18 +31,24 @@ namespace KK_SkinEffects
                 controller.OnFinishAnalRawInside(heroine, __instance);
             }
 
+            // Always called during the H-Scene whenever there is a vaginal insertion.
+            // HFlag.AddSonyuKokanPlay can't be used, it's called only once and is unreliable.
+            // Another difference is that AddSonyuKokanPlay is called as the button is pressed,
+            // while SetInsertKokan is called after the peen is fully inside.
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuKokanPlay))]
-            private static void AddSonyuKokanPlay(HFlag __instance)
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertKokan))]
+            private static void SetInsertKokan(HFlag __instance)
             {
                 // Insert vaginal
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
                 GetEffectController(heroine).OnInsert(heroine, __instance);
             }
 
+            // Always call during the H-Scene whenever there is an anal insertion.
+            // HFlag.AddSonyuAnalPlay can't be used, it's called only once and is unreliable.
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(HFlag), nameof(HFlag.AddSonyuAnalPlay))]
-            public static void AddSonyuAnalPlay(HFlag __instance)
+            [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertAnal))]
+            public static void SetInsertAnal(HFlag __instance)
             {
                 // Insert Anal
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
@@ -103,7 +109,7 @@ namespace KK_SkinEffects
                     }
                 }
             }
-            
+
             [HarmonyPrefix]
             [HarmonyPatch(typeof(TalkScene), nameof(TalkScene.TouchFunc), typeof(string), typeof(Vector3))]
             private static void TouchFuncHook(TalkScene __instance, string _kind)
