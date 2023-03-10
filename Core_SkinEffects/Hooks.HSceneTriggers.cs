@@ -32,9 +32,9 @@ namespace KK_SkinEffects
             }
 
             // Always called during the H-Scene whenever there is a vaginal insertion.
-            // Another difference is that when there is blood on first insertion it will
-            // show when the penis is already inside.
             // HFlag.AddSonyuKokanPlay can't be used, it's called only once and is unreliable.
+            // Another difference is that AddSonyuKokanPlay is called as the button is pressed,
+            // while SetInsertKokan is called after the peen is fully inside.
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertKokan))]
             public static void SetInsertKokan(HFlag __instance)
