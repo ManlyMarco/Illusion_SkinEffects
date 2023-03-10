@@ -37,7 +37,7 @@ namespace KK_SkinEffects
             // while SetInsertKokan is called after the peen is fully inside.
             [HarmonyPrefix]
             [HarmonyPatch(typeof(HFlag), nameof(HFlag.SetInsertKokan))]
-            public static void SetInsertKokan(HFlag __instance)
+            private static void SetInsertKokan(HFlag __instance)
             {
                 // Insert vaginal
                 var heroine = KKAPI.Utilities.HSceneUtils.GetLeadingHeroine(__instance);
