@@ -424,6 +424,9 @@ namespace KK_SkinEffects
             DisableDeflowering = false;
             _talkSceneTouchCount = 0;
 
+            if (_ksox == null)
+                _ksox = GetComponent<KoiSkinOverlayController>();
+
             var data = GetExtendedData();
 
             if (!MakerAPI.InsideAndLoaded || MakerAPI.GetCharacterLoadFlags().Parameters)
