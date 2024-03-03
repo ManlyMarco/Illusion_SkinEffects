@@ -62,8 +62,9 @@ namespace KK_SkinEffects
             {
                 var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
 
-                // Always check this if SkinEffectsPlugin.EnablePersistence.Value
-                // is false heroine will bleed in every H encounter
+                // Always check this:
+                // if SkinEffectsPlugin.EnablePersistence.Value is false
+                // HymenRegen was true heroine will bleed in every H encounter
                 if (controller.DisableDeflowering)
                     _disableDeflowering.Add(heroine);
 
