@@ -53,26 +53,35 @@ namespace KK_SkinEffects
         protected override void OnEndH(MonoBehaviour proc, HFlag flags, bool vr)
 #endif
         {
-            if (flags.isFreeH || !SkinEffectsPlugin.EnablePersistence.Value) return;
+            if (flags.isFreeH) return;
 
             var isShower = flags.IsShowerPeeping();
+            var isPersistence = SkinEffectsPlugin.EnablePersistence.Value;
+
             foreach (var heroine in flags.lstHeroine)
             {
-                if (isShower)
-                {
-                    // Clear effects after a shower, save them after other types of h scenes
-                    _persistentCharaState.Remove(heroine);
-                }
-                else
-                {
-                    var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
-                    SavePersistData(heroine, controller);
+                var controller = heroine.chaCtrl.GetComponent<SkinEffectsController>();
 
-                    if (controller.DisableDeflowering)
-                        _disableDeflowering.Add(heroine);
-                }
+                // Always check this:
+                // if SkinEffectsPlugin.EnablePersistence.Value is false
+                // HymenRegen was true heroine will bleed in every H encounter
+                if (controller.DisableDeflowering)
+                    _disableDeflowering.Add(heroine);
 
-                StartCoroutine(RefreshOnSceneChangeCo(heroine, true));
+                if (isPersistence)
+                {
+                    if (isShower)
+                    {
+                        // Clear effects after a shower, save them after other types of h scenes
+                        _persistentCharaState.Remove(heroine);
+                    }
+                    else
+                    {
+                        SavePersistData(heroine, controller);
+                    }
+
+                    StartCoroutine(RefreshOnSceneChangeCo(heroine, true));
+                }
             }
         }
 
