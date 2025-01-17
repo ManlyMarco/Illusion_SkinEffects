@@ -20,7 +20,6 @@ namespace KK_SkinEffects
         {
             public static void InstallHooks(Harmony instance)
             {
-                //return;
                 instance.PatchAll(typeof(PersistClothes));
 
                 // Patch TalkScene.TalkEnd iterator nested class
@@ -114,7 +113,7 @@ namespace KK_SkinEffects
             /// Handle resetting clothing/fluid state when the girl showers or otherwise fixes her clothes
             /// </summary>
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(AI), "Result")]
+            [HarmonyPatch(typeof(AI), nameof(AI.Result))]
             private static void AfterResultPrefix(AI __instance, ActionControl.ResultInfo result)
             {
                 var actionHistory = __instance.GetLastActions().ToArray();
@@ -184,7 +183,7 @@ namespace KK_SkinEffects
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(AI), "Result")]
+            [HarmonyPatch(typeof(AI), nameof(AI.Result))]
             private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
             {
                 if (result == null || !SkinEffectsPlugin.EnableSwtActions.Value) return;

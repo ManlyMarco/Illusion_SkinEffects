@@ -81,7 +81,7 @@ namespace KK_SkinEffects
             /// Handle resetting clothing/fluid state when the girl showers or otherwise fixes her clothes
             /// </summary>
             [HarmonyPrefix]
-            [HarmonyPatch(typeof(AI), "Result")]
+            [HarmonyPatch(typeof(AI), nameof(AI.Result))]
             private static void AfterResultPrefix(AI __instance, ActionControl.ResultInfo result)
             {
                 var actionHistory = __instance.GetLastActions().ToArray();
@@ -139,7 +139,7 @@ namespace KK_SkinEffects
             }
 
             [HarmonyPostfix]
-            [HarmonyPatch(typeof(AI), "Result")]
+            [HarmonyPatch(typeof(AI), nameof(AI.Result))]
             private static void AfterResultPostfix(AI __instance, ActionControl.ResultInfo result)
             {
                 if (result == null || !SkinEffectsPlugin.EnableSwtActions.Value) return;
@@ -158,12 +158,12 @@ namespace KK_SkinEffects
                     case 27:
                         c.SweatLevel += 1;
                         break;
-                    
+
                     // excercise
                     case 18:
                         c.SweatLevel += 2;
                         break;
-
+                    
                     // shower
                     case 2:
                     // take a bath
