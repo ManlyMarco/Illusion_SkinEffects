@@ -64,6 +64,19 @@ namespace KK_SkinEffects
 
             StudioAPI.GetOrCreateCurrentStateCategory("Additional skin effects")
                      .AddControls(SkinEffectKindUtils.ValidSkinEffectKinds.Select(CreateToggle).Cast<CurrentStateCategorySubItemBase>().ToArray());
+
+            if (TimelineCompatibility.IsTimelineAvailable())
+            {
+                foreach (var skinEffectKind in SkinEffectKindUtils.ValidSkinEffectKinds)
+                {
+                    TimelineCompatibility.AddCharaFunctionInterpolable<int, SkinEffectsController>(owner: "SkinEffects",
+                                                                                                     id: "Effect_" + skinEffectKind.ToDataKey(),
+                                                                                                     name: skinEffectKind.GetDisplayName(),
+                                                                                                     interpolateBefore: (oci, ctrl, leftValue, rightValue, factor) => ctrl.SetEffectLevel(skinEffectKind, Mathf.RoundToInt(Mathf.Lerp(leftValue, rightValue, factor)), true),
+                                                                                                     interpolateAfter: null,
+                                                                                                     getValue: (c, controller) => controller.GetEffectLevel(skinEffectKind));
+                }
+            }
         }
 
         private static int RescaleStudioLevel(int lvl, int maxInLvl, int maxOutLvl)
