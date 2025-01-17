@@ -1,6 +1,5 @@
 ﻿using KKAPI.Studio;
 using HarmonyLib;
-using KKAPI.Utilities;
 
 namespace KK_SkinEffects
 {

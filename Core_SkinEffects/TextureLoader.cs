@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
 using System.Reflection;
@@ -7,251 +8,106 @@ using UnityEngine;
 
 namespace KK_SkinEffects
 {
+    /// <summary>
+    /// Just add textures for additional levels as resources with sequential numbers at the end, everything should scale automatically.
+    /// Blood might require tweaking of the severity algorithm to make it work well in-game.
+    /// </summary>
     internal static class TextureLoader
     {
         private static readonly Assembly _resourceAssembly;
-
-        private static Texture2D[] GetTextures(string[] resourceNames)
-        {
-            byte[] ReadResource(string resourceName)
-            {
-                using (var stream = _resourceAssembly.GetManifestResourceStream(resourceName))
-                    return (stream ?? throw new InvalidOperationException($"The resource {resourceName} was not found")).ReadAllBytes();
-            }
-
-            return resourceNames.Select(ReadResource).Select(bytes => bytes.LoadTexture(TextureFormat.DXT5)).ToArray();
-        }
-
-        // Just add textures for additional levels here, everything should scale automatically.
-        // Blood might require tweaking of the severity algorithm to make it work well.
-        private static readonly string[] _bldResources;
-        private static readonly string[] _cumResources;
-        private static readonly string[] _analcumResources;
-        private static readonly string[] _wetBodyResources;
-        private static readonly string[] _wetFaceResources;
-        private static readonly string[] _tearResources;
-        private static readonly string[] _droolResources;
-        private static readonly string[] _salivaResources;
-        private static readonly string[] _cumInNoseResources;
-        private static readonly string[] _buttResources;
-        private static readonly string[] _blushBodyResources;
-        private static readonly string[] _blushFaceResources;
-        private static readonly string[] _pussyJuiceResources;
+        private static readonly string[][] _resources;
+        private static readonly Texture2D[][] _textures;
+        /// <summary>
+        /// bool is true if it affects face, false if body
+        /// </summary>
+        internal static readonly Dictionary<Texture2D, bool> LoadedTextures;
 
         static TextureLoader()
         {
+            LoadedTextures = new Dictionary<Texture2D, bool>();
+
             _resourceAssembly = Assembly.GetExecutingAssembly();
             var resourceNames = _resourceAssembly.GetManifestResourceNames().OrderBy(x => x).ToList();
-            _analcumResources = resourceNames.Where(x => x.IndexOf("AnalBukkake", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _bldResources = resourceNames.Where(x => x.IndexOf("BloodBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _cumResources = resourceNames.Where(x => x.IndexOf("BukkakeBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _wetBodyResources = resourceNames.Where(x => x.IndexOf("WetBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _wetFaceResources = resourceNames.Where(x => x.IndexOf("WetFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _tearResources = resourceNames.Where(x => x.IndexOf("TearFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _droolResources = resourceNames.Where(x => x.IndexOf("DroolFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _salivaResources = resourceNames.Where(x => x.IndexOf("Saliva", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _cumInNoseResources = resourceNames.Where(x => x.IndexOf("CumInNose", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _buttResources = resourceNames.Where(x => x.IndexOf("ButtBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _blushBodyResources = resourceNames.Where(x => x.IndexOf("BlushBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _blushFaceResources = resourceNames.Where(x => x.IndexOf("BlushFace", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-            _pussyJuiceResources = resourceNames.Where(x => x.IndexOf("PussyJuiceBody", StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
-        }
 
-        public static int BldTexturesCount => _bldResources.Length;
-        public static int CumTexturesCount => _cumResources.Length;
-        public static int AnalCumTexturesCount => _analcumResources.Length;
-        public static int WetTexturesBodyCount => _wetBodyResources.Length;
-        public static int WetTexturesFaceCount => _wetFaceResources.Length;
-        public static int DroolTexturesCount => _droolResources.Length;
-        public static int SalivaTexturesCount => _salivaResources.Length;
-        public static int CumInNoseTexturesCount => _cumInNoseResources.Length;
-        public static int TearTexturesCount => _tearResources.Length;
-        public static int ButtTexturesCount => _tearResources.Length;
-        public static int BlushTexturesBodyCount => _blushBodyResources.Length;
-        public static int BlushTexturesFaceCount => _blushFaceResources.Length;
-        public static int PussyJuiceTexturesCount => _pussyJuiceResources.Length;
+            var effectCount = SkinEffectKindUtils.ValidSkinEffectKinds.Length;
+            _resources = new string[effectCount][];
+            _textures = new Texture2D[effectCount][];
 
-        private static Texture2D[] _bldTextures;
-        private static Texture2D[] _cumTextures;
-        private static Texture2D[] _analcumTextures;
-        private static Texture2D[] _wetTexturesBody;
-        private static Texture2D[] _wetTexturesFace;
-        private static Texture2D[] _droolTextures;
-        private static Texture2D[] _salivaTextures;
-        private static Texture2D[] _cumInNoseTextures;
-        private static Texture2D[] _tearTextures;
-        private static Texture2D[] _buttTextures;
-        private static Texture2D[] _blushTexturesBody;
-        private static Texture2D[] _blushTexturesFace;
-        private static Texture2D[] _pussyJuiceTextures;
-
-        public static Texture2D[] BldTextures
-        {
-            get
+            for (int i = 0; i < effectCount; i++)
             {
-                if (_bldTextures == null)
-                    _bldTextures = GetTextures(_bldResources);
-
-                return _bldTextures;
+                var effectKind = SkinEffectKindUtils.ValidSkinEffectKinds[i];
+                var name = Enum.GetName(typeof(SkinEffectKind), effectKind) ?? throw new Exception("Invalid enum value? " + effectKind);
+                _resources[i] = resourceNames.Where(x => x.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             }
         }
 
-        public static Texture2D[] CumTextures
+        public static int GetTextureCount(SkinEffectKind kind)
         {
-            get
-            {
-                if (_cumTextures == null)
-                    _cumTextures = GetTextures(_cumResources);
+            if (kind < 0)
+                return 0;
 
-                return _cumTextures;
-            }
-        }
-        public static Texture2D[] AnalCumTextures
-        {
-            get
-            {
-                if (_analcumTextures == null)
-                    _analcumTextures = GetTextures(_analcumResources);
-
-                return _analcumTextures;
-            }
+            return _resources[(int)kind].Length;
         }
 
-        public static Texture2D[] WetTexturesBody
+        private static byte[] ReadResource(string resourceName)
         {
-            get
-            {
-                if (_wetTexturesBody == null)
-                    _wetTexturesBody = GetTextures(_wetBodyResources);
-
-                return _wetTexturesBody;
-            }
+            using (var stream = _resourceAssembly.GetManifestResourceStream(resourceName))
+                return (stream ?? throw new InvalidOperationException($"The resource {resourceName} was not found")).ReadAllBytes();
         }
 
-        public static Texture2D[] WetTexturesFace
+        private static Texture2D[] GetTextures(string[] resourceNames)
         {
-            get
-            {
-                if (_wetTexturesFace == null)
-                    _wetTexturesFace = GetTextures(_wetFaceResources);
-
-                return _wetTexturesFace;
-            }
+            return resourceNames.Select(name => ReadResource(name).LoadTexture(TextureFormat.DXT5)).ToArray();
         }
 
-        public static Texture2D[] DroolTextures
+        public static Texture2D[] GetTextures(SkinEffectKind kind)
         {
-            get
+            if (_textures[(int)kind] == null)
             {
-                if (_droolTextures == null)
-                    _droolTextures = GetTextures(_droolResources);
+                var newTextures = GetTextures(_resources[(int)kind]);
+                _textures[(int)kind] = newTextures;
 
-                return _droolTextures;
+                var affectsFace = kind.AffectsFace();
+                foreach (var newTexture in newTextures)
+                    LoadedTextures.Add(newTexture, affectsFace);
             }
-        }
-        public static Texture2D[] SalivaTextures
-        {
-            get
-            {
-                if (_salivaTextures == null)
-                    _salivaTextures = GetTextures(_salivaResources);
 
-                return _salivaTextures;
-            }
+            return _textures[(int)kind];
         }
 
-        public static Texture2D[] CumInNoseTextures
+        public static Texture2D GetTexture(SkinEffectKind kind, int level)
         {
-            get
-            {
-                if (_cumInNoseTextures == null)
-                    _cumInNoseTextures = GetTextures(_cumInNoseResources);
-
-                return _cumInNoseTextures;
-            }
-        }
-
-        public static Texture2D[] TearTextures
-        {
-            get
-            {
-                if (_tearTextures == null)
-                    _tearTextures = GetTextures(_tearResources);
-
-                return _tearTextures;
-            }
-        }
-
-        public static Texture2D[] ButtTextures
-        {
-            get
-            {
-                if (_buttTextures == null)
-                    _buttTextures = GetTextures(_buttResources);
-
-                return _buttTextures;
-            }
-        }
-
-        public static Texture2D[] BlushTexturesBody
-        {
-            get
-            {
-                if (_blushTexturesBody == null)
-                    _blushTexturesBody = GetTextures(_blushBodyResources);
-
-                return _blushTexturesBody;
-            }
-        }
-
-        public static Texture2D[] BlushTexturesFace
-        {
-            get
-            {
-                if (_blushTexturesFace == null)
-                    _blushTexturesFace = GetTextures(_blushFaceResources);
-
-                return _blushTexturesFace;
-            }
-        }
-
-        public static Texture2D[] PussyJuiceTextures
-        {
-            get
-            {
-                if (_pussyJuiceTextures == null)
-                    _pussyJuiceTextures = GetTextures(_pussyJuiceResources);
-
-                return _pussyJuiceTextures;
-            }
+            var textures = GetTextures(kind);
+            if (level < 0 || level >= textures.Length)
+                return null;
+            return textures[level];
         }
 
         public static void PreloadAllTextures()
         {
+            if (!_textures.Contains(null))
+                return;
+
             var sw = Stopwatch.StartNew();
 
-            // Preload the textures
-            var _ = TearTextures;
-            _ = DroolTextures;
-            _ = SalivaTextures;
-            _ = CumInNoseTextures;
-            _ = WetTexturesBody;
-            _ = WetTexturesFace;
-            _ = CumTextures;
-            _ = AnalCumTextures;
-            _ = BldTextures;
-            _ = BlushTexturesBody;
-            _ = BlushTexturesFace;
-            _ = PussyJuiceTextures;
+            for (int i = 0; i < _textures.Length; i++)
+                GetTextures((SkinEffectKind)i);
 
-            SkinEffectsPlugin.Logger.LogDebug($"PreloadAllTextures finished in {sw.ElapsedMilliseconds}ms");
+            SkinEffectsPlugin.Logger.LogDebug($"{nameof(PreloadAllTextures)} finished in {sw.ElapsedMilliseconds}ms");
         }
 
         public static void PreloadMainGameTextures()
         {
-            // Preload the textures
-            var _ = WetTexturesBody;
-            _ = WetTexturesFace;
+            if (_textures[(int)SkinEffectKind.WetBody] != null &&
+                _textures[(int)SkinEffectKind.WetFace] != null)
+                return;
+
+            var sw = Stopwatch.StartNew();
+
+            GetTextures(SkinEffectKind.WetBody);
+            GetTextures(SkinEffectKind.WetFace);
+
+            SkinEffectsPlugin.Logger.LogDebug($"{nameof(PreloadMainGameTextures)} finished in {sw.ElapsedMilliseconds}ms");
         }
     }
 }
