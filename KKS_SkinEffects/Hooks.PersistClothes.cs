@@ -100,7 +100,7 @@ namespace KK_SkinEffects
 
                 var replaceClothesActions = new HashSet<int>(new[]
                 {
-                    0, // Change Clothes
+                    //0, // Change Clothes
                     1, // Toilet
                     2, // Shower
                     4, // H masturbate
@@ -125,7 +125,7 @@ namespace KK_SkinEffects
                         effectsController.ClearCharaState(true, true);
                         SkinEffectGameController.SavePersistData(heroine, effectsController);
                     }
-                    else if (previousAction == 0 || !npc.IsExitingScene())
+                    else if (!npc.IsExitingScene())
                     {
                         // Otherwise do a partial clear
                         effectsController.ClothingState = null;
