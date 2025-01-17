@@ -151,20 +151,23 @@ namespace KK_SkinEffects
                 // This only has effect if persistance is on
                 switch (result.actionNo)
                 {
-                    // shower
-                    case 2:
-                    // excercise
-                    case 18:
                     // run away
                     case 20:
                     // les
                     case 26:
                     case 27:
-                    // take a bath
-                    case 31:
-                        c.SweatLevel = 1;
+                        c.SweatLevel += 1;
+                        break;
+                    
+                    // excercise
+                    case 18:
+                        c.SweatLevel += 2;
                         break;
 
+                    // shower
+                    case 2:
+                    // take a bath
+                    case 31:
                     // Splashing in water
                     case 42:
                     case 43:
