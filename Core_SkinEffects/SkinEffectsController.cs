@@ -12,179 +12,152 @@ using KoiSkinOverlayX;
 using UnityEngine;
 using KKAPI.Utilities;
 
+#pragma warning disable CS0612 // Type or member is obsolete
+
 namespace KK_SkinEffects
 {
     public class SkinEffectsController : CharaCustomFunctionController
     {
-        private int _bloodLevel;
-        private int _bukkakeLevel;
-        private int _analbukkakeLevel;
-        private int _sweatLevel;
-        private int _tearLevel;
-        private int _droolLevel;
-        private int _salivaLevel;
         private int _mouthFilledWithCumCount;
-        private int _cumInNoseLevel;
-        private int _buttLevel;
-        private int _blushLevel;
-        private int _pussyJuiceLevel;
+        private int[] _effectLevels = new int[SkinEffectKindUtils.ValidSkinEffectKinds.Length];
         private byte[] _clothingState;
         private bool[] _accessoryState;
         private byte[] _siruState;
         private KoiSkinOverlayController _ksox;
         private bool _studioInitialLoad = true;
+        private bool _bloodLevelNeedsCalc = true;
 
+        /// <summary>
+        /// Array of all effect levels, index is the SkinEffectKind enum value
+        /// Value represents: 0 = disabled, 1 = texture index 0
+        /// This is a copy of the internal array, modifying it will not affect the controller.
+        /// </summary>
+        public int[] GetEffectLevels() => _effectLevels.ToArray();
+
+        /// <summary>
+        /// 0 = disabled, 1 = texture index 0
+        /// </summary>
+        public int GetEffectLevel(SkinEffectKind kind)
+        {
+            // todo throw instead?
+            if (kind < 0 || (int)kind >= SkinEffectKindUtils.ValidSkinEffectKinds.Length) return -1;
+            return _effectLevels[(int)kind];
+        }
+
+        /// <summary>
+        /// 0 = disabled, 1 = texture index 0
+        /// </summary>
+        public bool SetEffectLevel(SkinEffectKind kind, int level, bool updateEffects)
+        {
+            // todo throw instead?
+            if (kind < 0 || (int)kind >= SkinEffectKindUtils.ValidSkinEffectKinds.Length) return false;
+
+            level = Mathf.Clamp(level, 0, TextureLoader.GetTextureCount(kind));
+
+            if (_effectLevels[(int)kind] != level)
+            {
+                _effectLevels[(int)kind] = level;
+
+                if (updateEffects)
+                    ApplyEffects(true);
+
+                return true;
+            }
+
+            return false;
+        }
+
+
+        #region Obsolete props
+
+        [Obsolete]
         public int BloodLevel
         {
-            get => _bloodLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.BldTexturesCount);
-                if (_bloodLevel != value)
-                {
-                    _bloodLevel = value;
-                    UpdateBldTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.BloodBody);
+            set => SetEffectLevel(SkinEffectKind.BloodBody, value, true);
         }
 
+        [Obsolete]
         public int BukkakeLevel
         {
-            get => _bukkakeLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.CumTexturesCount);
-                if (_bukkakeLevel != value)
-                {
-                    _bukkakeLevel = value;
-                    UpdateCumTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.BukkakeBody);
+            set => SetEffectLevel(SkinEffectKind.BukkakeBody, value, true);
         }
+
+        [Obsolete]
         public int AnalBukkakeLevel
         {
-            get => _analbukkakeLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.AnalCumTexturesCount);
-                if (_analbukkakeLevel != value)
-                {
-                    _analbukkakeLevel = value;
-                    UpdateAnalCumTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.AnalBukkake);
+            set => SetEffectLevel(SkinEffectKind.AnalBukkake, value, true);
         }
 
+        [Obsolete]
         public int SweatLevel
         {
-            get => _sweatLevel;
+            get => GetEffectLevel(SkinEffectKind.WetBody);
             set
             {
-                value = Math.Min(value, TextureLoader.WetTexturesFaceCount);
-                if (_sweatLevel != value)
-                {
-                    _sweatLevel = value;
-                    UpdateWetTexture();
-                }
+                if (SetEffectLevel(SkinEffectKind.WetBody, value, false) | // yes this has to be a single | not ||
+                    SetEffectLevel(SkinEffectKind.WetFace, value, false))
+                    ApplyEffects(true);
             }
         }
 
+        [Obsolete]
         public int TearLevel
         {
-            get => _tearLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.TearTexturesCount);
-                if (_tearLevel != value)
-                {
-                    _tearLevel = value;
-                    UpdateTearTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.TearFace);
+            set => SetEffectLevel(SkinEffectKind.TearFace, value, true);
         }
 
+        [Obsolete]
         public int DroolLevel
         {
-            get => _droolLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.DroolTexturesCount);
-                if (_droolLevel != value)
-                {
-                    _droolLevel = value;
-                    UpdateDroolTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.DroolFace);
+            set => SetEffectLevel(SkinEffectKind.DroolFace, value, true);
         }
+
+        [Obsolete]
         public int SalivaLevel
         {
-            get => _salivaLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.SalivaTexturesCount);
-                if (_salivaLevel != value)
-                {
-                    _salivaLevel = value;
-                    UpdateSalivaTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.Saliva);
+            set => SetEffectLevel(SkinEffectKind.Saliva, value, true);
         }
 
+        [Obsolete]
         public int CumInNoseLevel
         {
-            get => _cumInNoseLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.CumInNoseTexturesCount);
-                if (_cumInNoseLevel != value)
-                {
-                    _cumInNoseLevel = value;
-                    UpdateCumInNoseTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.CumInNose);
+            set => SetEffectLevel(SkinEffectKind.CumInNose, value, true);
         }
 
+        [Obsolete]
         public int ButtLevel
         {
-            get => _buttLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.ButtTexturesCount);
-                if (_buttLevel != value)
-                {
-                    _buttLevel = value;
-                    UpdateButtTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.ButtBody);
+            set => SetEffectLevel(SkinEffectKind.ButtBody, value, true);
         }
 
+        [Obsolete]
         public int BlushLevel
         {
-            get => _blushLevel;
+            get => GetEffectLevel(SkinEffectKind.BlushBody);
             set
             {
-                value = Math.Min(value, TextureLoader.BlushTexturesFaceCount);
-                if (_blushLevel != value)
-                {
-                    _blushLevel = value;
-                    UpdateBlushTexture();
-                }
+                if (SetEffectLevel(SkinEffectKind.BlushBody, value, false) | // yes this has to be a single | not ||
+                    SetEffectLevel(SkinEffectKind.BlushFace, value, false))
+                    ApplyEffects(true);
             }
         }
 
+        [Obsolete]
         public int PussyJuiceLevel
         {
-            get => _pussyJuiceLevel;
-            set
-            {
-                value = Math.Min(value, TextureLoader.PussyJuiceTexturesCount);
-                if (_pussyJuiceLevel != value)
-                {
-                    _pussyJuiceLevel = value;
-                    UpdatePussyJuiceTexture();
-                }
-            }
+            get => GetEffectLevel(SkinEffectKind.PussyJuiceBody);
+            set => SetEffectLevel(SkinEffectKind.PussyJuiceBody, value, true);
         }
+
+        #endregion
 
         public byte[] ClothingState
         {
@@ -195,7 +168,7 @@ namespace KK_SkinEffects
                 {
                     _clothingState = value;
 
-                    UpdateClothingState(true);
+                    ApplyClothingState(true);
                 }
             }
         }
@@ -208,7 +181,7 @@ namespace KK_SkinEffects
                 if (_accessoryState != value || _accessoryState == null)
                 {
                     _accessoryState = value;
-                    UpdateAccessoryState();
+                    ApplyAccessoryState();
                 }
             }
         }
@@ -221,7 +194,7 @@ namespace KK_SkinEffects
                 if (_siruState != value || _siruState == null)
                 {
                     _siruState = value;
-                    UpdateSiruState();
+                    ApplySiruState();
                 }
             }
         }
@@ -326,7 +299,7 @@ namespace KK_SkinEffects
         {
             // Full wetness in shower scene
             if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
-                SweatLevel = TextureLoader.WetTexturesBodyCount;
+                SweatLevel = TextureLoader.GetTextureCount(SkinEffectKind.WetBody);
         }
 
         internal void OnInsert(SaveData.Heroine heroine, HFlag hFlag)
@@ -336,11 +309,11 @@ namespace KK_SkinEffects
 
             if (DisableDeflowering) return;
 
-            // -1 means it wasn't calculated yet for this scene
-            if (BloodLevel == -1 && (heroine.isVirgin || HymenRegen))
+            if (_bloodLevelNeedsCalc && (heroine.isVirgin || HymenRegen))
             {
+                var bldTexturesCount = TextureLoader.GetTextureCount(SkinEffectKind.BloodBody);
                 // figure out bleed level
-                var lvl = TextureLoader.BldTexturesCount - 1;
+                var lvl = bldTexturesCount - 1; // start at 1 less than max (index starts at 1, 0 is off)
                 if (hFlag.gaugeFemale >= 60)
                     lvl -= 1;
                 if (hFlag.GetOrgCount() >= 2)
@@ -367,15 +340,17 @@ namespace KK_SkinEffects
 
                 var minLvl = SkinEffectsPlugin.EnableBldAlways.Value ? 1 : 0;
 
-                BloodLevel = Mathf.Clamp(lvl, minLvl, TextureLoader.BldTexturesCount);
+                BloodLevel = Mathf.Clamp(lvl, minLvl, bldTexturesCount);
 
                 if (SkinEffectsPlugin.EnableTear.Value)
                 {
-                    if (BloodLevel == TextureLoader.BldTexturesCount)
+                    if (BloodLevel == bldTexturesCount)
                         TearLevel += 2;
                     else
                         TearLevel += 1;
                 }
+
+                _bloodLevelNeedsCalc = false;
             }
 
             DisableDeflowering = true;
@@ -403,7 +378,7 @@ namespace KK_SkinEffects
 
         protected override void OnCardBeingSaved(GameMode currentGameMode)
         {
-            var data = new PluginData();
+            var data = new PluginData { version = 2 };
 
             data.data[nameof(HymenRegen)] = HymenRegen;
             data.data[nameof(StretchedHymen)] = StretchedHymen;
@@ -427,44 +402,29 @@ namespace KK_SkinEffects
             if (_ksox == null)
                 _ksox = GetComponent<KoiSkinOverlayController>();
 
-            var data = GetExtendedData();
+            var data = GetExtendedData() ?? new PluginData { version = 2 };
+            AutoConvertExtData(data);
 
             if (!MakerAPI.InsideAndLoaded || MakerAPI.GetCharacterLoadFlags().Parameters)
             {
-                HymenRegen = false;
-                StretchedHymen = false;
-                FragileVag = false;
-
-                if (data != null)
-                {
-                    if (data.data.TryGetValue(nameof(HymenRegen), out var val1)) HymenRegen = (bool)val1;
-                    if (data.data.TryGetValue(nameof(StretchedHymen), out var val2)) StretchedHymen = (bool)val2;
-                    if (data.data.TryGetValue(nameof(FragileVag), out var val3)) FragileVag = (bool)val3;
-                }
+                data.data.TryGetValue(nameof(HymenRegen), out var val1);
+                HymenRegen = Equals(val1, true);
+                data.data.TryGetValue(nameof(StretchedHymen), out var val2);
+                StretchedHymen = Equals(val2, true);
+                data.data.TryGetValue(nameof(FragileVag), out var val3);
+                FragileVag = Equals(val3, true);
             }
 
             switch (currentGameMode)
             {
                 case GameMode.Studio:
-                    var dataDict = data?.data;
+                    var dataDict = data.data;
 
-                    if (!_studioInitialLoad)
-                    {
-                        // persist current state when replacing character in studio
-                        dataDict = dataDict ?? new Dictionary<string, object>();
-                        dataDict[nameof(BukkakeLevel)] = _bukkakeLevel;
-                        dataDict[nameof(AnalBukkakeLevel)] = _analbukkakeLevel;
-                        dataDict[nameof(SweatLevel)] = _sweatLevel;
-                        dataDict[nameof(BloodLevel)] = _bloodLevel;
-                        dataDict[nameof(TearLevel)] = _tearLevel;
-                        dataDict[nameof(DroolLevel)] = _droolLevel;
-                        dataDict[nameof(SalivaLevel)] = _salivaLevel;
-                        dataDict[nameof(CumInNoseLevel)] = _cumInNoseLevel;
-                        dataDict[nameof(BlushLevel)] = _blushLevel;
-                        dataDict[nameof(PussyJuiceLevel)] = _pussyJuiceLevel;
-                    }
-
+                    // Hold the state across character replacements in studio
+                    if (!_studioInitialLoad || maintainState)
+                        WriteCharaState(dataDict);
                     _studioInitialLoad = false;
+
                     // Get the state set in the character state menu
                     ApplyCharaState(dataDict, true);
                     break;
@@ -474,88 +434,111 @@ namespace KK_SkinEffects
                     SkinEffectGameController.ApplyPersistData(this);
                     break;
 
+                case GameMode.Unknown:
+                case GameMode.Maker:
                 default:
                     ClearCharaState(true);
                     break;
             }
         }
 
-        public bool ClearCharaState(bool refreshTextures = false, bool forceClothesStateUpdate = false)
+        public bool ClearCharaState(bool refreshEffects, bool forceClothesStateUpdate = false)
         {
-            var needsUpdate = _ksox.AdditionalTextures.RemoveAll(x => ReferenceEquals(x.Tag, this)) > 0;
+            //Console.WriteLine($"ClearCharaState for {ChaControl.name} {refreshEffects} {forceClothesStateUpdate} - {new StackTrace(1)}");
 
-            _bukkakeLevel = 0;
-            _analbukkakeLevel = 0;
-            _bloodLevel = -1;
-            _sweatLevel = 0;
-            _tearLevel = 0;
-            _droolLevel = 0;
-            _salivaLevel = 0;
-            _cumInNoseLevel = 0;
-            _blushLevel = 0;
-            _pussyJuiceLevel = 0;
+            var hadEffects = _effectLevels.Any(x => x > 0);
+            _effectLevels = new int[SkinEffectKindUtils.ValidSkinEffectKinds.Length];
+            _bloodLevelNeedsCalc = true;
 
             if (_siruState != null || forceClothesStateUpdate)
             {
                 _siruState = null;
-                UpdateSiruState();
+                ApplySiruState();
             }
             if (_clothingState != null || forceClothesStateUpdate)
             {
                 _clothingState = null;
-                UpdateClothingState(true);
+                ApplyClothingState(true);
             }
             if (_accessoryState != null || forceClothesStateUpdate)
             {
                 _accessoryState = null;
-                UpdateAccessoryState();
+                ApplyAccessoryState();
             }
 
-            if (refreshTextures && needsUpdate)
-                UpdateAllTextures();
+            if (refreshEffects && hadEffects)
+                ApplyEffects(true);
 
-            return needsUpdate;
+            return hadEffects;
+        }
+
+        private static void WriteEffectLevelsToData(IDictionary<string, object> dataDict, int[] effectLevels)
+        {
+            if (dataDict == null) throw new ArgumentNullException(nameof(dataDict));
+            if (effectLevels == null) throw new ArgumentNullException(nameof(effectLevels));
+            if (effectLevels.Length != SkinEffectKindUtils.ValidSkinEffectKinds.Length)
+                throw new ArgumentException($"effectLevels length does not match the number of valid skin effect kinds - {effectLevels.Length} to {SkinEffectKindUtils.ValidSkinEffectKinds.Length}");
+
+            for (int id = 0; id < effectLevels.Length; id++)
+                dataDict[id.ToDataKey()] = effectLevels[id];
+        }
+        private static int[] ReadEffectLevelsFromData(IDictionary<string, object> dataDict)
+        {
+            if (dataDict == null) throw new ArgumentNullException(nameof(dataDict));
+
+            var result = new int[SkinEffectKindUtils.ValidSkinEffectKinds.Length];
+            for (var index = 0; index < SkinEffectKindUtils.ValidSkinEffectKinds.Length; index++)
+            {
+                var id = (int)SkinEffectKindUtils.ValidSkinEffectKinds[index];
+                if (dataDict.TryGetValue(id.ToDataKey(), out var obj))
+                    result[id] = obj is int val ? val : 0;
+            }
+
+            return result;
+        }
+        private static void AutoConvertExtData(PluginData data)
+        {
+            if (data == null) throw new ArgumentNullException(nameof(data));
+
+            if (data.version < 2)
+            {
+                var dataDict = data.data;
+                void ConvertVal(string oldKey, SkinEffectKind newKind, SkinEffectKind newKind2 = SkinEffectKind.Unknown)
+                {
+                    dataDict.TryGetValue(oldKey, out var oldVal);
+                    dataDict.Remove(oldKey);
+                    dataDict[newKind.ToDataKey()] = oldVal;
+                    if (newKind2 != SkinEffectKind.Unknown)
+                        dataDict[newKind2.ToDataKey()] = oldVal;
+                }
+
+                ConvertVal("BukkakeLevel", SkinEffectKind.BukkakeBody);
+                ConvertVal("AnalBukkakeLevel", SkinEffectKind.AnalBukkake);
+                ConvertVal("SweatLevel", SkinEffectKind.WetBody, SkinEffectKind.WetFace);
+                ConvertVal("BloodLevel", SkinEffectKind.BloodBody);
+                ConvertVal("TearLevel", SkinEffectKind.TearFace);
+                ConvertVal("DroolLevel", SkinEffectKind.DroolFace);
+                ConvertVal("SalivaLevel", SkinEffectKind.Saliva);
+                ConvertVal("CumInNoseLevel", SkinEffectKind.CumInNose);
+                ConvertVal("BlushLevel", SkinEffectKind.BlushBody, SkinEffectKind.BlushFace);
+                ConvertVal("PussyJuiceLevel", SkinEffectKind.PussyJuiceBody);
+
+                data.version = 2;
+            }
+            else if (data.version > 2)
+            {
+                SkinEffectsPlugin.Logger.LogWarning("Character has SkinEffects data of version higher than supported! Update SkinEffects or you may lose the character's settings or encounter bugs.");
+            }
         }
 
         public void ApplyCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
         {
-            var needsUpdate = ClearCharaState();
+            var needsUpdate = ClearCharaState(false, false);
             if (dataDict != null && dataDict.Count > 0)
             {
-                int GetValue(string propName)
-                {
-                    if (dataDict.TryGetValue(propName, out var obj))
-                    {
-                        var result = (int)obj;
-                        if (result > 0) needsUpdate = true;
-                        return result;
-                    }
-                    return 0;
-                }
-
-                _bukkakeLevel = GetValue(nameof(BukkakeLevel));
-                _analbukkakeLevel = GetValue(nameof(AnalBukkakeLevel));
-                _sweatLevel = GetValue(nameof(SweatLevel));
-                _bloodLevel = GetValue(nameof(BloodLevel));
-                _tearLevel = GetValue(nameof(TearLevel));
-                _droolLevel = GetValue(nameof(DroolLevel));
-                _buttLevel = GetValue(nameof(ButtLevel));
-                _salivaLevel = GetValue(nameof(SalivaLevel));
-                _cumInNoseLevel = GetValue(nameof(CumInNoseLevel));
-                _blushLevel = GetValue(nameof(BlushLevel));
-                _pussyJuiceLevel = GetValue(nameof(PussyJuiceLevel));
-
-                UpdateWetTexture(false);
-                UpdateBldTexture(false);
-                UpdateCumTexture(false);
-                UpdateAnalCumTexture(false);
-                UpdateDroolTexture(false);
-                UpdateSalivaTexture(false);
-                UpdateCumInNoseTexture(false);
-                UpdateTearTexture(false);
-                UpdateButtTexture(false);
-                UpdateBlushTexture(false);
-                UpdatePussyJuiceTexture(false);
+                var newLevels = ReadEffectLevelsFromData(dataDict);
+                if (newLevels.Any(x => x > 0)) needsUpdate = true;
+                _effectLevels = newLevels;
 
                 if (!onlyCustomEffects && !StudioAPI.InsideStudio)
                 {
@@ -563,29 +546,19 @@ namespace KK_SkinEffects
                     if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
                     if (dataDict.TryGetValue(nameof(AccessoryState), out var obj8)) _accessoryState = ((IEnumerable)obj8).Cast<bool>().ToArray();
                     if (dataDict.TryGetValue(nameof(SiruState), out var obj9)) _siruState = ((IEnumerable)obj9).Cast<byte>().ToArray();
-                    UpdateClothingState();
-                    UpdateAccessoryState();
-                    UpdateSiruState();
+                    ApplyClothingState();
+                    ApplyAccessoryState();
+                    ApplySiruState();
                 }
             }
 
             if (needsUpdate)
-                UpdateAllTextures();
+                ApplyEffects(true);
         }
 
         public void WriteCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
         {
-            dataDict[nameof(BukkakeLevel)] = BukkakeLevel;
-            dataDict[nameof(AnalBukkakeLevel)] = AnalBukkakeLevel;
-            dataDict[nameof(SweatLevel)] = SweatLevel;
-            dataDict[nameof(BloodLevel)] = BloodLevel;
-            dataDict[nameof(TearLevel)] = TearLevel;
-            dataDict[nameof(DroolLevel)] = DroolLevel;
-            dataDict[nameof(SalivaLevel)] = SalivaLevel;
-            dataDict[nameof(CumInNoseLevel)] = CumInNoseLevel;
-            dataDict[nameof(ButtLevel)] = ButtLevel;
-            dataDict[nameof(BlushLevel)] = BlushLevel;
-            dataDict[nameof(PussyJuiceLevel)] = PussyJuiceLevel;
+            WriteEffectLevelsToData(dataDict, _effectLevels);
 
             if (!onlyCustomEffects && !StudioAPI.InsideStudio)
             {
@@ -601,14 +574,17 @@ namespace KK_SkinEffects
             base.Start();
         }
 
+        [Obsolete]
         public void UpdateAllTextures()
         {
-            UpdateTextures(true, true);
+            UpdateOverlayTextures(true, true);
         }
 
-        private void UpdateTextures(bool body, bool face)
+        private void UpdateOverlayTextures(bool body, bool face)
         {
-            void Update()
+            if (!body && !face) return;
+
+            void DoUpdate()
             {
                 if (body)
                     _ksox.UpdateTexture(TexType.BodyOver);
@@ -618,179 +594,50 @@ namespace KK_SkinEffects
 
             // Needed in rare cases to prevent body texture from becoming black during H scene, not needed outside of it
             if (SceneApi.GetLoadSceneName() == "H")
-                StartCoroutine(new object[] { new WaitForEndOfFrame(), CoroutineUtils.CreateCoroutine(Update) }.GetEnumerator());
+                StartCoroutine(new object[] { new WaitForEndOfFrame(), CoroutineUtils.CreateCoroutine(DoUpdate) }.GetEnumerator());
             else
-                Update();
+                DoUpdate();
         }
 
-        private void UpdateBldTexture(bool refresh = true)
+        private void ApplyEffects(bool updateTextures)
         {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BldTextures.Contains(x.Texture));
+            var body = false;
+            var face = false;
 
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableBld.Value)
+            _ksox.AdditionalTextures.RemoveAll(x =>
             {
-                if (BloodLevel > 0)
+                if (ReferenceEquals(x.Tag, this))
                 {
-                    // Keep it under the cum tex
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BldTextures[BloodLevel - 1], TexType.BodyOver, this, 101));
+                    if (TextureLoader.LoadedTextures.TryGetValue(x.Texture, out var affectsFace))
+                    {
+                        if (affectsFace) face = true;
+                        else body = true;
+                        return true;
+                    }
                 }
+                return false;
+            });
 
-                if (refresh)
-                    UpdateTextures(true, false);
-            }
-        }
-
-        private void UpdateCumTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableCum.Value)
+            for (int i = 0; i < _effectLevels.Length; i++)
             {
-                if (BukkakeLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumTextures[BukkakeLevel - 1], TexType.BodyOver, this, 102));
-
-                if (refresh)
-                    UpdateTextures(true, false);
-            }
-        }
-
-        private void UpdateAnalCumTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.AnalCumTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableCum.Value)
-            {
-                if (AnalBukkakeLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.AnalCumTextures[AnalBukkakeLevel - 1], TexType.BodyOver, this, 102));
-
-                if (refresh)
-                    UpdateTextures(true, false);
-            }
-        }
-
-        private void UpdateWetTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.WetTexturesBody.Contains(x.Texture) || TextureLoader.WetTexturesFace.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableSwt.Value)
-            {
-                if (SweatLevel > 0)
+                var lvl = _effectLevels[i];
+                if (lvl > 0)
                 {
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesBody[SweatLevel - 1], TexType.BodyOver, this, 100));
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.WetTexturesFace[SweatLevel - 1], TexType.FaceOver, this, 100));
+                    var skinEffectKind = (SkinEffectKind)i;
+                    var isFace = skinEffectKind.AffectsFace();
+
+                    if (isFace) face = true;
+                    else body = true;
+
+                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.GetTexture(skinEffectKind, lvl - 1), isFace ? TexType.FaceOver : TexType.BodyOver, this, 100 + i));
                 }
-
-                if (refresh)
-                    UpdateAllTextures();
             }
+
+            if (updateTextures)
+                UpdateOverlayTextures(body, face);
         }
 
-        private void UpdateTearTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.TearTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableTear.Value)
-            {
-                if (TearLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.TearTextures[TearLevel - 1], TexType.FaceOver, this, 102));
-
-                if (refresh)
-                    UpdateTextures(false, true);
-            }
-        }
-
-        private void UpdateDroolTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.DroolTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
-            {
-                if (DroolLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.DroolTextures[DroolLevel - 1], TexType.FaceOver, this, 101));
-
-                if (refresh)
-                    UpdateTextures(false, true);
-            }
-        }
-
-        private void UpdateSalivaTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.SalivaTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
-            {
-                if (SalivaLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.SalivaTextures[SalivaLevel - 1], TexType.FaceOver, this, 101));
-
-                if (refresh)
-                    UpdateTextures(false, true);
-            }
-        }
-
-        private void UpdateCumInNoseTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.CumInNoseTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableDrl.Value)
-            {
-                if (CumInNoseLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.CumInNoseTextures[CumInNoseLevel - 1], TexType.FaceOver, this, 101));
-
-                if (refresh)
-                    UpdateTextures(false, true);
-            }
-        }
-
-        private void UpdateButtTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.ButtTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableButt.Value)
-            {
-                if (ButtLevel > 0)
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.ButtTextures[ButtLevel - 1], TexType.BodyOver, this, 99));
-
-                if (refresh)
-                    UpdateTextures(true, false);
-            }
-        }
-
-        private void UpdateBlushTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BlushTexturesFace.Contains(x.Texture));
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.BlushTexturesBody.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableBlush.Value)
-            {
-                if (BlushLevel > 0)
-                {
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BlushTexturesBody[BlushLevel - 1], TexType.BodyOver, this, 98));
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.BlushTexturesFace[BlushLevel - 1], TexType.FaceOver, this, 98));
-                }
-
-                if (refresh)
-                    UpdateTextures(true, true);
-            }
-        }
-
-        private void UpdatePussyJuiceTexture(bool refresh = true)
-        {
-            _ksox.AdditionalTextures.RemoveAll(x => TextureLoader.PussyJuiceTextures.Contains(x.Texture));
-
-            if (StudioAPI.InsideStudio || SkinEffectsPlugin.EnableJuice.Value)
-            {
-                if (PussyJuiceLevel > 0)
-                {
-                    // Keep it under the cum tex but over the body blush
-                    _ksox.AdditionalTextures.Add(new AdditionalTexture(TextureLoader.PussyJuiceTextures[PussyJuiceLevel - 1], TexType.BodyOver, this, 99));
-                }
-
-                if (refresh)
-                    UpdateTextures(true, false);
-            }
-        }
-
-        private void UpdateClothingState(bool forceClothesStateUpdate = false)
+        private void ApplyClothingState(bool forceClothesStateUpdate = false)
         {
             if (StudioAPI.InsideStudio) return;
 
@@ -803,7 +650,7 @@ namespace KK_SkinEffects
                 ChaControl.SetClothesStateAll(0);
         }
 
-        private void UpdateAccessoryState()
+        private void ApplyAccessoryState()
         {
             if (StudioAPI.InsideStudio) return;
 
@@ -811,7 +658,7 @@ namespace KK_SkinEffects
                 ChaFileControl.status.showAccessory = _accessoryState;
         }
 
-        private void UpdateSiruState()
+        private void ApplySiruState()
         {
             if (StudioAPI.InsideStudio) return;
 
@@ -824,7 +671,6 @@ namespace KK_SkinEffects
             }
             try
             {
-
                 var ccType = typeof(ChaControl);
 
                 // Store previous high poly value and if it's off then force it on so the semen can appear
@@ -859,21 +705,18 @@ namespace KK_SkinEffects
                 {
                     _talkSceneTouchCount++;
                     if (_talkSceneTouchCount >= 4 && _talkSceneTouchCount % 4 == 0) // Trigger every 4 touch events
-                    {
-                        if (SweatLevel < TextureLoader.WetTexturesFaceCount - 1) // Limit to not allow reaching max level
-                            SweatLevel++;
-                    }
+                        SweatLevel++;
                 }
             }
         }
 
-        public void OnRunning()
+        internal void OnRunning()
         {
             //Console.WriteLine("running " + gameObject.FullPath());
             // todo not working reliably?
             StartCoroutine(CoroutineUtils.CreateCoroutine(
                 new WaitForSeconds(25),
-                () => SweatLevel += UnityEngine.Random.Range(1, TextureLoader.WetTexturesFaceCount)));
+                () => SweatLevel += UnityEngine.Random.Range(1, TextureLoader.GetTextureCount(SkinEffectKind.WetBody))));
         }
     }
 }

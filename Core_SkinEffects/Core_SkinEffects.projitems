@@ -13,6 +13,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Hooks.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Hooks.HSceneTriggers.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectGameController.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)SkinEffectKind.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsController.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsGui.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)SkinEffectsPlugin.cs" />

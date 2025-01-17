@@ -9,6 +9,8 @@ using KKAPI.MainGame;
 using Manager;
 using UnityEngine;
 
+#pragma warning disable CS0612 // Type or member is obsolete
+
 namespace KK_SkinEffects
 {
     /// <summary>
@@ -31,11 +33,7 @@ namespace KK_SkinEffects
             _disableDeflowering.Clear();
         }
 
-#if KK
-        protected override void OnStartH(BaseLoader proc, HFlag hFlag, bool vr)
-#elif KKS
         protected override void OnStartH(MonoBehaviour proc, HFlag hFlag, bool vr)
-#endif
         {
             StopAllCoroutines();
 
@@ -47,11 +45,7 @@ namespace KK_SkinEffects
                 proc.StartCoroutine(HsceneUpdate(hSceneProc, hFlag));
         }
 
-#if KK
-        protected override void OnEndH(BaseLoader proc, HFlag flags, bool vr)
-#elif KKS
         protected override void OnEndH(MonoBehaviour proc, HFlag flags, bool vr)
-#endif
         {
             if (flags.isFreeH) return;
 
@@ -102,6 +96,7 @@ namespace KK_SkinEffects
 
             const int secondsPerLevel = 10;
 
+            // Loop until H Scene ends
             while (proc)
             {
                 var isAibu = flags.mode == HFlag.EMode.aibu;
