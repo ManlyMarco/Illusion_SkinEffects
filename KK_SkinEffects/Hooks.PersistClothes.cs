@@ -202,15 +202,17 @@ namespace KK_SkinEffects
                         if (result.point != null && result.point.transform.childCount > 0)
                             c.OnRunning();
                         break;
-
-                    // shower
-                    case 2:
                     // run away
                     case 20:
                     // les
                     case 26:
                     case 27:
-                        c.SweatLevel = 1;
+                        c.SweatLevel += 1;
+                        break;
+
+                    // shower
+                    case 2:
+                        c.SweatLevel = int.MaxValue;
                         break;
                 }
             }
