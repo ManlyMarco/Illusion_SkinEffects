@@ -11,6 +11,7 @@ using KKAPI.Studio;
 using KoiSkinOverlayX;
 using UnityEngine;
 using KKAPI.Utilities;
+using Random = UnityEngine.Random;
 
 #pragma warning disable CS0612 // Type or member is obsolete
 
@@ -66,8 +67,7 @@ namespace KK_SkinEffects
 
             return false;
         }
-
-
+        
         #region Obsolete props
 
         [Obsolete]
@@ -207,173 +207,11 @@ namespace KK_SkinEffects
         /// Prevents the deflowering effect from appearing, not saved to the card
         /// </summary>
         public bool DisableDeflowering { get; set; }
-
-        private int _fragileVagTriggeredLvl;
-        private int _insertCount;
-        private bool _stopChecking;
-
-        internal void OnFemaleGaugeUp(SaveData.Heroine heroine, HFlag hFlag)
+        
+        protected override void Start()
         {
-            var gaugeFemale = hFlag.gaugeFemale;
-
-            if (hFlag.mode == HFlag.EMode.masturbation)
-            {
-                // Worakound to org count not increasing when the girl climaxes in masturbation/peeping scenes
-                if (_stopChecking)
-                {
-                    if (gaugeFemale >= 0 && gaugeFemale < 5)
-                    {
-                        //Reset it when meter resets, only if not already set back to false.
-                        _stopChecking = false;
-                    }
-                }
-                else
-                {
-                    if (gaugeFemale >= 70 && gaugeFemale < 71)
-                    {
-                        // Also make this check between 70-71, as it seems to be a decimal value between these two numbers. Don't want to check consistently.
-                        SweatLevel += 1;
-                        PussyJuiceLevel += 1;
-                        if (SweatLevel >= 2)
-                            BlushLevel++;
-
-                        _stopChecking = true;
-                    }
-                }
-            }
-            else
-            {
-                if (gaugeFemale >= 70)
-                {
-                    // Using GetOrgCount to prevent adding a level when you let gauge fall below 70 and resume
-                    var orgCount = hFlag.GetOrgCount();
-                    var orgsPlusOne = orgCount + 1;
-                    if (SweatLevel < orgsPlusOne)
-                        SweatLevel = orgsPlusOne;
-                    if (PussyJuiceLevel < orgsPlusOne)
-                        PussyJuiceLevel = orgsPlusOne;
-                    if (BlushLevel < orgCount / 2)
-                        BlushLevel = orgCount / 2;
-                }
-            }
-
-            // When going too rough and has FragileVag, add bld effect
-            if (FragileVag)
-            {
-                if (_fragileVagTriggeredLvl == 0)
-                {
-                    var orgCount = hFlag.GetOrgCount();
-                    if (orgCount == 0 && IsRoughPiston(hFlag))
-                    {
-                        BloodLevel = Mathf.Max(1, BloodLevel + 1);
-                        _fragileVagTriggeredLvl = 1;
-                    }
-                }
-
-                if (_fragileVagTriggeredLvl < hFlag.count.sonyuOrg - 2)
-                {
-                    if (IsRoughPiston(hFlag))
-                    {
-                        BloodLevel++;
-                        _fragileVagTriggeredLvl = hFlag.count.sonyuOrg - 1;
-                    }
-                }
-            }
-        }
-
-        private static bool IsRoughPiston(HFlag hFlag)
-        {
-            return hFlag.gaugeFemale < 55 && hFlag.speed > 2.1f && hFlag.nowAnimStateName == "SLoop";
-        }
-
-        internal void OnFinishRawInside(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            BukkakeLevel += 1;
-        }
-        internal void OnFinishAnalRawInside(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            AnalBukkakeLevel += 1;
-        }
-
-        internal void OnHSceneProcStart(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            // Full wetness in shower scene
-            if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
-                SweatLevel = TextureLoader.GetTextureCount(SkinEffectKind.WetBody);
-        }
-
-        internal void OnInsert(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            if (++_insertCount == 5 && FragileVag)
-                BloodLevel++;
-
-            if (DisableDeflowering) return;
-
-            if (_bloodLevelNeedsCalc && (heroine.isVirgin || HymenRegen))
-            {
-                var bldTexturesCount = TextureLoader.GetTextureCount(SkinEffectKind.BloodBody);
-                // figure out bleed level
-                var lvl = bldTexturesCount - 1; // start at 1 less than max (index starts at 1, 0 is off)
-                if (hFlag.gaugeFemale >= 60)
-                    lvl -= 1;
-                if (hFlag.GetOrgCount() >= 2)
-                    lvl -= 1;
-
-                var attribs = heroine.parameter.attribute;
-                if (attribs.bitch) lvl -= 2;
-                if (attribs.undo) lvl -= 1;
-                if (attribs.kireizuki) lvl += 1;
-                if (attribs.majime) lvl += 2;
-
-                var moreBldPersonalities = new[] { 03, 06, 08, 19, 20, 26, 28, 37 };
-                var lessBldPersonalities = new[] { 00, 07, 11, 12, 13, 14, 15, 33 };
-                if (moreBldPersonalities.Contains(heroine.personality))
-                    lvl += 1;
-                else if (lessBldPersonalities.Contains(heroine.personality))
-                    lvl -= 1;
-
-                if (StretchedHymen)
-                    lvl -= 4;
-
-                if (FragileVag)
-                    lvl += 2;
-
-                var minLvl = SkinEffectsPlugin.EnableBldAlways.Value ? 1 : 0;
-
-                BloodLevel = Mathf.Clamp(lvl, minLvl, bldTexturesCount);
-
-                if (SkinEffectsPlugin.EnableTear.Value)
-                {
-                    if (BloodLevel == bldTexturesCount)
-                        TearLevel += 2;
-                    else
-                        TearLevel += 1;
-                }
-
-                _bloodLevelNeedsCalc = false;
-            }
-
-            DisableDeflowering = true;
-        }
-
-        public void OnAnalInsert(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            TearLevel++;
-        }
-
-        public void OnCumInMouth(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            DroolLevel++;
-            TearLevel++;
-
-            _mouthFilledWithCumCount += 1;
-            if (_mouthFilledWithCumCount >= 3)
-                CumInNoseLevel += 1;
-        }
-
-        public void OnKissing(SaveData.Heroine heroine, HFlag hFlag)
-        {
-            SalivaLevel++;
+            _ksox = GetComponent<KoiSkinOverlayController>();
+            base.Start();
         }
 
         protected override void OnCardBeingSaved(GameMode currentGameMode)
@@ -496,6 +334,44 @@ namespace KK_SkinEffects
 
             return result;
         }
+
+        public void WriteCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
+        {
+            WriteEffectLevelsToData(dataDict, _effectLevels);
+
+            if (!onlyCustomEffects && !StudioAPI.InsideStudio)
+            {
+                dataDict[nameof(ClothingState)] = (byte[])ChaFileControl.status.clothesState.Clone();
+                dataDict[nameof(AccessoryState)] = (bool[])ChaFileControl.status.showAccessory.Clone();
+                dataDict[nameof(SiruState)] = (byte[])ChaFileControl.status.siruLv.Clone();
+            }
+        }
+
+        public void ApplyCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
+        {
+            var needsUpdate = ClearCharaState(false, false);
+            if (dataDict != null && dataDict.Count > 0)
+            {
+                var newLevels = ReadEffectLevelsFromData(dataDict);
+                if (newLevels.Any(x => x > 0)) needsUpdate = true;
+                _effectLevels = newLevels;
+
+                if (!onlyCustomEffects && !StudioAPI.InsideStudio)
+                {
+                    // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
+                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
+                    if (dataDict.TryGetValue(nameof(AccessoryState), out var obj8)) _accessoryState = ((IEnumerable)obj8).Cast<bool>().ToArray();
+                    if (dataDict.TryGetValue(nameof(SiruState), out var obj9)) _siruState = ((IEnumerable)obj9).Cast<byte>().ToArray();
+                    ApplyClothingState();
+                    ApplyAccessoryState();
+                    ApplySiruState();
+                }
+            }
+
+            if (needsUpdate)
+                ApplyEffects(true);
+        }
+
         private static void AutoConvertExtData(PluginData data)
         {
             if (data == null) throw new ArgumentNullException(nameof(data));
@@ -529,49 +405,6 @@ namespace KK_SkinEffects
             {
                 SkinEffectsPlugin.Logger.LogWarning("Character has SkinEffects data of version higher than supported! Update SkinEffects or you may lose the character's settings or encounter bugs.");
             }
-        }
-
-        public void ApplyCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
-        {
-            var needsUpdate = ClearCharaState(false, false);
-            if (dataDict != null && dataDict.Count > 0)
-            {
-                var newLevels = ReadEffectLevelsFromData(dataDict);
-                if (newLevels.Any(x => x > 0)) needsUpdate = true;
-                _effectLevels = newLevels;
-
-                if (!onlyCustomEffects && !StudioAPI.InsideStudio)
-                {
-                    // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
-                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
-                    if (dataDict.TryGetValue(nameof(AccessoryState), out var obj8)) _accessoryState = ((IEnumerable)obj8).Cast<bool>().ToArray();
-                    if (dataDict.TryGetValue(nameof(SiruState), out var obj9)) _siruState = ((IEnumerable)obj9).Cast<byte>().ToArray();
-                    ApplyClothingState();
-                    ApplyAccessoryState();
-                    ApplySiruState();
-                }
-            }
-
-            if (needsUpdate)
-                ApplyEffects(true);
-        }
-
-        public void WriteCharaState(IDictionary<string, object> dataDict, bool onlyCustomEffects = false)
-        {
-            WriteEffectLevelsToData(dataDict, _effectLevels);
-
-            if (!onlyCustomEffects && !StudioAPI.InsideStudio)
-            {
-                dataDict[nameof(ClothingState)] = (byte[])ChaFileControl.status.clothesState.Clone();
-                dataDict[nameof(AccessoryState)] = (bool[])ChaFileControl.status.showAccessory.Clone();
-                dataDict[nameof(SiruState)] = (byte[])ChaFileControl.status.siruLv.Clone();
-            }
-        }
-
-        protected override void Start()
-        {
-            _ksox = GetComponent<KoiSkinOverlayController>();
-            base.Start();
         }
 
         [Obsolete]
@@ -695,9 +528,11 @@ namespace KK_SkinEffects
             }
         }
 
+        #region Event handlers
+
         private int _talkSceneTouchCount;
         // Sweat after touching a bunch in talk scene
-        public void OnTalkSceneTouch(SaveData.Heroine heroine, string touchKind)
+        internal void OnTalkSceneTouch(SaveData.Heroine heroine, string touchKind)
         {
             if (touchKind == "MuneL" || touchKind == "MuneR")
             {
@@ -715,8 +550,189 @@ namespace KK_SkinEffects
             //Console.WriteLine("running " + gameObject.FullPath());
             // todo not working reliably?
             StartCoroutine(CoroutineUtils.CreateCoroutine(
-                new WaitForSeconds(25),
-                () => SweatLevel += UnityEngine.Random.Range(1, TextureLoader.GetTextureCount(SkinEffectKind.WetBody))));
+                               new WaitForSeconds(25),
+                               () => SweatLevel += Random.Range(1, TextureLoader.GetTextureCount(SkinEffectKind.WetBody))));
         }
+        
+        private int _fragileVagTriggeredLvl;
+        private int _insertCount;
+        private bool _stopChecking;
+
+        internal void OnFemaleGaugeUp(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            var gaugeFemale = hFlag.gaugeFemale;
+
+            if (hFlag.mode == HFlag.EMode.masturbation)
+            {
+                // Worakound to org count not increasing when the girl climaxes in masturbation/peeping scenes
+                if (_stopChecking)
+                {
+                    if (gaugeFemale >= 0 && gaugeFemale < 5)
+                    {
+                        //Reset it when meter resets, only if not already set back to false.
+                        _stopChecking = false;
+                    }
+                }
+                else
+                {
+                    if (gaugeFemale >= 70 && gaugeFemale < 71)
+                    {
+                        // Also make this check between 70-71, as it seems to be a decimal value between these two numbers. Don't want to check consistently.
+                        SweatLevel += 1;
+                        PussyJuiceLevel += 1;
+                        if (SweatLevel >= 2)
+                            BlushLevel++;
+
+                        _stopChecking = true;
+                    }
+                }
+            }
+            else
+            {
+                if (gaugeFemale >= 70)
+                {
+                    // Using GetOrgCount to prevent adding a level when you let gauge fall below 70 and resume
+                    var orgCount = hFlag.GetOrgCount();
+                    var orgsPlusOne = orgCount + 1;
+                    if (SweatLevel < orgsPlusOne)
+                        SweatLevel = orgsPlusOne;
+                    if (PussyJuiceLevel < orgsPlusOne)
+                        PussyJuiceLevel = orgsPlusOne;
+                    if (BlushLevel < orgCount / 2)
+                        BlushLevel = orgCount / 2;
+                }
+            }
+
+            // When going too rough and has FragileVag, add bld effect
+            if (FragileVag)
+            {
+                if (_fragileVagTriggeredLvl == 0)
+                {
+                    var orgCount = hFlag.GetOrgCount();
+                    if (orgCount == 0 && IsRoughPiston(hFlag))
+                    {
+                        BloodLevel = Mathf.Max(1, BloodLevel + 1);
+                        _fragileVagTriggeredLvl = 1;
+                    }
+                }
+
+                if (_fragileVagTriggeredLvl < hFlag.count.sonyuOrg - 2)
+                {
+                    if (IsRoughPiston(hFlag))
+                    {
+                        BloodLevel++;
+                        _fragileVagTriggeredLvl = hFlag.count.sonyuOrg - 1;
+                    }
+                }
+            }
+        }
+
+        private static bool IsRoughPiston(HFlag hFlag)
+        {
+            return hFlag.gaugeFemale < 55 && hFlag.speed > 2.1f && hFlag.nowAnimStateName == "SLoop";
+        }
+
+        internal void OnFinishRawInside(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            BukkakeLevel += 1;
+        }
+        internal void OnFinishAnalRawInside(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            AnalBukkakeLevel += 1;
+        }
+
+        internal void OnHSceneProcStart(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            // Full wetness in shower scene
+            if (hFlag.mode == HFlag.EMode.peeping && hFlag.nowAnimationInfo.nameAnimation == "シャワー覗き")
+                SweatLevel = TextureLoader.GetTextureCount(SkinEffectKind.WetBody);
+        }
+
+        internal void OnInsert(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            if (++_insertCount == 5 && FragileVag)
+                BloodLevel++;
+
+            if (DisableDeflowering) return;
+
+            if (_bloodLevelNeedsCalc && (heroine.isVirgin || HymenRegen))
+            {
+                var maxBloodLevel = TextureLoader.GetTextureCount(SkinEffectKind.BloodBody);
+                // figure out bleed level
+                var level = maxBloodLevel - 1; // start at 1 less than max (index starts at 1, 0 is off)
+                if (hFlag.gaugeFemale >= 60)
+                    level -= 1;
+                if (hFlag.GetOrgCount() >= 2)
+                    level -= 1;
+
+                var attribs = heroine.parameter.attribute;
+                if (attribs.bitch) level -= 2;
+                if (attribs.undo) level -= 1;
+                if (attribs.kireizuki) level += 1;
+                if (attribs.majime) level += 2;
+
+                switch (heroine.personality)
+                {
+                    case 03:
+                    case 06:
+                    case 08:
+                    case 19:
+                    case 20:
+                    case 26:
+                    case 28:
+                    case 37:
+                        level += 1;
+                        break;
+
+                    case 00:
+                    case 07:
+                    case 11:
+                    case 12:
+                    case 13:
+                    case 14:
+                    case 15:
+                    case 33:
+                        level -= 1;
+                        break;
+                }
+
+                if (StretchedHymen)
+                    level -= 4;
+
+                if (FragileVag)
+                    level += 2;
+
+                var minBloodLevel = SkinEffectsPlugin.EnableBldAlways.Value ? 1 : 0;
+                BloodLevel = Mathf.Clamp(level, minBloodLevel, maxBloodLevel);
+
+                TearLevel += BloodLevel == maxBloodLevel ? 2 : 1;
+
+                _bloodLevelNeedsCalc = false;
+            }
+
+            DisableDeflowering = true;
+        }
+
+        internal void OnAnalInsert(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            TearLevel++;
+        }
+
+        internal void OnCumInMouth(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            DroolLevel++;
+            TearLevel++;
+
+            _mouthFilledWithCumCount += 1;
+            if (_mouthFilledWithCumCount >= 3)
+                CumInNoseLevel += 1;
+        }
+
+        internal void OnKissing(SaveData.Heroine heroine, HFlag hFlag)
+        {
+            SalivaLevel++;
+        }
+
+        #endregion
     }
 }

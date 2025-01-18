@@ -6,7 +6,6 @@ using ActionGame;
 using HarmonyLib;
 using KKAPI;
 using KKAPI.MainGame;
-using Manager;
 using UnityEngine;
 
 #pragma warning disable CS0612 // Type or member is obsolete
