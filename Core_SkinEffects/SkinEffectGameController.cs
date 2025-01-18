@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ActionGame;
-using HarmonyLib;
 using KKAPI;
 using KKAPI.MainGame;
 using UnityEngine;
@@ -91,8 +90,8 @@ namespace KK_SkinEffects
             var previousButtLevel = new int[controllers.Length];
 
             var hands = new[] { proc.hand, proc.hand1 };
-            var aibuItems = Traverse.Create(proc.hand).Field<HandCtrl.AibuItem[]>("useItems").Value;
-
+            var aibuItems = proc.hand.useItems;
+            
             const int secondsPerLevel = 10;
 
             // Loop until H Scene ends
