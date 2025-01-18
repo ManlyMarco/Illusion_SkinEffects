@@ -39,8 +39,9 @@ namespace KK_SkinEffects
         /// </summary>
         public int GetEffectLevel(SkinEffectKind kind)
         {
-            // todo throw instead?
-            if (kind < 0 || (int)kind >= SkinEffectKindUtils.ValidSkinEffectKinds.Length) return -1;
+            if (!kind.IsValidKind())
+                throw new ArgumentException($"Invalid effect kind: {kind}", nameof(kind));
+
             return _effectLevels[(int)kind];
         }
 
@@ -49,8 +50,8 @@ namespace KK_SkinEffects
         /// </summary>
         public bool SetEffectLevel(SkinEffectKind kind, int level, bool updateEffects)
         {
-            // todo throw instead?
-            if (kind < 0 || (int)kind >= SkinEffectKindUtils.ValidSkinEffectKinds.Length) return false;
+            if (!kind.IsValidKind())
+                return false;
 
             level = Mathf.Clamp(level, 0, TextureLoader.GetTextureCount(kind));
 
@@ -352,6 +353,7 @@ namespace KK_SkinEffects
             if (dataDict != null && dataDict.Count > 0)
             {
                 var newLevels = ReadEffectLevelsFromData(dataDict);
+                TextureLoader.ClampEffectLevelArray(newLevels);
                 if (newLevels.Any(x => x > 0)) needsUpdate = true;
                 _effectLevels = newLevels;
 

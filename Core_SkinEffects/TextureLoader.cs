@@ -43,8 +43,11 @@ namespace KK_SkinEffects
 
         public static int GetTextureCount(SkinEffectKind kind)
         {
-            if (kind < 0)
+            if (kind < 0 || (int)kind >= _resources.Length)
+            {
+                SkinEffectsPlugin.Logger.LogError($"Invalid effect kind: {kind}\n{new StackTrace()}");
                 return 0;
+            }
 
             return _resources[(int)kind].Length;
         }
@@ -62,6 +65,9 @@ namespace KK_SkinEffects
 
         public static Texture2D[] GetTextures(SkinEffectKind kind)
         {
+            if (kind < 0 || (int)kind >= _resources.Length)
+                throw new ArgumentException($"Invalid effect kind: {kind}", nameof(kind));
+
             if (_textures[(int)kind] == null)
             {
                 var newTextures = GetTextures(_resources[(int)kind]);
@@ -78,9 +84,12 @@ namespace KK_SkinEffects
         public static Texture2D GetTexture(SkinEffectKind kind, int level)
         {
             var textures = GetTextures(kind);
-            if (level < 0 || level >= textures.Length)
-                return null;
-            return textures[level];
+            if (level < 0)
+                return textures[0];
+            else if (level >= textures.Length)
+                return textures.Last();
+            else
+                return textures[level];
         }
 
         public static void PreloadAllTextures()
@@ -108,6 +117,15 @@ namespace KK_SkinEffects
             GetTextures(SkinEffectKind.WetFace);
 
             SkinEffectsPlugin.Logger.LogDebug($"{nameof(PreloadMainGameTextures)} finished in {sw.ElapsedMilliseconds}ms");
+        }
+
+        public static void ClampEffectLevelArray(int[] effectLevels)
+        {
+            if (effectLevels.Length > _resources.Length)
+                Array.Resize(ref effectLevels, _resources.Length);
+
+            for (int i = 0; i < effectLevels.Length; i++)
+                effectLevels[i] = Mathf.Clamp(effectLevels[i], 0, _resources[i].Length);
         }
     }
 }

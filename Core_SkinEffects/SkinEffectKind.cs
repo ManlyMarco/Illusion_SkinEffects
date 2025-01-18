@@ -8,7 +8,7 @@ namespace KK_SkinEffects
     /// <summary>
     /// List of all effect texture kinds. The values and names are important and should not be changed.
     /// Names are used for resource lookup, effect textures should have the same name as the enum value + a number that represents the level (e.g. WetBody_01).
-    /// Values are used for indexing and should not be changed or some saved data might become misaligned. Values must be sequential starting from 0.
+    /// Values are used for indexing and should not be changed or some saved data might become misaligned. Values must be sequential starting from 0. Higher value effect texture is overlayed above lower ones.
     /// Description is used only for display names and can be changed.
     /// AffectsBody / AffectsFace attributes are used to determine where the effect should be applied, only one can be used.
     /// </summary>
@@ -50,5 +50,7 @@ namespace KK_SkinEffects
         public static string ToDataKey(this SkinEffectKind kind) => ((int)kind).ToDataKey();
         public static string ToDataKey(this int id) => id.ToString("D", CultureInfo.InvariantCulture);
         public static string GetDisplayName(this SkinEffectKind kind) => kind.GetAttributeOfType<DescriptionAttribute>()?.Description ?? kind.ToString();
+
+        public static bool IsValidKind(this SkinEffectKind kind) => kind >= 0 && (int)kind < ValidSkinEffectKinds.Length;
     }
 }
