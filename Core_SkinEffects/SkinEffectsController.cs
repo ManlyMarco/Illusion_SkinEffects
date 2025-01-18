@@ -621,7 +621,7 @@ namespace KK_SkinEffects
             for (int i = 0; i < _effectLevels.Length; i++)
             {
                 var lvl = _effectLevels[i];
-                if (lvl > 0)
+                if (lvl > 0 && SkinEffectsPlugin.IsEffectEnabled((SkinEffectKind)i))
                 {
                     var skinEffectKind = (SkinEffectKind)i;
                     var isFace = skinEffectKind.AffectsFace();
