@@ -11,13 +11,13 @@ using UnityEngine.SceneManagement;
 
 namespace KK_SkinEffects
 {
-    [BepInPlugin(GUID, "Additional Skin Effects", Version)]
+    [BepInPlugin(GUID, Constants.Name, Constants.Version)]
     [BepInDependency(KoikatuAPI.GUID, KoikatuAPI.VersionConst)]
     [BepInDependency(KoiSkinOverlayX.KoiSkinOverlayMgr.GUID, KoiSkinOverlayX.KoiSkinOverlayMgr.Version)]
     internal class SkinEffectsPlugin : BaseUnityPlugin
     {
         public const string GUID = "Marco.SkinEffects";
-        public const string Version = "3.0";
+        public const string Version = Constants.Version;
 
         internal static new ManualLogSource Logger { get; private set; }
 
