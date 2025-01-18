@@ -1,7 +1,5 @@
-﻿using System;
-using ActionGame.Chara;
+﻿using ActionGame.Chara;
 using System.Collections.Generic;
-using System.Linq;
 using ActionGame;
 using KKAPI.MainGame;
 using HarmonyLib;
