@@ -3,7 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ExtensibleSaveFormat;
-using HarmonyLib;
 using KKAPI;
 using KKAPI.Chara;
 using KKAPI.Maker;
@@ -67,7 +66,7 @@ namespace KK_SkinEffects
 
             return false;
         }
-        
+
         #region Obsolete props
 
         [Obsolete]
@@ -207,7 +206,7 @@ namespace KK_SkinEffects
         /// Prevents the deflowering effect from appearing, not saved to the card
         /// </summary>
         public bool DisableDeflowering { get; set; }
-        
+
         protected override void Start()
         {
             _ksox = GetComponent<KoiSkinOverlayController>();
@@ -488,7 +487,12 @@ namespace KK_SkinEffects
             if (StudioAPI.InsideStudio) return;
 
             if (_accessoryState != null)
-                ChaFileControl.status.showAccessory = _accessoryState;
+            {
+                var showAccessory = ChaFileControl.status.showAccessory;
+                // Copy values rather than whole array to deal with changing accessory amounts by MoreAccessories
+                for (int i = 0; i < showAccessory.Length && i < _accessoryState.Length; i++)
+                    showAccessory[i] = _accessoryState[i];
+            }
         }
 
         private void ApplySiruState()
@@ -504,23 +508,17 @@ namespace KK_SkinEffects
             }
             try
             {
-                var ccType = typeof(ChaControl);
-
                 // Store previous high poly value and if it's off then force it on so the semen can appear
-                var hiPolyProperty = ccType.GetProperty(nameof(ChaControl.hiPoly), AccessTools.all);
-                if (hiPolyProperty == null) throw new ArgumentNullException(nameof(hiPolyProperty));
-                var hiPoly = (bool)hiPolyProperty.GetValue(ChaControl, null);
+                var hiPoly = ChaControl.hiPoly;
                 if (!hiPoly)
-                    hiPolyProperty.SetValue(ChaControl, true, null);
+                    ChaControl.hiPoly = true;
 
                 // Trigger Semen update
-                var updateSiruMethod = ccType.GetMethod("UpdateSiru", AccessTools.all);
-                if (updateSiruMethod == null) throw new ArgumentNullException(nameof(updateSiruMethod));
-                updateSiruMethod.Invoke(ChaControl, new object[] { true });
+                ChaControl.UpdateSiru(true);
 
                 // Restore previous high poly value
                 if (!hiPoly)
-                    hiPolyProperty.SetValue(ChaControl, false, null);
+                    ChaControl.hiPoly = false;
             }
             catch (Exception e)
             {
@@ -553,7 +551,7 @@ namespace KK_SkinEffects
                                new WaitForSeconds(25),
                                () => SweatLevel += Random.Range(1, TextureLoader.GetTextureCount(SkinEffectKind.WetBody))));
         }
-        
+
         private int _fragileVagTriggeredLvl;
         private int _insertCount;
         private bool _stopChecking;

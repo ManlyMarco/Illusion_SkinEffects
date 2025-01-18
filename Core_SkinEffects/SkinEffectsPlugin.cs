@@ -29,7 +29,7 @@ namespace KK_SkinEffects
 
         public static ConfigEntry<KeyboardShortcut> ClearEffectsKey { get; private set; }
 
-        private static readonly Dictionary<SkinEffectKind, ConfigEntry<bool>> _effectEnabledSettings = new Dictionary<SkinEffectKind, ConfigEntry<bool>>(SkinEffectKindUtils.ValidSkinEffectKinds.Length);
+        private static readonly Dictionary<SkinEffectKind, ConfigEntry<bool>> _effectEnabledSettings = new Dictionary<SkinEffectKind, ConfigEntry<bool>>(13);
         public static bool IsEffectEnabled(SkinEffectKind kind) => StudioAPI.InsideStudio || !_effectEnabledSettings.TryGetValue(kind, out var setting) || setting.Value;
 
         private void Start()
