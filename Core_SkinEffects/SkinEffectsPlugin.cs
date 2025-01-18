@@ -41,11 +41,11 @@ namespace KK_SkinEffects
                 //foreach (var kind in SkinEffectKindUtils.ValidSkinEffectKinds)
                 //    _effectEnabledSettings[kind] = Config.Bind("Effects", $"Enable {kind}", true, $"Allow the '{kind.GetDisplayName()}' effect to be used in Story and FreeH modes. Does not affect studio.");
 
-                _effectEnabledSettings[SkinEffectKind.BloodBody] = Config.Bind("Effects", "Enable virgin bleeding", true, "When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
+                _effectEnabledSettings[SkinEffectKind.VirginBloodBody] = Config.Bind("Effects", "Enable virgin bleeding", true, "When penetrated for the first time, virgins have a chance to bleed. The extent varies based on their status.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
 
                 var bukkake = Config.Bind("Effects", "Enable bukkake", true, "Triggers when cumming inside.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
-                _effectEnabledSettings[SkinEffectKind.BukkakeBody] = bukkake;
-                _effectEnabledSettings[SkinEffectKind.AnalBukkake] = bukkake;
+                _effectEnabledSettings[SkinEffectKind.PussyBukkakeBody] = bukkake;
+                _effectEnabledSettings[SkinEffectKind.AnalBukkakeBody] = bukkake;
 
                 var wet = Config.Bind("Effects", "Enable sweating/wet under shower", true, "When excited girls sweat. Also triggers under shower because it makes things wet.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 _effectEnabledSettings[SkinEffectKind.WetBody] = wet;
@@ -55,10 +55,10 @@ namespace KK_SkinEffects
 
                 var drool = Config.Bind("Effects", "Enable drool", true, "Triggers when cumming inside the mouth.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 _effectEnabledSettings[SkinEffectKind.DroolFace] = drool;
-                _effectEnabledSettings[SkinEffectKind.Saliva] = drool;
-                _effectEnabledSettings[SkinEffectKind.CumInNose] = drool;
+                _effectEnabledSettings[SkinEffectKind.SalivaFace] = drool;
+                _effectEnabledSettings[SkinEffectKind.CumInNoseFace] = drool;
 
-                _effectEnabledSettings[SkinEffectKind.ButtBody] = Config.Bind("Effects", "Enable butt blush", true, "Triggers when massaging roughly.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
+                _effectEnabledSettings[SkinEffectKind.ButtBlushBody] = Config.Bind("Effects", "Enable butt blush", true, "Triggers when massaging roughly.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
 
                 var blush = Config.Bind("Effects", "Enable face and body blush", true, "Triggers after a few orgasms and when extremely excited.\n\nDoesn't affect studio. May need to reload the current scene to take effects.");
                 _effectEnabledSettings[SkinEffectKind.BlushBody] = blush;

@@ -73,22 +73,22 @@ namespace KK_SkinEffects
         [Obsolete]
         public int BloodLevel
         {
-            get => GetEffectLevel(SkinEffectKind.BloodBody);
-            set => SetEffectLevel(SkinEffectKind.BloodBody, value, true);
+            get => GetEffectLevel(SkinEffectKind.VirginBloodBody);
+            set => SetEffectLevel(SkinEffectKind.VirginBloodBody, value, true);
         }
 
         [Obsolete]
         public int BukkakeLevel
         {
-            get => GetEffectLevel(SkinEffectKind.BukkakeBody);
-            set => SetEffectLevel(SkinEffectKind.BukkakeBody, value, true);
+            get => GetEffectLevel(SkinEffectKind.PussyBukkakeBody);
+            set => SetEffectLevel(SkinEffectKind.PussyBukkakeBody, value, true);
         }
 
         [Obsolete]
         public int AnalBukkakeLevel
         {
-            get => GetEffectLevel(SkinEffectKind.AnalBukkake);
-            set => SetEffectLevel(SkinEffectKind.AnalBukkake, value, true);
+            get => GetEffectLevel(SkinEffectKind.AnalBukkakeBody);
+            set => SetEffectLevel(SkinEffectKind.AnalBukkakeBody, value, true);
         }
 
         [Obsolete]
@@ -120,22 +120,22 @@ namespace KK_SkinEffects
         [Obsolete]
         public int SalivaLevel
         {
-            get => GetEffectLevel(SkinEffectKind.Saliva);
-            set => SetEffectLevel(SkinEffectKind.Saliva, value, true);
+            get => GetEffectLevel(SkinEffectKind.SalivaFace);
+            set => SetEffectLevel(SkinEffectKind.SalivaFace, value, true);
         }
 
         [Obsolete]
         public int CumInNoseLevel
         {
-            get => GetEffectLevel(SkinEffectKind.CumInNose);
-            set => SetEffectLevel(SkinEffectKind.CumInNose, value, true);
+            get => GetEffectLevel(SkinEffectKind.CumInNoseFace);
+            set => SetEffectLevel(SkinEffectKind.CumInNoseFace, value, true);
         }
 
         [Obsolete]
         public int ButtLevel
         {
-            get => GetEffectLevel(SkinEffectKind.ButtBody);
-            set => SetEffectLevel(SkinEffectKind.ButtBody, value, true);
+            get => GetEffectLevel(SkinEffectKind.ButtBlushBody);
+            set => SetEffectLevel(SkinEffectKind.ButtBlushBody, value, true);
         }
 
         [Obsolete]
@@ -388,14 +388,14 @@ namespace KK_SkinEffects
                         dataDict[newKind2.ToDataKey()] = oldVal;
                 }
 
-                ConvertVal("BukkakeLevel", SkinEffectKind.BukkakeBody);
-                ConvertVal("AnalBukkakeLevel", SkinEffectKind.AnalBukkake);
+                ConvertVal("BukkakeLevel", SkinEffectKind.PussyBukkakeBody);
+                ConvertVal("AnalBukkakeLevel", SkinEffectKind.AnalBukkakeBody);
                 ConvertVal("SweatLevel", SkinEffectKind.WetBody, SkinEffectKind.WetFace);
-                ConvertVal("BloodLevel", SkinEffectKind.BloodBody);
+                ConvertVal("BloodLevel", SkinEffectKind.VirginBloodBody);
                 ConvertVal("TearLevel", SkinEffectKind.TearFace);
                 ConvertVal("DroolLevel", SkinEffectKind.DroolFace);
-                ConvertVal("SalivaLevel", SkinEffectKind.Saliva);
-                ConvertVal("CumInNoseLevel", SkinEffectKind.CumInNose);
+                ConvertVal("SalivaLevel", SkinEffectKind.SalivaFace);
+                ConvertVal("CumInNoseLevel", SkinEffectKind.CumInNoseFace);
                 ConvertVal("BlushLevel", SkinEffectKind.BlushBody, SkinEffectKind.BlushFace);
                 ConvertVal("PussyJuiceLevel", SkinEffectKind.PussyJuiceBody);
 
@@ -657,7 +657,7 @@ namespace KK_SkinEffects
 
             if (_bloodLevelNeedsCalc && (heroine.isVirgin || HymenRegen))
             {
-                var maxBloodLevel = TextureLoader.GetTextureCount(SkinEffectKind.BloodBody);
+                var maxBloodLevel = TextureLoader.GetTextureCount(SkinEffectKind.VirginBloodBody);
                 // figure out bleed level
                 var level = maxBloodLevel - 1; // start at 1 less than max (index starts at 1, 0 is off)
                 if (hFlag.gaugeFemale >= 60)
