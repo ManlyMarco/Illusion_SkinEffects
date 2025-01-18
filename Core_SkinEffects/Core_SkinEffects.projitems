@@ -21,16 +21,16 @@
     <Compile Include="$(MSBuildThisFileDirectory)Utils.cs" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BloodBody_03.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BukkakeBody_03.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBody_03.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\DroolFace.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\VirginBloodBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\VirginBloodBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\VirginBloodBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyBukkakeBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyBukkakeBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyBukkakeBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBlushBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBlushBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\ButtBlushBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\DroolFace_01.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_01.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_02.png" />
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\TearFace_03.png" />
@@ -47,16 +47,16 @@
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\PussyJuiceBody_03.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkake_03.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNose_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkakeBody_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkakeBody_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\AnalBukkakeBody_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNoseFace_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\CumInNoseFace_02.png" />
   </ItemGroup>
   <ItemGroup>
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_01.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_02.png" />
-    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\Saliva_03.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\SalivaFace_01.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\SalivaFace_02.png" />
+    <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\SalivaFace_03.png" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="$(MSBuildThisFileDirectory)Resources\BlushBody_01.png" />
