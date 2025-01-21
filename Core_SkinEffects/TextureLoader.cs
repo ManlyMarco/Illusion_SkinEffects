@@ -36,7 +36,7 @@ namespace KK_SkinEffects
             for (int i = 0; i < effectCount; i++)
             {
                 var effectKind = SkinEffectKindUtils.ValidSkinEffectKinds[i];
-                var name = Enum.GetName(typeof(SkinEffectKind), effectKind) ?? throw new Exception("Invalid enum value? " + effectKind);
+                var name = "." + (Enum.GetName(typeof(SkinEffectKind), effectKind) ?? throw new Exception("Invalid enum value? " + effectKind)) + "_";
                 _resources[i] = resourceNames.Where(x => x.IndexOf(name, StringComparison.OrdinalIgnoreCase) >= 0).ToArray();
             }
         }
