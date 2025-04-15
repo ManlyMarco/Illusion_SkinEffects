@@ -360,10 +360,13 @@ namespace KK_SkinEffects
                 if (!onlyCustomEffects && !StudioAPI.InsideStudio)
                 {
                     // The casts are necessary when deserializing with messagepack because it can produce object[] arrays
-                    if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
                     if (dataDict.TryGetValue(nameof(AccessoryState), out var obj8)) _accessoryState = ((IEnumerable)obj8).Cast<bool>().ToArray();
                     if (dataDict.TryGetValue(nameof(SiruState), out var obj9)) _siruState = ((IEnumerable)obj9).Cast<byte>().ToArray();
-                    ApplyClothingState();
+                    if (!ChaControl.hiPoly)
+                    {
+                        if (dataDict.TryGetValue(nameof(ClothingState), out var obj7)) _clothingState = ((IEnumerable)obj7).Cast<byte>().ToArray();
+                        ApplyClothingState();
+                    }
                     ApplyAccessoryState();
                     ApplySiruState();
                 }
